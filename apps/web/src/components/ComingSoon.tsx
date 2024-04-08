@@ -3,12 +3,12 @@ import { useViewportSize } from "@mantine/hooks";
 import { FC } from "react";
 import Typist from "react-typist-component";
 
-import logo from "./img/knight.png";
+import logo from "../img/knight.png";
 
 export const ComingSoon: FC = () => {
     const { height } = useViewportSize();
     return (
-        <Stack h={height} align="center" justify="center">
+        <Stack h={height - 80} align="center" justify="center">
             <Flex align="baseline">
                 <Image src={logo} w={300} h={300} bg="red" />
                 <Typist>
