@@ -29,11 +29,15 @@ export const ComingSoon: FC = () => {
                     <Group gap={5}>
                         <Text>coming on</Text>
                         <Anchor href="https://base.org">
-                            <Image src="/img/base_icon.svg" h={20} />
+                            <Image src="/img/base_icon.svg" h="20px" w="20px" />
                         </Anchor>
                         <Text>powered by</Text>
                         <Anchor href="https://cartesi.io">
-                            <Image src="/img/cartesi_icon.svg" h={20} />
+                            <Image
+                                src="/img/cartesi_icon.svg"
+                                h="20px"
+                                w="20px"
+                            />
                         </Anchor>
                     </Group>
                 </Center>
