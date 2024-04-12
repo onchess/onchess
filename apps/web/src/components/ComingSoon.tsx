@@ -1,30 +1,81 @@
-import { Flex, Image, Stack, Text } from "@mantine/core";
-import { useViewportSize } from "@mantine/hooks";
-import { FC } from "react";
-import Typist from "react-typist-component";
+"use client";
 
-import logo from "../img/knight.png";
+import {
+    ActionIcon,
+    Anchor,
+    Center,
+    Group,
+    Image,
+    Stack,
+    Text,
+} from "@mantine/core";
+import { useViewportSize } from "@mantine/hooks";
+import { IconBrandGithub, IconBrandX } from "@tabler/icons-react";
+import { FC } from "react";
 
 export const ComingSoon: FC = () => {
     const { height } = useViewportSize();
-    return (
-        <Stack h={height - 80} align="center" justify="center">
-            <Flex align="baseline">
-                <Image src={logo} w={300} h={300} bg="red" />
-                <Typist>
-                    <Typist.Delay ms={500} />
-                    <Text ff="Cardo" fz={96} c="#273053">
-                        OnChain Chess
-                    </Text>
-                    <Typist.Delay ms={800} />
-                    <Typist.Backspace count={9} />
-                    <Text ff="Cardo" fz={96} c="#273053">
-                        ess
-                    </Text>
-                    <Typist.Delay ms={800} />
-                    <Text>(coming soon)</Text>
-                </Typist>
-            </Flex>
+    return height > 0 ? (
+        <Stack h={height} align="stretch" justify="space-around">
+            <Center></Center>
+            <Group align="baseline" justify="center">
+                <Image src="/img/knight.png" h={300} />
+                <Text ff="Cardo" fz={96} c="#273053" visibleFrom="md">
+                    OnChess
+                </Text>
+            </Group>
+            <Stack>
+                <Center>
+                    <Group gap={5}>
+                        <Text>coming on</Text>
+                        <Anchor href="https://base.org">
+                            <Image src="/img/base_icon.svg" h={20} />
+                        </Anchor>
+                        <Text>powered by</Text>
+                        <Anchor href="https://cartesi.io">
+                            <Image src="/img/cartesi_icon.svg" h={20} />
+                        </Anchor>
+                    </Group>
+                </Center>
+                <Center>
+                    <Group>
+                        <Anchor
+                            href="https://x.com/OnChessProject"
+                            target="_blank"
+                        >
+                            <ActionIcon
+                                size="lg"
+                                color="gray"
+                                variant="subtle"
+                                radius="lg"
+                            >
+                                <IconBrandX
+                                    style={{ width: "70%", height: "70%" }}
+                                    stroke={1.5}
+                                />
+                            </ActionIcon>
+                        </Anchor>
+                        <Anchor
+                            href="https://github.com/onchess"
+                            target="_blank"
+                        >
+                            <ActionIcon
+                                size="lg"
+                                color="gray"
+                                variant="subtle"
+                                radius="lg"
+                            >
+                                <IconBrandGithub
+                                    style={{ width: "70%", height: "70%" }}
+                                    stroke={1.5}
+                                />
+                            </ActionIcon>
+                        </Anchor>
+                    </Group>
+                </Center>
+            </Stack>
         </Stack>
+    ) : (
+        <></>
     );
 };
