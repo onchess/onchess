@@ -1,0 +1,9 @@
+.cartesi
+.next
+.storybook
+.turbo
+.vscode
+dist
+node_modules
+out
+storybook-static
