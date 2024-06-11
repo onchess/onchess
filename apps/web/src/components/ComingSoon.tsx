@@ -17,7 +17,7 @@ export const ComingSoon: FC = () => {
     const { height } = useViewportSize();
     return height > 0 ? (
         <Stack h={height} align="stretch" justify="space-around">
-            <Center></Center>
+            <Center />
             <Group align="baseline" justify="center">
                 <Image src="/img/knight.png" h={300} />
                 <Text ff="Cardo" fz={96} c="#273053" visibleFrom="md">
