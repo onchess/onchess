@@ -1,13 +1,13 @@
-import "@mantine/core/styles.css";
 import "@mantine/carousel/styles.css";
 import { ColorSchemeScript } from "@mantine/core";
+import "@mantine/core/styles.css";
 
 import { StyleProvider } from "../providers/style";
 import { WalletProvider } from "../providers/wallet";
 
 export const metadata = {
-    title: "Mantine Next.js template",
-    description: "I am using Mantine with Next.js!",
+    title: "OnChess",
+    description: "OnChain Chess Game",
 };
 
 const RootLayout = ({ children }: { children: React.ReactNode[] }) => {
