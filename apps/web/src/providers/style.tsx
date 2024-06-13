@@ -1,3 +1,5 @@
+"use client";
+
 import { MantineProvider, createTheme } from "@mantine/core";
 import { FC, ReactNode } from "react";
 
