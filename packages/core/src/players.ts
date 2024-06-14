@@ -1,6 +1,8 @@
 import { Address } from "viem";
 import { Player, State } from "./state.js";
 
+export const INITIAL_RATING = 1000;
+
 /**
  * Creates a new player from an address
  * @param address ETH address of player
@@ -12,7 +14,7 @@ export const createPlayer = (address: Address): Player => ({
     draws: 0,
     losses: 0,
     played: 0,
-    rating: 1000,
+    rating: INITIAL_RATING,
     wins: 0,
 });
 
