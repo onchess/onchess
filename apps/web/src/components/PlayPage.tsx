@@ -16,18 +16,29 @@ import { Gameboard } from "./Gameboard";
 import { Header } from "./Header";
 
 export interface PlayPageProps {
-    player?: Player;
     game?: Game;
+    now: number;
+    onClaimVictory: (params: Omit<GameBasePayload, "metadata">) => void;
     onCreate: (params: Omit<CreateGamePayload, "metadata">) => void;
     onDeposit: (params: Omit<DepositPayload, "metadata" | "sender">) => void;
     onMove: (params: Omit<MovePiecePayload, "metadata" | "sender">) => void;
     onResign: (params: Omit<GameBasePayload, "metadata">) => void;
+    player?: Player;
     token: Token;
 }
 
 export const PlayPage: FC<PlayPageProps> = (props) => {
-    const { player, game, onCreate, onDeposit, onMove, onResign, token } =
-        props;
+    const {
+        game,
+        now,
+        onClaimVictory,
+        onCreate,
+        onDeposit,
+        onMove,
+        onResign,
+        player,
+        token,
+    } = props;
     return (
         <Stack>
             <Header player={player} token={token} />
@@ -35,9 +46,11 @@ export const PlayPage: FC<PlayPageProps> = (props) => {
                 {game && (
                     <Gameboard
                         game={game}
-                        player={player}
+                        now={now}
+                        onClaimVictory={onClaimVictory}
                         onMove={onMove}
                         onResign={onResign}
+                        player={player}
                     />
                 )}
                 {!game && (

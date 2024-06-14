@@ -14,11 +14,14 @@ import {
     SquareRendererFunc,
     defaultRenderSquare,
 } from "react-fen-chess-board";
+import { useTimeLeft } from "../hooks/clock";
 import { Clock } from "./Clock";
 import { PlayerText } from "./PlayerText";
 
 export type GameboardProps = {
     game: Game;
+    now: number;
+    onClaimVictory: (params: Omit<GameBasePayload, "metadata">) => void;
     onMove: (params: Omit<MovePiecePayload, "metadata" | "sender">) => void;
     onResign: (params: Omit<GameBasePayload, "metadata">) => void;
     player?: Player; // optional, so we can support "expectators"
@@ -36,6 +39,8 @@ function getErrorMessage(error: unknown) {
 
 export const Gameboard: FC<GameboardProps> = ({
     game,
+    now,
+    onClaimVictory,
     onMove,
     onResign,
     player,
@@ -53,6 +58,28 @@ export const Gameboard: FC<GameboardProps> = ({
     const [promotion, setPromotion] = useState<Promotion | null>(null);
     const fen = chess.fen();
 
+    // flag that indicates if white player can claim vitory
+    const whiteTimeLeft = useTimeLeft(
+        turn === "w",
+        game.updatedAt,
+        game.whiteTime,
+    );
+    const blackTimeLeft = useTimeLeft(
+        turn === "b",
+        game.updatedAt,
+        game.blackTime,
+    );
+    const whiteClaimVictory =
+        player?.address === game.white &&
+        turn === "b" &&
+        !chess.isGameOver() &&
+        blackTimeLeft === 0;
+    const blackClaimVictory =
+        player?.address === game.black &&
+        turn === "w" &&
+        !chess.isGameOver() &&
+        whiteTimeLeft === 0;
+
     // players addresses
     const whiteAddress = (
         <Group justify="space-between">
@@ -65,8 +92,14 @@ export const Gameboard: FC<GameboardProps> = ({
                     Resign
                 </Button>
             )}
+            {whiteClaimVictory && (
+                <Button
+                    onClick={() => onClaimVictory({ address: game.address })}
+                />
+            )}
             <Clock
                 active={turn === "w"}
+                now={now}
                 secondsRemaining={game.whiteTime}
                 startTime={game.updatedAt}
             />
@@ -83,8 +116,14 @@ export const Gameboard: FC<GameboardProps> = ({
                     Resign
                 </Button>
             )}
+            {blackClaimVictory && (
+                <Button
+                    onClick={() => onClaimVictory({ address: game.address })}
+                />
+            )}
             <Clock
                 active={turn === "b"}
+                now={now}
                 secondsRemaining={game.blackTime}
                 startTime={game.updatedAt}
             />

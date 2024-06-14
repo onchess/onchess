@@ -16,6 +16,8 @@ type Story = StoryObj<typeof meta>;
 const alice = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266";
 const bob = "0x70997970C51812dc3A010C7d01b50e0d17dc79C8";
 
+const now = Math.floor(Date.now() / 1000);
+
 export const Opening: Story = {
     args: {
         game: {
@@ -25,18 +27,20 @@ export const Opening: Story = {
             pgn: new Chess().pgn(),
             pot: (10n * 10n ** 18n).toString(),
             timeControl: "1500",
-            updatedAt: Math.floor(Date.now() / 1000),
+            updatedAt: now,
             white: alice,
             whiteTime: 25 * 60,
         },
+        now,
+        onClaimVictory: fn(),
         onMove: fn(),
         onResign: fn(),
         player: createPlayer(alice),
     },
 };
 
-const chess = new Chess();
-chess.move("e4");
+const openedGame = new Chess();
+openedGame.move("e4");
 
 export const BlackMove: Story = {
     args: {
@@ -44,16 +48,39 @@ export const BlackMove: Story = {
             address: "0x90F79bf6EB2c4f870365E785982E1f101E93b906",
             black: bob,
             blackTime: 25 * 60,
-            pgn: chess.pgn(),
+            pgn: openedGame.pgn(),
             pot: (10n * 10n ** 18n).toString(),
             timeControl: "1500",
-            updatedAt: Math.floor(Date.now() / 1000),
+            updatedAt: now,
             white: alice,
             whiteTime: 25 * 60,
         },
+        now,
+        onClaimVictory: fn(),
         onMove: fn(),
         onResign: fn(),
         player: createPlayer(bob),
+    },
+};
+
+export const TimeOver: Story = {
+    args: {
+        game: {
+            address: "0x90F79bf6EB2c4f870365E785982E1f101E93b906",
+            black: bob,
+            blackTime: 60, // 1 minute
+            pgn: openedGame.pgn(),
+            pot: (10n * 10n ** 18n).toString(),
+            timeControl: "900", // 15 minutes
+            updatedAt: now,
+            white: alice,
+            whiteTime: 60, // 1 minute
+        },
+        now,
+        onClaimVictory: fn(),
+        onMove: fn(),
+        onResign: fn(),
+        player: createPlayer(alice),
     },
 };
 
@@ -68,8 +95,10 @@ export const Expectator: Story = {
             timeControl: "1500", // 25 minutes
             whiteTime: 5 * 60, // 5 minutes
             blackTime: 4 * 60, // 4 minutes
-            updatedAt: Math.floor(Date.now() / 1000) - 10, // 10 seconds ago
+            updatedAt: now - 10, // 10 seconds ago
         },
+        now,
+        onClaimVictory: fn(),
         onMove: fn(),
         onResign: fn(),
     },

@@ -10,6 +10,7 @@ import { MiniGameboard, MiniGameboardPlaceholder } from "./MiniGameboard";
 export interface GamesProps extends StackProps {
     account?: Address;
     games: Record<Address, Game>;
+    now: number;
     token: Token;
 }
 
@@ -17,7 +18,7 @@ const inGame = (account: Address, white: Address, black: Address) =>
     white === account || black === account;
 
 export const Games: FC<GamesProps> = (props) => {
-    const { account, games, token } = props;
+    const { account, games, now, token } = props;
     const items = Object.entries(games);
 
     const sorted = items.sort(([, game1], [, game2]) => {
@@ -49,6 +50,7 @@ export const Games: FC<GamesProps> = (props) => {
                             key={index}
                             account={account}
                             address={address as Address}
+                            now={now}
                             game={game}
                             token={token}
                         />

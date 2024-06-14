@@ -23,6 +23,7 @@ export type MiniGameboardProps = {
     account?: Address;
     address: Address;
     game: Game;
+    now: number;
     token: Token;
 };
 
@@ -30,6 +31,7 @@ export const MiniGameboard: FC<MiniGameboardProps> = ({
     account,
     address,
     game,
+    now,
     token,
 }) => {
     const chess = new Chess();
@@ -58,6 +60,7 @@ export const MiniGameboard: FC<MiniGameboardProps> = ({
                         />
                         <Clock
                             active={turn === "b"}
+                            now={now}
                             secondsRemaining={game.blackTime}
                             startTime={game.updatedAt}
                         />
@@ -78,6 +81,7 @@ export const MiniGameboard: FC<MiniGameboardProps> = ({
                         />
                         <Clock
                             active={turn === "w"}
+                            now={now}
                             secondsRemaining={game.whiteTime}
                             startTime={game.updatedAt}
                         />

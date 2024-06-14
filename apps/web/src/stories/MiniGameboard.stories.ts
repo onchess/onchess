@@ -10,6 +10,8 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+const now = Math.floor(Date.now() / 1000);
+
 export const Default: Story = {
     args: {
         address: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
@@ -43,10 +45,11 @@ Qb7 22. Bxf6 Nxf6 23. Nxb4 Qxb4 24. Nf1 Rb8 25. Ra8 Rxa8 26. Qxa8+ Qf8 27. Qxf8+
 Kxf8 28. f3 Nd7 29. Kf2 Ke7 30. e4 Nc5 31. Ke3 Nd7 32. Kf2 Nc5 33. Ke3 Nd7 34.
 Kf2 1/2-1/2`,
             timeControl: "1500",
-            updatedAt: Math.floor(Date.now() / 1000) - 120, // 2 minutes ago
+            updatedAt: now - 120, // 2 minutes ago
             whiteTime: 690,
             blackTime: 722,
         },
+        now,
         token: {
             address: "0x92C6bcA388E99d6B304f1Af3c3Cd749Ff0b591e2",
             decimals: 18,
