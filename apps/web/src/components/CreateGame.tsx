@@ -5,6 +5,7 @@ import {
     Group,
     Paper,
     PaperProps,
+    RangeSlider,
     SegmentedControl,
     Stack,
     Text,
@@ -12,6 +13,7 @@ import {
 import {
     CreateGamePayload,
     DepositPayload,
+    INITIAL_RATING,
     Player,
     parseTimeControl,
 } from "@onchess/core";
@@ -64,6 +66,15 @@ export const CreateGame: FC<CreateGameProps> = (props) => {
     const [timeControl, setTimeControl] = useState(timeControls[0]);
     const timeControlMessage = timeControlFormat(timeControl);
 
+    // opponent rating
+    const playerRating = player ? player.rating : INITIAL_RATING;
+    const minRating = Math.max(0, playerRating - 300);
+    const maxRating = Math.min(3000, playerRating + 300);
+    const [rating, setRating] = useState<[number, number]>([
+        minRating,
+        maxRating,
+    ]);
+
     const { open } = useWeb3Modal();
 
     return (
@@ -96,6 +107,18 @@ export const CreateGame: FC<CreateGameProps> = (props) => {
                     />
                     <Text>{timeControlMessage}</Text>
                 </Stack>
+                <Stack gap={2}>
+                    <Text fw={800}>Opponent Rating</Text>
+                    <RangeSlider
+                        min={0}
+                        max={3000}
+                        minRange={200}
+                        step={10}
+                        value={rating}
+                        onChange={setRating}
+                        labelAlwaysOn
+                    />
+                </Stack>
                 <Group>
                     {player &&
                         balance !== undefined &&
@@ -105,8 +128,8 @@ export const CreateGame: FC<CreateGameProps> = (props) => {
                                     onCreate({
                                         bet,
                                         timeControl,
-                                        minRating: 0,
-                                        maxRating: Number.MAX_SAFE_INTEGER,
+                                        minRating: rating[0],
+                                        maxRating: rating[1],
                                     });
                                 }}
                             >

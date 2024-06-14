@@ -1,9 +1,11 @@
 import "@mantine/core/styles.css";
 
-import { MantineProvider, useMantineColorScheme } from "@mantine/core";
+import { useMantineColorScheme } from "@mantine/core";
 import { addons } from "@storybook/preview-api";
 import React, { ReactNode, useEffect } from "react";
 import { DARK_MODE_EVENT_NAME } from "storybook-dark-mode";
+import { StyleProvider } from "../src/providers/style";
+import { WalletProvider } from "../src/providers/wallet";
 
 const channel = addons.getChannel();
 
@@ -24,5 +26,9 @@ export const decorators = [
     (renderStory: any) => (
         <ColorSchemeWrapper>{renderStory()}</ColorSchemeWrapper>
     ),
-    (renderStory: any) => <MantineProvider>{renderStory()}</MantineProvider>,
+    (renderStory: any) => (
+        <StyleProvider>
+            <WalletProvider>{renderStory()}</WalletProvider>
+        </StyleProvider>
+    ),
 ];
