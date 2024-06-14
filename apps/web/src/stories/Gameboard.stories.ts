@@ -68,7 +68,7 @@ export const TimeOver: Story = {
         game: {
             address: "0x90F79bf6EB2c4f870365E785982E1f101E93b906",
             black: bob,
-            blackTime: 60, // 1 minute
+            blackTime: 0,
             pgn: openedGame.pgn(),
             pot: (10n * 10n ** 18n).toString(),
             timeControl: "900", // 15 minutes

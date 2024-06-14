@@ -14,7 +14,7 @@ import {
     SquareRendererFunc,
     defaultRenderSquare,
 } from "react-fen-chess-board";
-import { useTimeLeft } from "../hooks/clock";
+import { getTimeLeft } from "../hooks/clock";
 import { Clock } from "./Clock";
 import { PlayerText } from "./PlayerText";
 
@@ -59,15 +59,17 @@ export const Gameboard: FC<GameboardProps> = ({
     const fen = chess.fen();
 
     // flag that indicates if white player can claim vitory
-    const whiteTimeLeft = useTimeLeft(
-        turn === "w",
-        game.updatedAt,
+    const whiteTimeLeft = getTimeLeft(
+        now,
         game.whiteTime,
-    );
-    const blackTimeLeft = useTimeLeft(
-        turn === "b",
         game.updatedAt,
+        turn === "w",
+    );
+    const blackTimeLeft = getTimeLeft(
+        now,
         game.blackTime,
+        game.updatedAt,
+        turn === "b",
     );
     const whiteClaimVictory =
         player?.address === game.white &&
@@ -95,7 +97,9 @@ export const Gameboard: FC<GameboardProps> = ({
             {whiteClaimVictory && (
                 <Button
                     onClick={() => onClaimVictory({ address: game.address })}
-                />
+                >
+                    Claim Victory
+                </Button>
             )}
             <Clock
                 active={turn === "w"}
@@ -119,7 +123,9 @@ export const Gameboard: FC<GameboardProps> = ({
             {blackClaimVictory && (
                 <Button
                     onClick={() => onClaimVictory({ address: game.address })}
-                />
+                >
+                    Claim Victory
+                </Button>
             )}
             <Clock
                 active={turn === "b"}

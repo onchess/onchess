@@ -17,38 +17,16 @@ export const useClock = (resolution: number = 1000) => {
     return clock;
 };
 
-export const useTimeLeft = (
-    active: boolean,
-    lastMove: number,
+export const getTimeLeft = (
+    now: number,
     clock: number,
+    lastMove: number,
+    active: boolean,
 ): number => {
-    // now in secods
-    const now = Math.floor(Date.now() / 1000);
-
-    // initialize the time left with clock if not active, or calculate the remaining time if active
+    // elapsed time since last move
     const elapsed = now - lastMove;
-    const [timeLeft, setTimeLeft] = useState(
-        active ? Math.max(clock - elapsed, 0) : clock,
-    );
 
-    useEffect(() => {
-        if (active) {
-            // make the clock tick
-            const interval = setInterval(() => {
-                // calculate remaining seconds
-                const now = Math.floor(Date.now() / 1000); // in seconds
-                const elapsed = now - lastMove;
-                const timeLeft = Math.max(clock - elapsed, 0);
-
-                // stop the clock when it reaches 0
-                if (timeLeft === 0) {
-                    clearInterval(interval);
-                }
-                setTimeLeft(timeLeft);
-            }, 1000);
-            return () => clearInterval(interval);
-        }
-    }, [active]);
-
-    return timeLeft;
+    // if clock is active (running), calculate time left by subtracting elapsed time from what was on the clock
+    // if clock is not active, return the clock as is
+    return active ? Math.max(clock - elapsed, 0) : clock;
 };
