@@ -1,7 +1,7 @@
 import { Config } from "@onchess/core";
 import { base, baseSepolia, foundry } from "viem/chains";
 
-const rakeDivider = 20; // (divider) 5%
+const rakeDivider = 50; // (divider) 2%
 const eloKFactor = 20;
 
 const configs: Record<number, Config> = {
