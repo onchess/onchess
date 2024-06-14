@@ -31,20 +31,6 @@ createWeb3Modal({
     themeVariables: {
         "--w3m-border-radius-master": "1px",
     },
-    tokens: {
-        1: {
-            address: "0x491604c0FDF08347Dd1fa4Ee062a822A5DD06B5D",
-            image: "https://s2.coinmarketcap.com/static/img/coins/64x64/5444.png",
-        },
-        42161: {
-            address: "0x319f865b287fcc10b30d8ce6144e8b6d1b476999",
-            image: "https://s2.coinmarketcap.com/static/img/coins/64x64/5444.png",
-        },
-        31337: {
-            address: "0xf795b3D15D47ac1c61BEf4Cc6469EBb2454C6a9b",
-            image: "https://s2.coinmarketcap.com/static/img/coins/64x64/5444.png",
-        },
-    },
 });
 
 declare module "wagmi" {
