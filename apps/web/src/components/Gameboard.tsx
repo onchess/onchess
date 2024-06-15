@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Group, Stack } from "@mantine/core";
+import { Badge, Button, Group, Stack } from "@mantine/core";
 import { Game, GameBasePayload, MovePiecePayload, Player } from "@onchess/core";
 import { Position } from "chess-fen";
 import { Chess } from "chess.js";
@@ -48,11 +48,16 @@ export const Gameboard: FC<GameboardProps> = ({
     // create a Chess instance and load the PGN
     const chess = new Chess();
     chess.loadPgn(game.pgn);
-
+    const gameover = chess.isGameOver();
+    const draw = chess.isDraw();
     const turn = chess.turn();
+    const result = draw ? 0.5 : gameover ? (turn === "w" ? 0 : 1) : undefined;
+
     const rotated = player?.address === game.black;
-    const whiteTurn = player?.address === game.white && turn === "w";
-    const blackTurn = player?.address === game.black && turn === "b";
+    const whiteTurn =
+        player?.address === game.white && turn === "w" && result == undefined;
+    const blackTurn =
+        player?.address === game.black && turn === "b" && result == undefined;
     const playerTurn = whiteTurn || blackTurn;
 
     const [promotion, setPromotion] = useState<Promotion | null>(null);
@@ -82,6 +87,8 @@ export const Gameboard: FC<GameboardProps> = ({
         !chess.isGameOver() &&
         whiteTimeLeft === 0;
 
+    const whiteWin = result == 1;
+    const blackWin = result == 0;
     // players addresses
     const whiteAddress = (
         <Group justify="space-between">
@@ -101,8 +108,13 @@ export const Gameboard: FC<GameboardProps> = ({
                     Claim Victory
                 </Button>
             )}
+            {whiteWin && (
+                <Badge bg="yellow" size="lg">
+                    Winner
+                </Badge>
+            )}
             <Clock
-                active={turn === "w"}
+                active={turn === "w" && result === undefined}
                 now={now}
                 size="lg"
                 secondsRemaining={game.whiteTime}
@@ -128,8 +140,13 @@ export const Gameboard: FC<GameboardProps> = ({
                     Claim Victory
                 </Button>
             )}
+            {blackWin && (
+                <Badge bg="yellow" size="lg">
+                    Winner
+                </Badge>
+            )}
             <Clock
-                active={turn === "b"}
+                active={turn === "b" && result === undefined}
                 now={now}
                 size="lg"
                 secondsRemaining={game.blackTime}
