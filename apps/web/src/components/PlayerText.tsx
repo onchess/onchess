@@ -16,7 +16,7 @@ export const PlayerText: FC<PlayerTextProps> = ({ address, color, isTurn }) => {
             <ColorSwatch color={color === "w" ? "white" : "black"} size={20} />
             <AddressText
                 address={address}
-                shorten={true}
+                shorten
                 ff="monospace"
                 size="sm"
                 fw={isTurn === true ? 800 : 200}
