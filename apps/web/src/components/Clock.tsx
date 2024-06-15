@@ -26,7 +26,7 @@ export const Clock: FC<ClockProps> = (props) => {
 
     // timestamp when the clock should stop
     const overTime = startTime + secondsRemaining;
-    const seconds = Math.max(overTime - now, 0);
+    const seconds = active ? Math.max(overTime - now, 0) : secondsRemaining;
 
     // format seconds to "mm:ss"
     const str = format(seconds);
