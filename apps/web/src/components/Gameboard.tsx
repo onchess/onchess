@@ -104,6 +104,7 @@ export const Gameboard: FC<GameboardProps> = ({
             <Clock
                 active={turn === "w"}
                 now={now}
+                size="lg"
                 secondsRemaining={game.whiteTime}
                 startTime={game.updatedAt}
             />
@@ -130,6 +131,7 @@ export const Gameboard: FC<GameboardProps> = ({
             <Clock
                 active={turn === "b"}
                 now={now}
+                size="lg"
                 secondsRemaining={game.blackTime}
                 startTime={game.updatedAt}
             />
