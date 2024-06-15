@@ -22,6 +22,7 @@ export interface PlayPageProps extends StackProps {
     onMove: (params: Omit<MovePiecePayload, "metadata" | "sender">) => void;
     onResign: (params: Omit<GameBasePayload, "metadata">) => void;
     player?: Player;
+    submitting: boolean;
     token: Token;
 }
 
@@ -34,6 +35,7 @@ export const PlayPage: FC<PlayPageProps> = (props) => {
         onMove,
         onResign,
         player,
+        submitting,
         token,
         ...stackProps
     } = props;
@@ -49,6 +51,7 @@ export const PlayPage: FC<PlayPageProps> = (props) => {
                         onMove={onMove}
                         onResign={onResign}
                         player={player}
+                        submitting={submitting}
                     />
                 )}
                 {!game && (

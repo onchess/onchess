@@ -37,6 +37,30 @@ export const Opening: Story = {
         onMove: fn(),
         onResign: fn(),
         player: createPlayer(alice),
+        submitting: false,
+    },
+};
+
+export const Submitting: Story = {
+    args: {
+        game: {
+            address: "0x90F79bf6EB2c4f870365E785982E1f101E93b906",
+            black: bob,
+            blackTime: 25 * 60,
+            pgn: new Chess().pgn(),
+            pot: (10n * 10n ** 18n).toString(),
+            timeControl: "1500",
+            updatedAt: now,
+            white: alice,
+            whiteTime: 25 * 60,
+            result: undefined,
+        },
+        now,
+        onClaimVictory: fn(),
+        onMove: fn(),
+        onResign: fn(),
+        player: createPlayer(alice),
+        submitting: true,
     },
 };
 
@@ -62,6 +86,7 @@ export const BlackMove: Story = {
         onMove: fn(),
         onResign: fn(),
         player: createPlayer(bob),
+        submitting: false,
     },
 };
 
@@ -84,6 +109,7 @@ export const TimeOver: Story = {
         onMove: fn(),
         onResign: fn(),
         player: createPlayer(alice),
+        submitting: false,
     },
 };
 
@@ -105,5 +131,6 @@ export const Expectator: Story = {
         onClaimVictory: fn(),
         onMove: fn(),
         onResign: fn(),
+        submitting: false,
     },
 };

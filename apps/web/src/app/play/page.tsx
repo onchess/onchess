@@ -3,7 +3,7 @@
 import { ABI, Game, State, createPlayer } from "@onchess/core";
 import { useState } from "react";
 import { Address, Hash, encodeFunctionData, getAddress } from "viem";
-import { useAccount } from "wagmi";
+import { useAccount, useWaitForTransactionReceipt } from "wagmi";
 import { PlayPage } from "../../components/PlayPage";
 import { useClock } from "../../hooks/clock";
 import { useWriteInputBoxAddInput } from "../../hooks/contracts";
@@ -48,6 +48,7 @@ const Play = () => {
 
     const { writeContractAsync: addInput } = useWriteInputBoxAddInput();
     const [hash, setHash] = useState<Hash | undefined>();
+    const { isFetching } = useWaitForTransactionReceipt({ hash });
 
     return (
         <PlayPage
@@ -100,6 +101,7 @@ const Play = () => {
                 }
             }}
             player={playerState.player}
+            submitting={isFetching}
             token={token}
         />
     );

@@ -1,6 +1,13 @@
 "use client";
 
-import { Badge, Button, Group, Stack } from "@mantine/core";
+import {
+    Badge,
+    Box,
+    Button,
+    Group,
+    LoadingOverlay,
+    Stack,
+} from "@mantine/core";
 import { Game, GameBasePayload, MovePiecePayload, Player } from "@onchess/core";
 import { Position } from "chess-fen";
 import { Chess } from "chess.js";
@@ -20,6 +27,7 @@ import { PlayerText } from "./PlayerText";
 
 export type GameboardProps = {
     game: Game;
+    submitting: boolean;
     now: number;
     onClaimVictory: (params: Omit<GameBasePayload, "metadata">) => void;
     onMove: (params: Omit<MovePiecePayload, "metadata" | "sender">) => void;
@@ -37,14 +45,10 @@ function getErrorMessage(error: unknown) {
     return String(error);
 }
 
-export const Gameboard: FC<GameboardProps> = ({
-    game,
-    now,
-    onClaimVictory,
-    onMove,
-    onResign,
-    player,
-}) => {
+export const Gameboard: FC<GameboardProps> = (props) => {
+    const { game, now, onClaimVictory, onMove, onResign, player, submitting } =
+        props;
+
     // create a Chess instance and load the PGN
     const chess = new Chess();
     chess.loadPgn(game.pgn);
@@ -95,6 +99,7 @@ export const Gameboard: FC<GameboardProps> = ({
             <PlayerText address={game.white} color="w" isTurn={whiteTurn} />
             {whiteTurn && (
                 <Button
+                    disabled={submitting}
                     onClick={() => onResign({ address: game.address })}
                     size="xs"
                 >
@@ -103,6 +108,7 @@ export const Gameboard: FC<GameboardProps> = ({
             )}
             {whiteClaimVictory && (
                 <Button
+                    disabled={submitting}
                     onClick={() => onClaimVictory({ address: game.address })}
                 >
                     Claim Victory
@@ -127,6 +133,7 @@ export const Gameboard: FC<GameboardProps> = ({
             <PlayerText address={game.black} color="b" isTurn={blackTurn} />
             {blackTurn && (
                 <Button
+                    disabled={submitting}
                     onClick={() => onResign({ address: game.address })}
                     size="xs"
                 >
@@ -135,6 +142,7 @@ export const Gameboard: FC<GameboardProps> = ({
             )}
             {blackClaimVictory && (
                 <Button
+                    disabled={submitting}
                     onClick={() => onClaimVictory({ address: game.address })}
                 >
                     Claim Victory
@@ -216,13 +224,22 @@ export const Gameboard: FC<GameboardProps> = ({
             {!rotated && blackAddress}
             {rotated && whiteAddress}
             <ChessBoardDndProvider>
-                <ChessBoard
-                    fen={fen}
-                    rotated={rotated}
-                    boardTheme={boardTheme}
-                    onMove={playerTurn ? moveHandler : undefined}
-                    renderSquare={renderSquare}
-                />
+                <Box pos="relative">
+                    <LoadingOverlay
+                        visible={submitting}
+                        zIndex={1000}
+                        overlayProps={{
+                            backgroundOpacity: 0.3,
+                        }}
+                    />
+                    <ChessBoard
+                        fen={fen}
+                        rotated={rotated}
+                        boardTheme={boardTheme}
+                        onMove={playerTurn ? moveHandler : undefined}
+                        renderSquare={renderSquare}
+                    />
+                </Box>
             </ChessBoardDndProvider>
             {rotated && blackAddress}
             {!rotated && whiteAddress}
