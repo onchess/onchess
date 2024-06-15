@@ -14,6 +14,7 @@ export interface Token {
  * Configuration of the app
  */
 export interface AppConfig {
-    token: Token; // ERC-20 token used
+    owner: Address; // address of the owner of the app, with special powers
     rakeDivider: bigint; // amount of the bet that goes to the house, i.e. 20n represents 5%, 10n represents 10%
+    token: Token; // ERC-20 token used
 }

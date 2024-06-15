@@ -16,7 +16,7 @@ import {
     useWriteErc20PortalDepositErc20Tokens,
 } from "../../hooks/contracts";
 import { useLatestState } from "../../hooks/state";
-import { dapp, token } from "../../providers/state";
+import { dapp, token } from "../../providers/config";
 
 export default function ProfilePage() {
     const { state } = useLatestState(20000);

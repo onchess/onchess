@@ -1,23 +1,13 @@
 "use client";
 
-import chessSlice, { AppConfig, Token } from "@onchess/core";
+import chessSlice, { AppConfig } from "@onchess/core";
 import { combineSlices, configureStore } from "@reduxjs/toolkit";
 import { FC, ReactNode, useRef } from "react";
 import { Provider, useDispatch, useSelector, useStore } from "react-redux";
-import { Address } from "viem";
-
-export const dapp: Address =
-    (process.env.NEXT_PUBLIC_DAPP_ADDRESS as Address) ||
-    "0xab7528bb862fB57E8A2BCd567a2e929a0Be56a5e";
-
-export const token: Token = {
-    address: "0x92C6bcA388E99d6B304f1Af3c3Cd749Ff0b591e2",
-    decimals: 18,
-    name: "Test",
-    symbol: "TEST",
-};
+import { owner, token } from "./config";
 
 const config: AppConfig = {
+    owner,
     rakeDivider: 20n,
     token,
 };

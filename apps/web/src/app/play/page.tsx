@@ -8,7 +8,7 @@ import { PlayPage } from "../../components/PlayPage";
 import { useClock } from "../../hooks/clock";
 import { useWriteInputBoxAddInput } from "../../hooks/contracts";
 import { useLatestState } from "../../hooks/state";
-import { dapp, token } from "../../providers/state";
+import { dapp, token } from "../../providers/config";
 
 const selectPlayerState = (state: State, address?: Address) => {
     const player = address
