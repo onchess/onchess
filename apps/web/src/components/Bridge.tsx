@@ -22,8 +22,9 @@ import { Withdraw } from "./Withdraw";
 
 export interface BridgeProps {
     allowance: string;
-    balance: string;
     applicationBalance: string;
+    balance: string;
+    executing: boolean;
     onApprove: (amount: string) => void;
     onDeposit: (amount: string) => void;
     onWithdraw: (amount: string) => void;

@@ -25,8 +25,9 @@ const amount = (amount: number): string =>
 export const Default: Story = {
     args: {
         allowance: amount(1000000000),
-        balance: amount(120),
         applicationBalance: amount(10),
+        balance: amount(120),
+        executing: false,
         onApprove: fn(),
         onDeposit: fn(),
         onWithdraw: fn(),
@@ -37,8 +38,9 @@ export const Default: Story = {
 export const NoBalance: Story = {
     args: {
         allowance: "0",
-        balance: "0",
         applicationBalance: "0",
+        balance: "0",
+        executing: false,
         onApprove: fn(),
         onDeposit: fn(),
         onWithdraw: fn(),
@@ -49,8 +51,22 @@ export const NoBalance: Story = {
 export const NoAllowance: Story = {
     args: {
         allowance: "0",
-        balance: amount(120),
         applicationBalance: "0",
+        balance: amount(120),
+        executing: false,
+        onApprove: fn(),
+        onDeposit: fn(),
+        onWithdraw: fn(),
+        token,
+    },
+};
+
+export const Executing: Story = {
+    args: {
+        allowance: amount(1000000000),
+        applicationBalance: amount(10),
+        balance: amount(120),
+        executing: true,
         onApprove: fn(),
         onDeposit: fn(),
         onWithdraw: fn(),

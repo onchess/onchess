@@ -7,6 +7,7 @@ import { Stat } from "./Stat";
 export interface ProfileProps {
     allowance: string; // base layer allowance
     balance: string; // base layer balance
+    executing: boolean;
     onApprove: (amount: string) => void;
     onDeposit: (amount: string) => void;
     onWithdraw: (amount: string) => void;
@@ -17,6 +18,7 @@ export interface ProfileProps {
 export const Profile: FC<ProfileProps> = ({
     allowance,
     balance,
+    executing,
     onApprove,
     onDeposit,
     onWithdraw,
@@ -33,8 +35,9 @@ export const Profile: FC<ProfileProps> = ({
             </SimpleGrid>
             <Bridge
                 allowance={allowance}
-                balance={balance}
                 applicationBalance={player.balance}
+                balance={balance}
+                executing={executing}
                 onApprove={onApprove}
                 onDeposit={onDeposit}
                 onWithdraw={onWithdraw}

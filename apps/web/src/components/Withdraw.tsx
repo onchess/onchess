@@ -6,12 +6,13 @@ import { parseUnits } from "viem";
 
 export interface WithdrawProps {
     applicationBalance: string;
+    executing: boolean;
     onWithdraw: (amount: string) => void;
     token: Token;
 }
 
 export const Withdraw: FC<WithdrawProps> = (props) => {
-    const { onWithdraw } = props;
+    const { executing, onWithdraw } = props;
     const { decimals, symbol } = props.token;
 
     const form = useForm({
@@ -60,7 +61,10 @@ export const Withdraw: FC<WithdrawProps> = (props) => {
                 <Button disabled>Insufficient balance</Button>
             )}
             {canWithdraw && (
-                <Button onClick={() => onWithdraw(amount.toString())}>
+                <Button
+                    loading={executing}
+                    onClick={() => onWithdraw(amount.toString())}
+                >
                     Withdraw
                 </Button>
             )}

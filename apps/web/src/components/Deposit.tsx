@@ -7,13 +7,14 @@ import { parseUnits } from "viem";
 export interface DepositProps {
     allowance: string;
     balance: string;
+    executing: boolean;
     onApprove: (amount: string) => void;
     onDeposit: (amount: string) => void;
     token: Token;
 }
 
 export const Deposit: FC<DepositProps> = (props) => {
-    const { onApprove, onDeposit } = props;
+    const { executing, onApprove, onDeposit } = props;
     const { decimals, symbol } = props.token;
 
     const form = useForm({
@@ -63,12 +64,18 @@ export const Deposit: FC<DepositProps> = (props) => {
                 <Button disabled>Insufficient balance</Button>
             )}
             {needApproval && (
-                <Button onClick={() => onApprove(amount.toString())}>
+                <Button
+                    loading={executing}
+                    onClick={() => onApprove(amount.toString())}
+                >
                     Approve
                 </Button>
             )}
             {canDeposit && (
-                <Button onClick={() => onDeposit(amount.toString())}>
+                <Button
+                    loading={executing}
+                    onClick={() => onDeposit(amount.toString())}
+                >
                     Deposit
                 </Button>
             )}
