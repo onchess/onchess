@@ -12,6 +12,22 @@ export const terminateGame = (
     const winner =
         result === 1 ? whitePlayer : result === 0 ? blackPlayer : null;
 
+    // adjust wins/losses/draws
+    switch (result) {
+        case 1:
+            whitePlayer.wins++;
+            blackPlayer.losses++;
+            break;
+        case 0:
+            whitePlayer.losses++;
+            blackPlayer.wins++;
+            break;
+        case 0.5:
+            whitePlayer.draws++;
+            blackPlayer.draws++;
+            break;
+    }
+
     // distribute pot
     const pot = BigInt(game.pot);
     if (winner) {
