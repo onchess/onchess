@@ -5,7 +5,7 @@
     "dependencies": {
         "@deroll/app": "^0.6.1",
         "@onchess/core": "workspace:*",
-        "viem": "^2.14.0"
+        "viem": "^2.14.1"
     },
     "scripts": {
         "build": "tsc && esbuild ./src/index.ts --bundle --outfile=dist/index.js --platform=node --target=node20",
