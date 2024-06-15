@@ -132,6 +132,7 @@ export default {
             updatedAt: 1712250000,
             whiteTime: 690,
             blackTime: 722,
+            result: undefined,
         },
         "0xf0Ce3f9FB57F3Fb111936ad4fDDCa53A096f4152": {
             address: "0xf0Ce3f9FB57F3Fb111936ad4fDDCa53A096f4152",
@@ -144,6 +145,7 @@ export default {
             updatedAt: 1712250000,
             whiteTime: 690,
             blackTime: 325,
+            result: undefined,
         },
         "0x32D8aAD575428C7e9A7E18742f8f646290480Fa1": {
             address: "0x32D8aAD575428C7e9A7E18742f8f646290480Fa1",
@@ -156,6 +158,7 @@ export default {
             updatedAt: 1712250000,
             whiteTime: 506,
             blackTime: 520,
+            result: undefined,
         },
         "0x0caFC34d505151914c518e38f6249423716d00ff": {
             address: "0x0caFC34d505151914c518e38f6249423716d00ff",
@@ -168,6 +171,7 @@ export default {
             updatedAt: 1712250000,
             whiteTime: 410,
             blackTime: 282,
+            result: undefined,
         },
         "0x05899ACA5d21A84Af09aBB6d43E197edE5177a0c": {
             address: "0x05899ACA5d21A84Af09aBB6d43E197edE5177a0c",
@@ -180,6 +184,7 @@ export default {
             updatedAt: 1712250000,
             whiteTime: 898,
             blackTime: 632,
+            result: undefined,
         },
         "0x63682cbD765f8b51E5401E2387eb9b4a80600603": {
             address: "0x63682cbD765f8b51E5401E2387eb9b4a80600603",
@@ -192,6 +197,7 @@ export default {
             updatedAt: 1712250000,
             whiteTime: 310,
             blackTime: 420,
+            result: undefined,
         },
         "0x87a215FF7af7c020913740382Dbac79C11bb9880": {
             address: "0x87a215FF7af7c020913740382Dbac79C11bb9880",
@@ -204,6 +210,7 @@ export default {
             updatedAt: 1712250000,
             whiteTime: 800,
             blackTime: 740,
+            result: undefined,
         },
         "0xb26f4BE53d367125cA08ee65604DAA22969ceA06": {
             address: "0xb26f4BE53d367125cA08ee65604DAA22969ceA06",
@@ -216,6 +223,7 @@ export default {
             updatedAt: 1712250000,
             whiteTime: 600,
             blackTime: 520,
+            result: undefined,
         },
     },
     rake: "0",

@@ -48,6 +48,7 @@ Kf2 1/2-1/2`,
             updatedAt: now - 120, // 2 minutes ago
             whiteTime: 690,
             blackTime: 722,
+            result: undefined,
         },
         now,
         token: {

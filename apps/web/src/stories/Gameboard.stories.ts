@@ -30,6 +30,7 @@ export const Opening: Story = {
             updatedAt: now,
             white: alice,
             whiteTime: 25 * 60,
+            result: undefined,
         },
         now,
         onClaimVictory: fn(),
@@ -54,6 +55,7 @@ export const BlackMove: Story = {
             updatedAt: now,
             white: alice,
             whiteTime: 25 * 60,
+            result: undefined,
         },
         now,
         onClaimVictory: fn(),
@@ -75,6 +77,7 @@ export const TimeOver: Story = {
             updatedAt: now,
             white: alice,
             whiteTime: 60, // 1 minute
+            result: 1,
         },
         now,
         onClaimVictory: fn(),
@@ -96,6 +99,7 @@ export const Expectator: Story = {
             whiteTime: 5 * 60, // 5 minutes
             blackTime: 4 * 60, // 4 minutes
             updatedAt: now - 10, // 10 seconds ago
+            result: undefined,
         },
         now,
         onClaimVictory: fn(),

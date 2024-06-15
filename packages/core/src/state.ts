@@ -48,6 +48,9 @@ export interface Game {
 
     // black clock, number of seconds left
     blackTime: number;
+
+    // game result: 1 (white wins), 0 (black wins), 0.5 (draw), undefined (game in progress)
+    result: 1 | 0 | 0.5 | undefined;
 }
 
 export interface Message {

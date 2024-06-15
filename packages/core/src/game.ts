@@ -9,9 +9,6 @@ export const terminateGame = (
     result: 1 | 0 | 0.5,
     rakeDivider: bigint,
 ) => {
-    const winner =
-        result === 1 ? whitePlayer : result === 0 ? blackPlayer : null;
-
     // adjust wins/losses/draws
     switch (result) {
         case 1:
@@ -30,18 +27,24 @@ export const terminateGame = (
 
     // distribute pot
     const pot = BigInt(game.pot);
-    if (winner) {
-        const rake = pot / rakeDivider;
-        const prize = pot - rake;
-        winner.balance = (BigInt(winner.balance) + prize).toString();
-        state.rake = (BigInt(state.rake) + rake).toString();
-    } else {
+    if (result === 0.5) {
         const prize = pot / 2n;
         whitePlayer.balance = (BigInt(whitePlayer.balance) + prize).toString();
         blackPlayer.balance = (BigInt(blackPlayer.balance) + prize).toString();
         // do not take rake from draws
+    } else {
+        const winner = result === 1 ? whitePlayer : blackPlayer;
+        const rake = pot / rakeDivider;
+        const prize = pot - rake;
+        winner.balance = (BigInt(winner.balance) + prize).toString();
+        state.rake = (BigInt(state.rake) + rake).toString();
     }
+
+    // remove money from the pot
     game.pot = "0";
+
+    // update game result
+    game.result = result;
 
     // update elo
     const delta = getRatingDelta(
