@@ -33,6 +33,7 @@ export const NewPlayer: Story = {
         },
         allowance: "0",
         balance: "0",
+        executing: false,
         onApprove: fn(),
         onDeposit: fn(),
         onWithdraw: fn(),
