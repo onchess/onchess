@@ -11,7 +11,7 @@ import {
 import { Header } from "../../components/Header";
 import { Profile } from "../../components/Profile";
 import {
-    inputBoxAddress,
+    erc20PortalAddress,
     useWriteErc20Approve,
     useWriteErc20PortalDepositErc20Tokens,
 } from "../../hooks/contracts";
@@ -34,7 +34,7 @@ export default function ProfilePage() {
                 abi: erc20Abi,
                 address: token.address,
                 functionName: "allowance",
-                args: [address!, inputBoxAddress],
+                args: [address!, erc20PortalAddress],
             },
             {
                 abi: erc20Abi,
@@ -77,7 +77,7 @@ export default function ProfilePage() {
                         onApprove={(amount) =>
                             approve({
                                 address: token.address,
-                                args: [inputBoxAddress, BigInt(amount)],
+                                args: [erc20PortalAddress, BigInt(amount)],
                             }).then(setHash)
                         }
                         onDeposit={(amount) =>
