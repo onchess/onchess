@@ -58,11 +58,15 @@ export default (config: AppConfig) =>
         const whitePlayer = getPlayer(state, game.white);
         const blackPlayer = getPlayer(state, game.black);
 
+        // update game PGN
+        chess.setComment(`${turn === "w" ? "White" : "Black"} resigns`);
+
         // if white is resigning black wins, otherwise white wins
         const result = turn === "w" ? 0 : 1;
         terminateGame(
             state,
             game,
+            chess,
             whitePlayer,
             blackPlayer,
             result,

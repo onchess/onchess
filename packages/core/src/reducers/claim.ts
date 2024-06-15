@@ -62,6 +62,7 @@ export default (config: AppConfig) =>
             terminateGame(
                 state,
                 game,
+                chess,
                 whitePlayer,
                 blackPlayer,
                 result,

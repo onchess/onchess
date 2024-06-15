@@ -1,9 +1,11 @@
+import { Chess } from "chess.js";
 import { getRatingDelta } from "./elo.js";
 import { Game, Player, State } from "./state.js";
 
 export const terminateGame = (
     state: State,
     game: Game,
+    chess: Chess,
     whitePlayer: Player,
     blackPlayer: Player,
     result: 1 | 0 | 0.5,
@@ -45,6 +47,14 @@ export const terminateGame = (
 
     // update game result
     game.result = result;
+
+    // update PGN
+    const results = {
+        1: "1-0",
+        0: "0-1",
+        0.5: "1/2-1/2",
+    };
+    game.pgn = `${chess.pgn()} ${results[result]}`;
 
     // update elo
     const delta = getRatingDelta(
