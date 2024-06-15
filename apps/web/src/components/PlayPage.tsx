@@ -1,9 +1,8 @@
 "use client";
 
-import { Group, Stack } from "@mantine/core";
+import { Group, Stack, StackProps } from "@mantine/core";
 import {
     CreateGamePayload,
-    DepositPayload,
     Game,
     GameBasePayload,
     MovePiecePayload,
@@ -15,12 +14,11 @@ import { CreateGame } from "./CreateGame";
 import { Gameboard } from "./Gameboard";
 import { Header } from "./Header";
 
-export interface PlayPageProps {
+export interface PlayPageProps extends StackProps {
     game?: Game;
     now: number;
     onClaimVictory: (params: Omit<GameBasePayload, "metadata">) => void;
     onCreate: (params: Omit<CreateGamePayload, "metadata">) => void;
-    onDeposit: (params: Omit<DepositPayload, "metadata" | "sender">) => void;
     onMove: (params: Omit<MovePiecePayload, "metadata" | "sender">) => void;
     onResign: (params: Omit<GameBasePayload, "metadata">) => void;
     player?: Player;
@@ -33,14 +31,14 @@ export const PlayPage: FC<PlayPageProps> = (props) => {
         now,
         onClaimVictory,
         onCreate,
-        onDeposit,
         onMove,
         onResign,
         player,
         token,
+        ...stackProps
     } = props;
     return (
-        <Stack>
+        <Stack {...stackProps}>
             <Header player={player} token={token} />
             <Group wrap="nowrap" justify="space-around">
                 {game && (
@@ -56,12 +54,11 @@ export const PlayPage: FC<PlayPageProps> = (props) => {
                 {!game && (
                     <Stack>
                         <CreateGame
-                            miw={400}
+                            miw={600}
                             player={player}
                             symbol={token.symbol}
                             decimals={token.decimals}
                             onCreate={onCreate}
-                            onDeposit={onDeposit}
                         />
                     </Stack>
                 )}

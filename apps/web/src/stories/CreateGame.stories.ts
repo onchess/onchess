@@ -19,7 +19,6 @@ export const Disconnected: Story = {
         decimals: 18,
         symbol: "TEST",
         onCreate: fn(),
-        onDeposit: fn(),
     },
 };
 
@@ -28,7 +27,6 @@ export const Connected: Story = {
         decimals: 18,
         symbol: "TEST",
         onCreate: fn(),
-        onDeposit: fn(),
         player: createPlayer("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
     },
 };
@@ -38,7 +36,6 @@ export const Balance80: Story = {
         decimals: 18,
         symbol: "TEST",
         onCreate: fn(),
-        onDeposit: fn(),
         player: {
             address: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
             balance: (80n * 10n ** 18n).toString(),

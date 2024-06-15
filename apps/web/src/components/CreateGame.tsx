@@ -12,7 +12,6 @@ import {
 } from "@mantine/core";
 import {
     CreateGamePayload,
-    DepositPayload,
     INITIAL_RATING,
     Player,
     parseTimeControl,
@@ -27,14 +26,12 @@ export interface CreateGameProps extends PaperProps {
     decimals: number;
     symbol: string;
     onCreate: (params: Omit<CreateGamePayload, "metadata">) => void;
-    onDeposit: (params: Omit<DepositPayload, "metadata" | "sender">) => void;
 }
 
 export const timeControls = ["1500", "2700", "1500+10", "2700+10"];
 
 export const CreateGame: FC<CreateGameProps> = (props) => {
-    const { decimals, onCreate, onDeposit, player, symbol, ...otherProps } =
-        props;
+    const { decimals, onCreate, player, symbol, ...otherProps } = props;
 
     // player balance
     const balance = player ? BigInt(player.balance) : undefined;
@@ -86,7 +83,7 @@ export const CreateGame: FC<CreateGameProps> = (props) => {
             shadow="md"
             bg="var(--mantine-primary-color-light)"
         >
-            <Stack justify="space-around" h="100%">
+            <Stack justify="space-around" h="100%" gap={30}>
                 <Stack gap={2}>
                     <Text fw={800}>Bet</Text>
                     <SegmentedControl
@@ -110,6 +107,7 @@ export const CreateGame: FC<CreateGameProps> = (props) => {
                 <Stack gap={2}>
                     <Text fw={800}>Opponent Rating</Text>
                     <RangeSlider
+                        mt={40}
                         min={0}
                         max={3000}
                         minRange={200}
@@ -139,13 +137,7 @@ export const CreateGame: FC<CreateGameProps> = (props) => {
                     {player &&
                         balance !== undefined &&
                         BigInt(bet) > balance && (
-                            <Button
-                                onClick={() => {
-                                    onDeposit({ amount: bet });
-                                }}
-                            >
-                                Deposit
-                            </Button>
+                            <Button disabled>Insufficient balance</Button>
                         )}
                     {!player && <Button onClick={() => open()}>Connect</Button>}
                 </Group>
