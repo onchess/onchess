@@ -193,7 +193,7 @@ export const Gameboard: FC<GameboardProps> = ({
     };
 
     return (
-        <Stack>
+        <Stack miw={600}>
             {!rotated && blackAddress}
             {rotated && whiteAddress}
             <ChessBoardDndProvider>
