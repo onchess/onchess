@@ -1,7 +1,6 @@
 import { SimpleGrid, Stack } from "@mantine/core";
 import { Player, Token } from "@onchess/core";
 import { FC } from "react";
-import { AddressText } from "./AddressText";
 import { Bridge } from "./Bridge";
 import { Stat } from "./Stat";
 
@@ -26,11 +25,6 @@ export const Profile: FC<ProfileProps> = ({
 }) => {
     return (
         <Stack>
-            <AddressText
-                address={player.address}
-                ff="monospace"
-                shorten={false}
-            />
             <SimpleGrid cols={4}>
                 <Stat name="Rating" value={player.rating} />
                 <Stat name="Wins" value={player.wins} />
