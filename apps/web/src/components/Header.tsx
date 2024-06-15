@@ -20,7 +20,7 @@ import {
     IconChessRookFilled,
 } from "@tabler/icons-react";
 import Link from "next/link";
-import { FC } from "react";
+import { FC, useMemo } from "react";
 import { formatUnits } from "viem";
 
 export type HeaderProps = {
@@ -41,9 +41,13 @@ export const Header: FC<HeaderProps> = ({ player, token }) => {
     const { symbol } = token;
 
     // choose a random wallet icon (just to be playful)
-    const iconIndex = Math.min(
-        Math.floor(Math.random() * chessIcons.length),
-        chessIcons.length - 1,
+    const iconIndex = useMemo(
+        () =>
+            Math.min(
+                Math.floor(Math.random() * chessIcons.length),
+                chessIcons.length - 1,
+            ),
+        [],
     );
     const Icon = chessIcons[iconIndex];
 
