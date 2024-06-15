@@ -23,7 +23,8 @@ export default function ProfilePage() {
     const { address } = useAccount();
     const player = address
         ? state && state.players
-            ? state.players[getAddress(address)]
+            ? state.players[getAddress(address)] ??
+              createPlayer(getAddress(address))
             : createPlayer(getAddress(address))
         : undefined;
 
