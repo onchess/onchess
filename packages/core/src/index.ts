@@ -13,7 +13,7 @@ import {
     withdrawRakeReducer,
     withdrawReducer,
 } from "./reducers/index.js";
-import { Config, Game, State } from "./state.js";
+import { Game, State } from "./state.js";
 
 export * from "./app.js";
 export * from "./payloads.js";
@@ -21,15 +21,7 @@ export * from "./players.js";
 export * from "./state.js";
 export * from "./time.js";
 
-const chessSlice = (config: Config) => {
-    const initialState: State = {
-        config,
-        games: {},
-        lobby: [],
-        players: {},
-        rake: "0",
-        vouchers: [],
-    };
+const chessSlice = (initialState: State) => {
     return createSlice({
         name: "chess",
         initialState,

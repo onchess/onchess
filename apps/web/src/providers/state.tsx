@@ -1,6 +1,6 @@
 "use client";
 
-import chessSlice, { Config } from "@onchess/core";
+import chessSlice, { Config, State } from "@onchess/core";
 import { combineSlices, configureStore } from "@reduxjs/toolkit";
 import { FC, ReactNode, useRef } from "react";
 import { Provider, useDispatch, useSelector, useStore } from "react-redux";
@@ -13,7 +13,16 @@ export const config: Config = {
     token,
 };
 
-const chess = chessSlice(config);
+const initialState: State = {
+    config,
+    games: {},
+    lobby: [],
+    players: {},
+    rake: "0",
+    vouchers: [],
+};
+
+const chess = chessSlice(initialState);
 const rootReducer = combineSlices(chess);
 const makeStore = () => configureStore({ reducer: rootReducer });
 

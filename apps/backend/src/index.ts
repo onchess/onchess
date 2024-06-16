@@ -1,5 +1,5 @@
 import { createApp } from "@deroll/app";
-import { createChess } from "@onchess/core";
+import { State, createChess } from "@onchess/core";
 import { getConfig } from "./config";
 
 // rollups URL
@@ -19,7 +19,15 @@ const config = getConfig(chainId);
 console.log(config);
 
 // create chess app
-createChess(app, config);
+const initialState: State = {
+    config,
+    games: {},
+    lobby: [],
+    players: {},
+    rake: "0",
+    vouchers: [],
+};
+createChess(app, initialState);
 
 app.start().catch((e) => {
     console.error(e);

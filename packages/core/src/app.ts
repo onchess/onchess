@@ -2,7 +2,7 @@ import { AdvanceRequestData, App } from "@deroll/core";
 import { isERC20Deposit, parseERC20Deposit } from "@deroll/wallet";
 import { Action, combineSlices, configureStore } from "@reduxjs/toolkit";
 import { decodeFunctionData, parseAbi, stringToHex } from "viem";
-import chessSlice, { ChessSlice, Config } from "./index.js";
+import chessSlice, { ChessSlice, Config, State } from "./index.js";
 
 // game onchain API
 export const ABI = parseAbi([
@@ -110,14 +110,14 @@ const makeActionCreator = (config: Config, chess: ChessSlice) => {
     };
 };
 
-export const createChess = (app: App, config: Config) => {
+export const createChess = (app: App, initialState: State) => {
     // create chess slice
-    const slice = chessSlice(config);
+    const slice = chessSlice(initialState);
 
     // create a store
     const reducer = combineSlices(slice);
     const store = configureStore({ reducer });
-    const actionCreator = makeActionCreator(config, slice);
+    const actionCreator = makeActionCreator(initialState.config, slice);
 
     // add handler for game actions
     app.addAdvanceHandler(async (data) => {
