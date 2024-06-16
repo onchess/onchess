@@ -1,8 +1,8 @@
 "use client";
 import { Box, Stack } from "@mantine/core";
-import { createPlayer } from "@onchess/core";
+import { ABI, createPlayer } from "@onchess/core";
 import { useState } from "react";
-import { Hash, erc20Abi, getAddress } from "viem";
+import { Hash, encodeFunctionData, erc20Abi, getAddress } from "viem";
 import {
     useAccount,
     useReadContracts,
@@ -14,6 +14,7 @@ import {
     erc20PortalAddress,
     useWriteErc20Approve,
     useWriteErc20PortalDepositErc20Tokens,
+    useWriteInputBoxAddInput,
 } from "../../hooks/contracts";
 import { useLatestState } from "../../hooks/state";
 import { dapp, token } from "../../providers/config";
@@ -58,6 +59,7 @@ export default function ProfilePage() {
     const { writeContractAsync: approve } = useWriteErc20Approve();
     const { writeContractAsync: deposit } =
         useWriteErc20PortalDepositErc20Tokens();
+    const { writeContractAsync: addInput } = useWriteInputBoxAddInput();
 
     // transaction processing
     const [hash, setHash] = useState<Hash | undefined>(undefined);
@@ -90,7 +92,14 @@ export default function ProfilePage() {
                                 ],
                             }).then(setHash)
                         }
-                        onWithdraw={() => {}}
+                        onWithdraw={(amount) => {
+                            const payload = encodeFunctionData({
+                                abi: ABI,
+                                functionName: "withdraw",
+                                args: [BigInt(amount)],
+                            });
+                            addInput({ args: [dapp, payload] }).then(setHash);
+                        }}
                     />
                 )}
             </Box>
