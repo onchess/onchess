@@ -52,10 +52,8 @@ export const Gameboard: FC<GameboardProps> = (props) => {
     // create a Chess instance and load the PGN
     const chess = new Chess();
     chess.loadPgn(game.pgn);
-    const gameover = chess.isGameOver();
-    const draw = chess.isDraw();
     const turn = chess.turn();
-    const result = draw ? 0.5 : gameover ? (turn === "w" ? 0 : 1) : undefined;
+    const result = game.result;
 
     const rotated = player?.address === game.black;
     const whiteTurn =
