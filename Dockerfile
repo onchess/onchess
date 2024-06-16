@@ -34,7 +34,7 @@ RUN pnpm run build --filter=@onchess/backend
 # Here the image's platform MUST be linux/riscv64.
 # Give preference to small base images, which lead to better start-up
 # performance when loading the Cartesi Machine.
-FROM --platform=linux/riscv64 cartesi/node:20.8.0-jammy-slim
+FROM --platform=linux/riscv64 cartesi/node:20.8.0-jammy-slim as runtime
 
 ARG MACHINE_EMULATOR_TOOLS_VERSION=0.14.1
 ADD https://github.com/cartesi/machine-emulator-tools/releases/download/v${MACHINE_EMULATOR_TOOLS_VERSION}/machine-emulator-tools-v${MACHINE_EMULATOR_TOOLS_VERSION}.deb /
@@ -63,3 +63,12 @@ ENV ROLLUP_HTTP_SERVER_URL="http://127.0.0.1:5004"
 
 ENTRYPOINT ["rollup-init"]
 CMD ["node", "index.js"]
+
+FROM runtime as mainnet
+ENV CHAIN_ID=8453
+
+FROM runtime as testnet
+ENV CHAIN_ID=84532
+
+FROM runtime
+ENV CHAIN_ID=31337
