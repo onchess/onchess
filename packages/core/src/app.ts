@@ -15,6 +15,7 @@ export const ABI = parseAbi([
     "function withdrawRake()",
     "function setRakeDivider(uint32 rake)",
     "function transferOwnership(address newOwner)",
+    "function upgrade(address dapp)",
 ]);
 
 /**
@@ -32,6 +33,7 @@ const makeActionCreator = (config: Config, chess: ChessSlice) => {
         resign,
         setRakeDivider,
         transferOwnership,
+        upgrade,
         withdraw,
         withdrawRake,
     } = chess.actions;
@@ -105,6 +107,11 @@ const makeActionCreator = (config: Config, chess: ChessSlice) => {
             case "transferOwnership": {
                 const [newOwner] = args;
                 return transferOwnership({ metadata, newOwner });
+            }
+
+            case "upgrade": {
+                const [dapp] = args;
+                return upgrade({ metadata, dapp });
             }
         }
     };

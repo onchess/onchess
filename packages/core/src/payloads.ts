@@ -60,3 +60,10 @@ export interface TransferOwnershipPayload extends BasePayload {
 export interface SetRakeDividerPayload extends BasePayload {
     value: number;
 }
+
+/**
+ * Payload to export game state to anothe dapp
+ */
+export interface ExportPayload extends BasePayload {
+    dapp: Address;
+}

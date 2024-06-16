@@ -10,6 +10,7 @@ import {
     resignReducer,
     setRakeDividerReducer,
     transferOwnershipReducer,
+    upgradeReducer,
     withdrawRakeReducer,
     withdrawReducer,
 } from "./reducers/index.js";
@@ -32,6 +33,7 @@ const chessSlice = (initialState: State) => {
             move: moveReducer,
             resign: resignReducer,
             claim: claimReducer,
+            upgrade: upgradeReducer,
             setRakeDivider: setRakeDividerReducer,
             transferOwnership: transferOwnershipReducer,
             withdraw: withdrawReducer,
