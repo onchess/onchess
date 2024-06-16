@@ -44,15 +44,12 @@ export const useLatestState = (pollInterval: number = 2000): StateResponse => {
         vouchers: [],
     });
 
+    const input = data?.inputs.edges[0]?.node;
     useEffect(() => {
-        if (
-            data &&
-            data.inputs.edges.length > 0 &&
-            data.inputs.edges[0].node.notices.edges.length > 0
-        ) {
+        const notice = input?.notices.edges[0]?.node;
+        if (notice) {
             // hex string of notice
-            const hex = data.inputs.edges[0].node.notices.edges[0].node
-                .payload as Hex;
+            const hex = notice.payload as Hex;
 
             // convert hex string string
             const str = hexToString(hex);
@@ -64,7 +61,7 @@ export const useLatestState = (pollInterval: number = 2000): StateResponse => {
                 setState(state);
             }
         }
-    }, [data]);
+    }, [input?.index]);
 
     return {
         loading,
