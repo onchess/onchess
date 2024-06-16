@@ -107,6 +107,7 @@ export default (state: State, action: PayloadAction<CreateGamePayload>) => {
             timeControl,
             pgn: chess.pgn(),
             pot: (bet * 2n).toString(), // 2x bet
+            result: undefined,
         };
         state.games[address] = game;
 

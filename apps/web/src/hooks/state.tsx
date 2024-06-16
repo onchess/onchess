@@ -2,6 +2,7 @@ import { useQuery } from "@apollo/client";
 import { State } from "@onchess/core";
 import { Hex, hexToString } from "viem";
 import { gql } from "../__generated__";
+import { config } from "../providers/state";
 
 const LATEST_STATE = gql(/* GraphQL */ `
     query LatestState {
@@ -58,6 +59,7 @@ export const useLatestState = (pollInterval: number = 2000): StateResponse => {
         loading,
         error: error?.message,
         state: {
+            config,
             rake: "0",
             games: {},
             lobby: [],

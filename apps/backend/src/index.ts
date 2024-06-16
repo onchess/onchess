@@ -1,10 +1,11 @@
 import { createApp } from "@deroll/app";
-import { AppConfig, createChess } from "@onchess/core";
-import { owner, rakeDivider, token, url } from "./config";
+import { Config, createChess } from "@onchess/core";
+import { eloKFactor, owner, rakeDivider, token, url } from "./config";
 
 // create deroll app
 const app = createApp({ url });
-const config: AppConfig = {
+const config: Config = {
+    eloKFactor,
     owner,
     rakeDivider,
     token,

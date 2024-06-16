@@ -10,36 +10,34 @@ import {
     resignReducer,
     withdrawReducer,
 } from "./reducers/index.js";
-import { Game, State } from "./state.js";
-import { AppConfig } from "./types.js";
+import { Config, Game, State } from "./state.js";
 
 export * from "./app.js";
 export * from "./payloads.js";
 export * from "./players.js";
 export * from "./state.js";
 export * from "./time.js";
-export * from "./types.js";
 
-const initialState: State = {
-    rake: "0",
-    games: {},
-    lobby: [],
-    players: {},
-    vouchers: [],
-};
-
-const chessSlice = (config: AppConfig) =>
-    createSlice({
+const chessSlice = (config: Config) => {
+    const initialState: State = {
+        config,
+        games: {},
+        lobby: [],
+        players: {},
+        rake: "0",
+        vouchers: [],
+    };
+    return createSlice({
         name: "chess",
         initialState,
         reducers: {
             deposit: depositReducer,
             create: createReducer,
             cancel: cancelReducer,
-            move: moveReducer(config),
-            resign: resignReducer(config),
-            claim: claimReducer(config),
-            withdraw: withdrawReducer(config),
+            move: moveReducer,
+            resign: resignReducer,
+            claim: claimReducer,
+            withdraw: withdrawReducer,
         },
         selectors: {
             selectLobby: (state) => state.lobby,
@@ -74,6 +72,7 @@ const chessSlice = (config: AppConfig) =>
             },
         },
     });
+};
 
 export type ChessSlice = ReturnType<typeof chessSlice>;
 export default chessSlice;

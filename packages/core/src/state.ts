@@ -1,6 +1,33 @@
 import { Voucher } from "@deroll/core";
 import { Address } from "viem";
 
+/**
+ * Configuration of a ERC-20 token used by the game
+ */
+export interface Token {
+    address: Address;
+    name: string;
+    symbol: string;
+    decimals: number;
+}
+
+/**
+ * Configuration of the app
+ */
+export interface Config {
+    // address of the owner of the app, with special powers
+    owner: Address;
+
+    // amount of the bet that goes to the house, i.e. 20n represents 5%, 10n represents 10%
+    rakeDivider: number;
+
+    // ERC-20 token used
+    token: Token;
+
+    // k factor of ELO calculation
+    eloKFactor: number;
+}
+
 export interface LobbyItem {
     // address of player proposing the game
     player: Address;
@@ -94,6 +121,9 @@ export interface Player {
 }
 
 export interface State {
+    // game configuration
+    config: Config;
+
     // rake balance
     rake: string;
 

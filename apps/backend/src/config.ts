@@ -38,4 +38,5 @@ export const token: Token = tokens[
     symbol: "TEST",
 };
 
-export const rakeDivider = 20n; // (divider) 5%
+export const rakeDivider = 20; // (divider) 5%
+export const eloKFactor = 20;

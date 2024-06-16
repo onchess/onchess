@@ -9,8 +9,9 @@ export const terminateGame = (
     whitePlayer: Player,
     blackPlayer: Player,
     result: 1 | 0 | 0.5,
-    rakeDivider: bigint,
 ) => {
+    const { eloKFactor, rakeDivider } = state.config;
+
     // adjust wins/losses/draws
     switch (result) {
         case 1:
@@ -36,7 +37,7 @@ export const terminateGame = (
         // do not take rake from draws
     } else {
         const winner = result === 1 ? whitePlayer : blackPlayer;
-        const rake = pot / rakeDivider;
+        const rake = pot / BigInt(rakeDivider);
         const prize = pot - rake;
         winner.balance = (BigInt(winner.balance) + prize).toString();
         state.rake = (BigInt(state.rake) + rake).toString();
@@ -61,7 +62,7 @@ export const terminateGame = (
         whitePlayer.rating,
         blackPlayer.rating,
         result,
-        20,
+        eloKFactor,
     );
     whitePlayer.rating += delta;
     blackPlayer.rating -= delta;
