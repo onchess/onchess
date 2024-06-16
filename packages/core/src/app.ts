@@ -12,6 +12,7 @@ export const ABI = parseAbi([
     "function resign(address game)",
     "function claim(address game)",
     "function withdraw(uint256 amount)",
+    "function withdrawRake()",
 ]);
 
 /**
@@ -20,8 +21,16 @@ export const ABI = parseAbi([
  * @returns new action
  */
 const makeActionCreator = (config: Config, chess: ChessSlice) => {
-    const { cancel, claim, create, deposit, move, resign, withdraw } =
-        chess.actions;
+    const {
+        cancel,
+        claim,
+        create,
+        deposit,
+        move,
+        resign,
+        withdraw,
+        withdrawRake,
+    } = chess.actions;
 
     return (data: AdvanceRequestData): Action | undefined => {
         const { metadata, payload } = data;
@@ -78,6 +87,10 @@ const makeActionCreator = (config: Config, chess: ChessSlice) => {
             case "withdraw": {
                 const [amount] = args;
                 return withdraw({ metadata, amount: amount.toString() });
+            }
+
+            case "withdrawRake": {
+                return withdrawRake({ metadata });
             }
         }
     };

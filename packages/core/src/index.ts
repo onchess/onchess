@@ -8,6 +8,7 @@ import {
     depositReducer,
     moveReducer,
     resignReducer,
+    withdrawRakeReducer,
     withdrawReducer,
 } from "./reducers/index.js";
 import { Config, Game, State } from "./state.js";
@@ -38,6 +39,7 @@ const chessSlice = (config: Config) => {
             resign: resignReducer,
             claim: claimReducer,
             withdraw: withdrawReducer,
+            withdrawRake: withdrawRakeReducer,
         },
         selectors: {
             selectLobby: (state) => state.lobby,
