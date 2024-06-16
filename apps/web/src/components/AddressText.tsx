@@ -18,13 +18,13 @@ export interface AddressTextProps extends TextProps {
 }
 
 export const AddressText: FC<AddressTextProps> = (props) => {
-    const { address, copyButton = true, shorten = true } = props;
+    const { address, copyButton = true, shorten = true, ...textProps } = props;
     const text = shorten
         ? address.slice(0, 6).concat("...").concat(address.slice(-4))
         : address;
     return (
         <Group gap={2}>
-            <Text {...props}>{text}</Text>
+            <Text {...textProps}>{text}</Text>
             {copyButton && (
                 <CopyButton value={address} timeout={2000}>
                     {({ copied, copy }) => (
