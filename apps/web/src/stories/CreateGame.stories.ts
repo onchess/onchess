@@ -12,8 +12,6 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const now = Math.floor(Date.now() / 1000);
-
 export const Disconnected: Story = {
     args: {
         decimals: 18,

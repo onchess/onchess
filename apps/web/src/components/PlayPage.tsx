@@ -5,6 +5,7 @@ import {
     CreateGamePayload,
     Game,
     GameBasePayload,
+    LobbyItem,
     MovePiecePayload,
     Player,
     Token,
@@ -13,9 +14,11 @@ import { FC } from "react";
 import { CreateGame } from "./CreateGame";
 import { Gameboard } from "./Gameboard";
 import { Header } from "./Header";
+import { WaitOpponent } from "./WaitOpponent";
 
 export interface PlayPageProps extends StackProps {
     game?: Game;
+    lobby?: LobbyItem;
     now: number;
     onClaimVictory: (params: Omit<GameBasePayload, "metadata">) => void;
     onCreate: (params: Omit<CreateGamePayload, "metadata">) => void;
@@ -29,6 +32,7 @@ export interface PlayPageProps extends StackProps {
 export const PlayPage: FC<PlayPageProps> = (props) => {
     const {
         game,
+        lobby,
         now,
         onClaimVictory,
         onCreate,
@@ -54,17 +58,16 @@ export const PlayPage: FC<PlayPageProps> = (props) => {
                         submitting={submitting}
                     />
                 )}
-                {!game && (
-                    <Stack>
-                        <CreateGame
-                            miw={600}
-                            player={player}
-                            symbol={token.symbol}
-                            decimals={token.decimals}
-                            onCreate={onCreate}
-                        />
-                    </Stack>
+                {!game && !lobby && (
+                    <CreateGame
+                        miw={600}
+                        player={player}
+                        symbol={token.symbol}
+                        decimals={token.decimals}
+                        onCreate={onCreate}
+                    />
                 )}
+                {lobby && <WaitOpponent lobby={lobby} token={token} />}
             </Group>
         </Stack>
     );

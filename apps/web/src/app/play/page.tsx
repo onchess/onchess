@@ -34,7 +34,7 @@ const selectPlayerState = (state: State, address?: Address) => {
 
 const Play = () => {
     const now = useClock();
-    const { state } = useLatestState(20000);
+    const { state } = useLatestState(2000);
     const { address } = useAccount();
     const playerState = state
         ? selectPlayerState(state, address)
@@ -43,8 +43,8 @@ const Play = () => {
               lobby: [],
               games: {},
           };
-    console.log(state);
     const firstGame = Object.values(playerState.games).at(0);
+    const firstLobby = playerState.lobby.at(0);
 
     const { writeContractAsync: addInput } = useWriteInputBoxAddInput();
     const [hash, setHash] = useState<Hash | undefined>();
@@ -53,6 +53,7 @@ const Play = () => {
     return (
         <PlayPage
             game={firstGame}
+            lobby={firstLobby}
             miw={400}
             now={now}
             onClaimVictory={(params) => {
