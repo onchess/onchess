@@ -46,3 +46,17 @@ export interface DepositPayload extends BasePayload {
 export interface WithdrawPayload extends BasePayload {
     amount: string;
 }
+
+/**
+ * Transfer ownership payload
+ */
+export interface TransferOwnershipPayload extends BasePayload {
+    newOwner: Address;
+}
+
+/**
+ * Payload to change rake divider
+ */
+export interface SetRakeDividerPayload extends BasePayload {
+    value: number;
+}

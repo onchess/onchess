@@ -13,6 +13,8 @@ export const ABI = parseAbi([
     "function claim(address game)",
     "function withdraw(uint256 amount)",
     "function withdrawRake()",
+    "function setRakeDivider(uint32 rake)",
+    "function transferOwnership(address newOwner)",
 ]);
 
 /**
@@ -28,6 +30,8 @@ const makeActionCreator = (config: Config, chess: ChessSlice) => {
         deposit,
         move,
         resign,
+        setRakeDivider,
+        transferOwnership,
         withdraw,
         withdrawRake,
     } = chess.actions;
@@ -91,6 +95,16 @@ const makeActionCreator = (config: Config, chess: ChessSlice) => {
 
             case "withdrawRake": {
                 return withdrawRake({ metadata });
+            }
+
+            case "setRakeDivider": {
+                const [value] = args;
+                return setRakeDivider({ metadata, value });
+            }
+
+            case "transferOwnership": {
+                const [newOwner] = args;
+                return transferOwnership({ metadata, newOwner });
             }
         }
     };

@@ -8,6 +8,8 @@ import {
     depositReducer,
     moveReducer,
     resignReducer,
+    setRakeDividerReducer,
+    transferOwnershipReducer,
     withdrawRakeReducer,
     withdrawReducer,
 } from "./reducers/index.js";
@@ -38,6 +40,8 @@ const chessSlice = (config: Config) => {
             move: moveReducer,
             resign: resignReducer,
             claim: claimReducer,
+            setRakeDivider: setRakeDividerReducer,
+            transferOwnership: transferOwnershipReducer,
             withdraw: withdrawReducer,
             withdrawRake: withdrawRakeReducer,
         },
