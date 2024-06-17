@@ -11,6 +11,7 @@ const LATEST_STATE = gql(/* GraphQL */ `
             edges {
                 node {
                     index
+                    status
                     notices(first: 1) {
                         edges {
                             node {
@@ -45,6 +46,7 @@ export const useLatestState = (pollInterval: number = 2000): StateResponse => {
     });
 
     const input = data?.inputs.edges[0]?.node;
+    const inputStatus = `${input?.index}:${input?.status}`;
     useEffect(() => {
         const notice = input?.notices.edges[0]?.node;
         if (notice) {
@@ -61,7 +63,7 @@ export const useLatestState = (pollInterval: number = 2000): StateResponse => {
                 setState(state);
             }
         }
-    }, [input?.index]);
+    }, [inputStatus]);
 
     return {
         loading,
