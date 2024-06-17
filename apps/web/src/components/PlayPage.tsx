@@ -1,6 +1,6 @@
 "use client";
 
-import { Group, Stack, StackProps } from "@mantine/core";
+import { Center, Stack, StackProps } from "@mantine/core";
 import {
     CreateGamePayload,
     Game,
@@ -43,32 +43,46 @@ export const PlayPage: FC<PlayPageProps> = (props) => {
         token,
         ...stackProps
     } = props;
+
+    // show wait if there is a lobby
+    const showWait = lobby !== undefined;
+
+    // show create if game is over or if there is no game
+    const showCreate =
+        !showWait && (game === undefined || game.result !== undefined);
+
+    // show game if is not waiting and there is a game
+    const showGame = !showWait && game !== undefined;
     return (
         <Stack {...stackProps}>
             <Header player={player} token={token} />
-            <Group wrap="nowrap" justify="space-around">
-                {game && (
-                    <Gameboard
-                        game={game}
-                        now={now}
-                        onClaimVictory={onClaimVictory}
-                        onMove={onMove}
-                        onResign={onResign}
-                        player={player}
-                        submitting={submitting}
-                    />
-                )}
-                {!game && !lobby && (
-                    <CreateGame
-                        miw={600}
-                        player={player}
-                        symbol={token.symbol}
-                        decimals={token.decimals}
-                        onCreate={onCreate}
-                    />
-                )}
-                {lobby && <WaitOpponent lobby={lobby} token={token} />}
-            </Group>
+            <Stack p={20}>
+                <Center>
+                    {showGame && (
+                        <Gameboard
+                            game={game}
+                            now={now}
+                            onClaimVictory={onClaimVictory}
+                            onMove={onMove}
+                            onResign={onResign}
+                            player={player}
+                            submitting={submitting}
+                        />
+                    )}
+                </Center>
+                <Center>
+                    {showCreate && (
+                        <CreateGame
+                            miw={600}
+                            player={player}
+                            symbol={token.symbol}
+                            decimals={token.decimals}
+                            onCreate={onCreate}
+                        />
+                    )}
+                    {showWait && <WaitOpponent lobby={lobby} token={token} />}
+                </Center>
+            </Stack>
         </Stack>
     );
 };

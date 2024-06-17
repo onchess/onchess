@@ -1,6 +1,6 @@
 "use client";
 
-import { ABI, Game, State, createPlayer } from "@onchess/core";
+import { ABI, State, createPlayer } from "@onchess/core";
 import { useState } from "react";
 import { Address, Hash, encodeFunctionData, getAddress } from "viem";
 import { useAccount, useWaitForTransactionReceipt } from "wagmi";
@@ -24,12 +24,11 @@ const selectPlayerState = (state: State, address?: Address) => {
                       game.white === getAddress(address) ||
                       game.black === getAddress(address),
               )
-              .reduce<Record<Address, Game>>((acc, game) => {
-                  acc[game.address] = game;
-                  return acc;
-              }, {})
-        : {};
-    return { player, lobby, games };
+              .sort((a, b) => b.updatedAt - a.updatedAt)
+        : [];
+    const unfinishedGames = games.filter((game) => game.result === undefined);
+    const finishedGames = games.filter((game) => game.result !== undefined);
+    return { player, lobby, unfinishedGames, finishedGames };
 };
 
 const Play = () => {
@@ -41,10 +40,12 @@ const Play = () => {
         : {
               player: address ? createPlayer(address) : undefined,
               lobby: [],
-              games: {},
+              finishedGames: [],
+              unfinishedGames: [],
           };
-    const firstGame = Object.values(playerState.games).at(0);
-    const firstLobby = playerState.lobby.at(0);
+    const firstGame =
+        playerState.unfinishedGames[0] || playerState.finishedGames[0];
+    const firstLobby = playerState.lobby[0];
 
     const { writeContractAsync: addInput } = useWriteInputBoxAddInput();
     const [hash, setHash] = useState<Hash | undefined>();
@@ -73,7 +74,12 @@ const Play = () => {
                     const payload = encodeFunctionData({
                         abi: ABI,
                         functionName: "create",
-                        args: [BigInt(bet), timeControl, minRating, maxRating],
+                        args: [
+                            BigInt(bet),
+                            timeControl,
+                            Math.ceil(minRating),
+                            Math.floor(maxRating),
+                        ],
                     });
                     addInput({ args: [dapp, payload] }).then(setHash);
                 }
