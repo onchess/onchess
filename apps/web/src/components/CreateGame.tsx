@@ -111,6 +111,7 @@ export const CreateGame: FC<CreateGameProps> = (props) => {
                         min={0}
                         max={3000}
                         minRange={200}
+                        precision={0}
                         step={10}
                         value={rating}
                         onChange={setRating}
