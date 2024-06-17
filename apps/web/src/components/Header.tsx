@@ -63,7 +63,7 @@ export const Header: FC<HeaderProps> = ({ player, token }) => {
             <Flex justify="flex-end" align="center" gap={5}>
                 <w3m-button />
                 {player && (
-                    <Link href="/profile">
+                    <Link href="/bridge">
                         <Badge
                             size="xl"
                             h={40}

@@ -1,23 +1,12 @@
 "use client";
 import { Box, Stack } from "@mantine/core";
-import { ABI, createPlayer } from "@onchess/core";
-import { useState } from "react";
-import { Hash, encodeFunctionData, erc20Abi, getAddress } from "viem";
-import {
-    useAccount,
-    useReadContracts,
-    useWaitForTransactionReceipt,
-} from "wagmi";
+import { createPlayer } from "@onchess/core";
+import { getAddress } from "viem";
+import { useAccount } from "wagmi";
 import { Header } from "../../components/Header";
 import { Profile } from "../../components/Profile";
-import {
-    erc20PortalAddress,
-    useWriteErc20Approve,
-    useWriteErc20PortalDepositErc20Tokens,
-    useWriteInputBoxAddInput,
-} from "../../hooks/contracts";
 import { useLatestState } from "../../hooks/state";
-import { dapp, token } from "../../providers/config";
+import { token } from "../../providers/config";
 
 export default function ProfilePage() {
     const { state } = useLatestState(20000);
@@ -29,80 +18,10 @@ export default function ProfilePage() {
             : createPlayer(getAddress(address))
         : undefined;
 
-    const { data } = useReadContracts({
-        contracts: [
-            {
-                abi: erc20Abi,
-                address: token.address,
-                functionName: "allowance",
-                args: [address!, erc20PortalAddress],
-            },
-            {
-                abi: erc20Abi,
-                address: token.address,
-                functionName: "balanceOf",
-                args: [address!],
-            },
-        ],
-        query: {
-            enabled: !!address,
-            refetchInterval: 2000,
-        },
-    });
-
-    const { result: allowance } = data?.[0] || {};
-    const { result: balance } = data?.[1] || {};
-
-    const hasData = player && allowance !== undefined && balance !== undefined;
-
-    // smart contracts actions
-    const { writeContractAsync: approve } = useWriteErc20Approve();
-    const { writeContractAsync: deposit } =
-        useWriteErc20PortalDepositErc20Tokens();
-    const { writeContractAsync: addInput } = useWriteInputBoxAddInput();
-
-    // transaction processing
-    const [hash, setHash] = useState<Hash | undefined>(undefined);
-    const { isFetching } = useWaitForTransactionReceipt({ hash });
-
     return (
         <Stack>
             <Header player={player} token={token} />
-            <Box p={20}>
-                {hasData && (
-                    <Profile
-                        player={player}
-                        allowance={allowance.toString()}
-                        balance={balance.toString()}
-                        executing={isFetching}
-                        token={token}
-                        onApprove={(amount) =>
-                            approve({
-                                address: token.address,
-                                args: [erc20PortalAddress, BigInt(amount)],
-                            }).then(setHash)
-                        }
-                        onDeposit={(amount) =>
-                            deposit({
-                                args: [
-                                    token.address,
-                                    dapp,
-                                    BigInt(amount),
-                                    "0x",
-                                ],
-                            }).then(setHash)
-                        }
-                        onWithdraw={(amount) => {
-                            const payload = encodeFunctionData({
-                                abi: ABI,
-                                functionName: "withdraw",
-                                args: [BigInt(amount)],
-                            });
-                            addInput({ args: [dapp, payload] }).then(setHash);
-                        }}
-                    />
-                )}
-            </Box>
+            <Box p={20}>{player && <Profile player={player} />}</Box>
         </Stack>
     );
 }
