@@ -51,15 +51,28 @@ export const Gameboard: FC<GameboardProps> = (props) => {
 
     // create a Chess instance and load the PGN
     const chess = new Chess();
-    chess.loadPgn(game.pgn);
+    try {
+        chess.loadPgn(game.pgn);
+    } catch {
+        // XXX: do what?
+        // XXX: happenened when player resigns before any move
+    }
     const turn = chess.turn();
     const result = game.result;
 
-    const rotated = player?.address === game.black;
-    const whiteTurn =
-        player?.address === game.white && turn === "w" && result == undefined;
-    const blackTurn =
-        player?.address === game.black && turn === "b" && result == undefined;
+    // connected user is white player
+    const isWhite = player?.address === game.white;
+
+    // connected user is black player
+    const isBlack = player?.address === game.black;
+
+    // rotate board if black is playing
+    const rotated = isBlack;
+
+    const showWhiteResign = isWhite && result === undefined;
+    const showBlackResign = isBlack && result === undefined;
+    const whiteTurn = isWhite && turn === "w" && result == undefined;
+    const blackTurn = isBlack && turn === "b" && result == undefined;
     const playerTurn = whiteTurn || blackTurn;
 
     const [promotion, setPromotion] = useState<Promotion | null>(null);
@@ -79,15 +92,9 @@ export const Gameboard: FC<GameboardProps> = (props) => {
         turn === "b",
     );
     const whiteClaimVictory =
-        player?.address === game.white &&
-        turn === "b" &&
-        !chess.isGameOver() &&
-        blackTimeLeft === 0;
+        isWhite && turn === "b" && !chess.isGameOver() && blackTimeLeft === 0;
     const blackClaimVictory =
-        player?.address === game.black &&
-        turn === "w" &&
-        !chess.isGameOver() &&
-        whiteTimeLeft === 0;
+        isBlack && turn === "w" && !chess.isGameOver() && whiteTimeLeft === 0;
 
     const whiteWin = result == 1;
     const blackWin = result == 0;
@@ -95,7 +102,7 @@ export const Gameboard: FC<GameboardProps> = (props) => {
     const whiteAddress = (
         <Group justify="space-between">
             <PlayerText address={game.white} color="w" isTurn={whiteTurn} />
-            {whiteTurn && (
+            {showWhiteResign && (
                 <Button
                     disabled={submitting}
                     onClick={() => onResign({ address: game.address })}
@@ -129,7 +136,7 @@ export const Gameboard: FC<GameboardProps> = (props) => {
     const blackAddress = (
         <Group justify="space-between">
             <PlayerText address={game.black} color="b" isTurn={blackTurn} />
-            {blackTurn && (
+            {showBlackResign && (
                 <Button
                     disabled={submitting}
                     onClick={() => onResign({ address: game.address })}

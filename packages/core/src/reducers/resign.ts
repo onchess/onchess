@@ -40,26 +40,21 @@ export default (state: State, action: PayloadAction<GameBasePayload>) => {
     const chess = new Chess();
     chess.loadPgn(game.pgn);
 
-    // check players turn
-    const turn = chess.turn();
-    if (
-        (turn === "w" && player.address !== game.white) ||
-        (turn === "b" && player.address !== game.black)
-    ) {
-        player.message = createError({
-            text: "Not your turn",
-            timestamp,
-        });
-        return;
-    }
-
     const whitePlayer = getPlayer(state, game.white);
     const blackPlayer = getPlayer(state, game.black);
 
-    // update game PGN
-    chess.setComment(`${turn === "w" ? "White" : "Black"} resigns`);
-
     // if white is resigning black wins, otherwise white wins
-    const result = turn === "w" ? 0 : 1;
+    const result = player.address === game.white ? 0 : 1;
+
+    // add resignation comment to PGN
+    switch (result) {
+        case 1:
+            chess.setComment("Black resigns");
+            break;
+        case 0:
+            chess.setComment("White resigns");
+            break;
+    }
+
     terminateGame(state, game, chess, whitePlayer, blackPlayer, result);
 };
