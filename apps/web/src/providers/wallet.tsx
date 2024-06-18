@@ -23,12 +23,13 @@ export const config = defaultWagmiConfig({
 });
 
 createWeb3Modal({
-    wagmiConfig: config,
-    projectId,
     enableAnalytics: true,
+    themeMode: "light",
+    projectId,
     themeVariables: {
         "--w3m-border-radius-master": "1px",
     },
+    wagmiConfig: config,
 });
 
 declare module "wagmi" {
