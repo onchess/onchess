@@ -17,7 +17,6 @@ const metadata = {
 
 export const config = defaultWagmiConfig({
     chains: [base, baseSepolia, foundry],
-    enableWalletConnect: false,
     metadata,
     projectId,
     ssr: true,
