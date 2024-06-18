@@ -12,7 +12,7 @@ const metadata = {
     name: "OnChess",
     description: "OnChess is onchain chess",
     url: "https://onchess.xyz",
-    icons: ["https://avatars.githubusercontent.com/u/37784886"],
+    icons: ["https://onchess.xyz/img/onchess_logo.png"],
 };
 
 export const config = defaultWagmiConfig({
