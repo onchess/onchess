@@ -9,7 +9,7 @@ import { owner, token } from "./config";
 export const config: Config = {
     eloKFactor: 20,
     owner,
-    rakeDivider: 20,
+    rakeDivider: 50,
     token,
 };
 
