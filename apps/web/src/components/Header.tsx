@@ -72,8 +72,10 @@ export const Header: FC<HeaderProps> = ({ player, token }) => {
                             }
                             leftSection={<Icon color="white" size="1.5rem" />}
                         >
-                            {formatUnits(BigInt(player.balance), 18)}{" "}
-                            {token.symbol}
+                            {`${formatUnits(
+                                BigInt(player.balance),
+                                token.decimals,
+                            )} ${token.symbol}`}
                         </Badge>
                     </Link>
                 )}
