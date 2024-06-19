@@ -16,7 +16,7 @@ import {
     IconSquareArrowRightFilled,
 } from "@tabler/icons-react";
 import { FC, useState } from "react";
-import { formatUnits } from "viem";
+import { Chain, formatUnits } from "viem";
 import { Deposit } from "./Deposit";
 import { Withdraw } from "./Withdraw";
 
@@ -24,6 +24,7 @@ export interface BridgeProps {
     allowance: string;
     applicationBalance: string;
     balance: string;
+    chain: Chain;
     disabled: boolean;
     executing: boolean;
     onApprove: (amount: string) => void;
@@ -33,6 +34,7 @@ export interface BridgeProps {
 }
 
 export const Bridge: FC<BridgeProps> = (props) => {
+    const { chain } = props;
     const { decimals, symbol } = props.token;
 
     const balance = BigInt(props.balance);
@@ -46,7 +48,7 @@ export const Bridge: FC<BridgeProps> = (props) => {
                 <Paper p={20} withBorder h="100%">
                     <Group gap={30} justify="space-between">
                         <Stack gap={0}>
-                            <Text>Balance</Text>
+                            <Text>{`Balance (${chain.name})`}</Text>
                             <Group gap={3} align="baseline">
                                 <Title order={2}>
                                     {formatUnits(balance, decimals)}
@@ -97,7 +99,7 @@ export const Bridge: FC<BridgeProps> = (props) => {
                 <Paper p={20} withBorder h="100%">
                     <Group gap={30} justify="space-between">
                         <Stack gap={0}>
-                            <Text>Balance</Text>
+                            <Text>Balance (OnChess)</Text>
                             <Group gap={3} align="baseline">
                                 <Title order={2}>
                                     {formatUnits(applicationBalance, decimals)}

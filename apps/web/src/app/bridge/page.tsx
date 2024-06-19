@@ -18,11 +18,12 @@ import {
     useWriteInputBoxAddInput,
 } from "../../hooks/contracts";
 import { useLatestState } from "../../hooks/state";
-import { token } from "../../providers/config";
 
 export default function ProfilePage() {
     const { state } = useLatestState(20000);
-    const { address } = useAccount();
+
+    const token = state?.config.token;
+    const { address, chain } = useAccount();
     const dapp = useApplicationAddress();
     const player = address
         ? state && state.players
@@ -35,19 +36,19 @@ export default function ProfilePage() {
         contracts: [
             {
                 abi: erc20Abi,
-                address: token.address,
+                address: token!.address,
                 functionName: "allowance",
                 args: [address!, erc20PortalAddress],
             },
             {
                 abi: erc20Abi,
-                address: token.address,
+                address: token!.address,
                 functionName: "balanceOf",
                 args: [address!],
             },
         ],
         query: {
-            enabled: !!address,
+            enabled: !!address && !!token,
             refetchInterval: 2000,
         },
     });
@@ -55,7 +56,12 @@ export default function ProfilePage() {
     const { result: allowance } = data?.[0] || {};
     const { result: balance } = data?.[1] || {};
 
-    const hasData = player && allowance !== undefined && balance !== undefined;
+    const hasData =
+        chain &&
+        player &&
+        allowance !== undefined &&
+        balance !== undefined &&
+        token !== undefined;
 
     // smart contracts actions
     const { writeContractAsync: approve } = useWriteErc20Approve();
@@ -75,6 +81,7 @@ export default function ProfilePage() {
                     <Bridge
                         applicationBalance={player.balance}
                         allowance={allowance.toString()}
+                        chain={chain}
                         balance={balance.toString()}
                         disabled={!dapp}
                         executing={isFetching}

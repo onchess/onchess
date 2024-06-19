@@ -26,7 +26,7 @@ export interface PlayPageProps extends StackProps {
     onResign: (params: Omit<GameBasePayload, "metadata">) => void;
     player?: Player;
     submitting: boolean;
-    token: Token;
+    token?: Token;
 }
 
 export const PlayPage: FC<PlayPageProps> = (props) => {
@@ -45,11 +45,13 @@ export const PlayPage: FC<PlayPageProps> = (props) => {
     } = props;
 
     // show wait if there is a lobby
-    const showWait = lobby !== undefined;
+    const showWait = lobby !== undefined && token !== undefined;
 
     // show create if game is over or if there is no game
     const showCreate =
-        !showWait && (game === undefined || game.result !== undefined);
+        !showWait &&
+        (game === undefined || game.result !== undefined) &&
+        token !== undefined;
 
     // show game if is not waiting and there is a game
     const showGame = !showWait && game !== undefined;

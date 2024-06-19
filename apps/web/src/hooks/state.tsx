@@ -2,8 +2,9 @@ import { useQuery } from "@apollo/client";
 import { State } from "@onchess/core";
 import { useEffect, useState } from "react";
 import { Hex, hexToString } from "viem";
+import { useChainId } from "wagmi";
 import { gql } from "../__generated__";
-import { config } from "../providers/state";
+import { getConfig } from "../util/config";
 
 const LATEST_STATE = gql(/* GraphQL */ `
     query LatestState {
@@ -32,12 +33,12 @@ export interface StateResponse {
 }
 
 export const useLatestState = (pollInterval: number = 2000): StateResponse => {
-    // query for latest input notice, with polling
-    const { data, loading, error } = useQuery(LATEST_STATE, {
-        pollInterval,
-    });
+    // default initial state depends on chainId
+    const chainId = useChainId();
+
+    const [initialized, setInitialized] = useState<boolean>(false);
     const [state, setState] = useState<State>({
-        config,
+        config: getConfig(chainId),
         rake: "0",
         games: {},
         lobby: [],
@@ -45,10 +46,17 @@ export const useLatestState = (pollInterval: number = 2000): StateResponse => {
         vouchers: [],
     });
 
+    // query for latest input notice, with polling
+    const { data, loading, error } = useQuery(LATEST_STATE, {
+        pollInterval,
+    });
+
     const input = data?.inputs.edges[0]?.node;
     const inputStatus = `${input?.index}:${input?.status}`;
     useEffect(() => {
+        // get first notice
         const notice = input?.notices.edges[0]?.node;
+
         if (notice) {
             // hex string of notice
             const hex = notice.payload as Hex;
@@ -61,9 +69,22 @@ export const useLatestState = (pollInterval: number = 2000): StateResponse => {
                 const obj = JSON.parse(str);
                 const state = obj.chess as State;
                 setState(state);
+                setInitialized(true);
+            }
+        } else {
+            // chain changed, but no state was initialized
+            if (!initialized) {
+                setState({
+                    config: getConfig(chainId),
+                    rake: "0",
+                    games: {},
+                    lobby: [],
+                    players: {},
+                    vouchers: [],
+                });
             }
         }
-    }, [inputStatus]);
+    }, [chainId, inputStatus]); // trigger effect when inputIndex+status changes
 
     return {
         loading,

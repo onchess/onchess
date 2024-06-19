@@ -41,7 +41,7 @@ declare module "wagmi" {
 const queryClient = new QueryClient();
 
 export interface WalletProviderProps {
-    children: ReactNode[];
+    children: ReactNode[] | ReactNode;
 }
 
 export const WalletProvider: FC<WalletProviderProps> = ({ children }) => {

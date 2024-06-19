@@ -6,10 +6,10 @@ import { useAccount } from "wagmi";
 import { Header } from "../../components/Header";
 import { Profile } from "../../components/Profile";
 import { useLatestState } from "../../hooks/state";
-import { token } from "../../providers/config";
 
 export default function ProfilePage() {
     const { state } = useLatestState(20000);
+    const token = state?.config.token;
     const { address } = useAccount();
     const player = address
         ? state && state.players

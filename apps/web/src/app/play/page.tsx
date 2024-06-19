@@ -9,7 +9,6 @@ import { useClock } from "../../hooks/clock";
 import { useApplicationAddress } from "../../hooks/config";
 import { useWriteInputBoxAddInput } from "../../hooks/contracts";
 import { useLatestState } from "../../hooks/state";
-import { token } from "../../providers/config";
 
 const selectPlayerState = (state: State, address?: Address) => {
     const player = address
@@ -36,6 +35,7 @@ const Play = () => {
     const now = useClock();
     const dapp = useApplicationAddress();
     const { state } = useLatestState(2000);
+    const token = state?.config.token;
     const { address } = useAccount();
     const playerState = state
         ? selectPlayerState(state, address)

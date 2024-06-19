@@ -1,6 +1,7 @@
 import { Token } from "@onchess/core";
 import type { Meta, StoryObj } from "@storybook/react";
 import { fn } from "@storybook/test";
+import { base } from "viem/chains";
 import { Bridge } from "../components/Bridge";
 
 const meta = {
@@ -27,6 +28,7 @@ export const Default: Story = {
         allowance: amount(1000000000),
         applicationBalance: amount(10),
         balance: amount(120),
+        chain: base,
         disabled: false,
         executing: false,
         onApprove: fn(),
@@ -41,6 +43,7 @@ export const Disabled: Story = {
         allowance: amount(1000000000),
         applicationBalance: amount(10),
         balance: amount(120),
+        chain: base,
         disabled: true,
         executing: false,
         onApprove: fn(),
@@ -55,6 +58,7 @@ export const NoBalance: Story = {
         allowance: "0",
         applicationBalance: "0",
         balance: "0",
+        chain: base,
         disabled: false,
         executing: false,
         onApprove: fn(),
@@ -69,6 +73,7 @@ export const NoAllowance: Story = {
         allowance: "0",
         applicationBalance: "0",
         balance: amount(120),
+        chain: base,
         disabled: false,
         executing: false,
         onApprove: fn(),
@@ -83,6 +88,7 @@ export const Executing: Story = {
         allowance: amount(1000000000),
         applicationBalance: amount(10),
         balance: amount(120),
+        chain: base,
         disabled: false,
         executing: true,
         onApprove: fn(),

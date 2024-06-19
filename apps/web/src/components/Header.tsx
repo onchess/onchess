@@ -26,7 +26,7 @@ import { formatUnits } from "viem";
 export type HeaderProps = {
     address?: string;
     player?: Player;
-    token: Token;
+    token?: Token;
 };
 
 const chessIcons = [
@@ -38,8 +38,6 @@ const chessIcons = [
 ];
 
 export const Header: FC<HeaderProps> = ({ player, token }) => {
-    const { symbol } = token;
-
     // choose a random wallet icon (just to be playful)
     const iconIndex = useMemo(
         () =>
@@ -62,7 +60,7 @@ export const Header: FC<HeaderProps> = ({ player, token }) => {
             </Group>
             <Flex justify="flex-end" align="center" gap={5}>
                 <w3m-button />
-                {player && (
+                {player && token && (
                     <Link href="/bridge">
                         <Badge
                             size="xl"
@@ -74,7 +72,8 @@ export const Header: FC<HeaderProps> = ({ player, token }) => {
                             }
                             leftSection={<Icon color="white" size="1.5rem" />}
                         >
-                            {formatUnits(BigInt(player.balance), 18)} {symbol}
+                            {formatUnits(BigInt(player.balance), 18)}{" "}
+                            {token.symbol}
                         </Badge>
                     </Link>
                 )}

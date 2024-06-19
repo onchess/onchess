@@ -1,18 +1,12 @@
 "use client";
 
-import chessSlice, { Config, State } from "@onchess/core";
+import chessSlice, { State } from "@onchess/core";
 import { combineSlices, configureStore } from "@reduxjs/toolkit";
 import { FC, ReactNode, useRef } from "react";
 import { Provider, useDispatch, useSelector, useStore } from "react-redux";
-import { owner, token } from "./config";
+import { getConfig } from "../util/config";
 
-export const config: Config = {
-    eloKFactor: 20,
-    owner,
-    rakeDivider: 20,
-    token,
-};
-
+const config = getConfig(31337);
 const initialState: State = {
     config,
     games: {},

@@ -23,13 +23,13 @@ const RootLayout = ({ children }: { children: React.ReactNode[] }) => {
                 />
             </head>
             <body>
-                <GraphQLProvider>
-                    <StateProvider>
-                        <StyleProvider>
-                            <WalletProvider>{children}</WalletProvider>
-                        </StyleProvider>
-                    </StateProvider>
-                </GraphQLProvider>
+                <StyleProvider>
+                    <WalletProvider>
+                        <GraphQLProvider>
+                            <StateProvider>{children}</StateProvider>
+                        </GraphQLProvider>
+                    </WalletProvider>
+                </StyleProvider>
             </body>
         </html>
     );
