@@ -37,7 +37,7 @@ export const CreateGame: FC<CreateGameProps> = (props) => {
     const balance = player ? BigInt(player.balance) : undefined;
 
     // possible bets
-    const bets = ["10", "100", "1000"].map((v) => parseUnits(v, decimals));
+    const bets = ["0.5", "1", "5"].map((v) => parseUnits(v, decimals));
     const betFormat = (value: bigint) => (
         <Text>
             {formatUnits(value, decimals)} {symbol}
