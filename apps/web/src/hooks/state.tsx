@@ -1,9 +1,10 @@
-import { useQuery } from "@apollo/client";
+import { QueryResult, useQuery } from "@apollo/client";
 import { State } from "@onchess/core";
 import { useEffect, useState } from "react";
 import { Hex, hexToString } from "viem";
 import { useChainId } from "wagmi";
 import { gql } from "../__generated__";
+import { Exact, LatestStateQuery } from "../__generated__/graphql";
 import { getConfig } from "../util/config";
 
 const LATEST_STATE = gql(/* GraphQL */ `
@@ -26,11 +27,14 @@ const LATEST_STATE = gql(/* GraphQL */ `
     }
 `);
 
-export interface StateResponse {
+export type StateResponse = QueryResult<
+    LatestStateQuery,
+    Exact<{
+        [key: string]: never;
+    }>
+> & {
     state?: State;
-    loading: boolean;
-    error?: string;
-}
+};
 
 export const useLatestState = (pollInterval: number = 2000): StateResponse => {
     // default initial state depends on chainId
@@ -47,9 +51,10 @@ export const useLatestState = (pollInterval: number = 2000): StateResponse => {
     });
 
     // query for latest input notice, with polling
-    const { data, loading, error } = useQuery(LATEST_STATE, {
+    const query = useQuery(LATEST_STATE, {
         pollInterval,
     });
+    const { data } = query;
 
     const input = data?.inputs.edges[0]?.node;
     const inputStatus = `${input?.index}:${input?.status}`;
@@ -86,9 +91,5 @@ export const useLatestState = (pollInterval: number = 2000): StateResponse => {
         }
     }, [chainId, inputStatus]); // trigger effect when inputIndex+status changes
 
-    return {
-        loading,
-        error: error?.message,
-        state,
-    };
+    return { ...query, state };
 };
