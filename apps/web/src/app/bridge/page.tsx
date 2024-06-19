@@ -10,6 +10,7 @@ import {
 } from "wagmi";
 import { Bridge } from "../../components/Bridge";
 import { Header } from "../../components/Header";
+import { useApplicationAddress } from "../../hooks/config";
 import {
     erc20PortalAddress,
     useWriteErc20Approve,
@@ -17,11 +18,12 @@ import {
     useWriteInputBoxAddInput,
 } from "../../hooks/contracts";
 import { useLatestState } from "../../hooks/state";
-import { dapp, token } from "../../providers/config";
+import { token } from "../../providers/config";
 
 export default function ProfilePage() {
     const { state } = useLatestState(20000);
     const { address } = useAccount();
+    const dapp = useApplicationAddress();
     const player = address
         ? state && state.players
             ? state.players[getAddress(address)] ??
@@ -74,6 +76,7 @@ export default function ProfilePage() {
                         applicationBalance={player.balance}
                         allowance={allowance.toString()}
                         balance={balance.toString()}
+                        disabled={!dapp}
                         executing={isFetching}
                         token={token}
                         onApprove={(amount) =>
@@ -82,23 +85,29 @@ export default function ProfilePage() {
                                 args: [erc20PortalAddress, BigInt(amount)],
                             }).then(setHash)
                         }
-                        onDeposit={(amount) =>
-                            deposit({
-                                args: [
-                                    token.address,
-                                    dapp,
-                                    BigInt(amount),
-                                    "0x",
-                                ],
-                            }).then(setHash)
-                        }
+                        onDeposit={(amount) => {
+                            if (dapp) {
+                                deposit({
+                                    args: [
+                                        token.address,
+                                        dapp,
+                                        BigInt(amount),
+                                        "0x",
+                                    ],
+                                }).then(setHash);
+                            }
+                        }}
                         onWithdraw={(amount) => {
-                            const payload = encodeFunctionData({
-                                abi: ABI,
-                                functionName: "withdraw",
-                                args: [BigInt(amount)],
-                            });
-                            addInput({ args: [dapp, payload] }).then(setHash);
+                            if (dapp) {
+                                const payload = encodeFunctionData({
+                                    abi: ABI,
+                                    functionName: "withdraw",
+                                    args: [BigInt(amount)],
+                                });
+                                addInput({ args: [dapp, payload] }).then(
+                                    setHash,
+                                );
+                            }
                         }}
                     />
                 )}

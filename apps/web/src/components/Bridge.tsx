@@ -24,6 +24,7 @@ export interface BridgeProps {
     allowance: string;
     applicationBalance: string;
     balance: string;
+    disabled: boolean;
     executing: boolean;
     onApprove: (amount: string) => void;
     onDeposit: (amount: string) => void;
@@ -32,7 +33,6 @@ export interface BridgeProps {
 }
 
 export const Bridge: FC<BridgeProps> = (props) => {
-    const { onWithdraw } = props;
     const { decimals, symbol } = props.token;
 
     const balance = BigInt(props.balance);

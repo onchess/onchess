@@ -7,6 +7,7 @@ import { parseUnits } from "viem";
 export interface DepositProps {
     allowance: string;
     balance: string;
+    disabled: boolean;
     executing: boolean;
     onApprove: (amount: string) => void;
     onDeposit: (amount: string) => void;
@@ -14,7 +15,7 @@ export interface DepositProps {
 }
 
 export const Deposit: FC<DepositProps> = (props) => {
-    const { executing, onApprove, onDeposit } = props;
+    const { disabled, executing, onApprove, onDeposit } = props;
     const { decimals, symbol } = props.token;
 
     const form = useForm({
@@ -53,6 +54,7 @@ export const Deposit: FC<DepositProps> = (props) => {
         <Stack>
             <TextInput
                 withAsterisk
+                disabled={disabled}
                 label="Amount"
                 key={form.key("amount")}
                 {...form.getInputProps("amount")}
@@ -65,6 +67,7 @@ export const Deposit: FC<DepositProps> = (props) => {
             )}
             {needApproval && (
                 <Button
+                    disabled={disabled}
                     loading={executing}
                     onClick={() => onApprove(amount.toString())}
                 >
@@ -73,6 +76,7 @@ export const Deposit: FC<DepositProps> = (props) => {
             )}
             {canDeposit && (
                 <Button
+                    disabled={disabled}
                     loading={executing}
                     onClick={() => onDeposit(amount.toString())}
                 >

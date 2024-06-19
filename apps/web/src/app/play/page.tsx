@@ -6,9 +6,10 @@ import { Address, Hash, encodeFunctionData, getAddress } from "viem";
 import { useAccount, useWaitForTransactionReceipt } from "wagmi";
 import { PlayPage } from "../../components/PlayPage";
 import { useClock } from "../../hooks/clock";
+import { useApplicationAddress } from "../../hooks/config";
 import { useWriteInputBoxAddInput } from "../../hooks/contracts";
 import { useLatestState } from "../../hooks/state";
-import { dapp, token } from "../../providers/config";
+import { token } from "../../providers/config";
 
 const selectPlayerState = (state: State, address?: Address) => {
     const player = address
@@ -33,6 +34,7 @@ const selectPlayerState = (state: State, address?: Address) => {
 
 const Play = () => {
     const now = useClock();
+    const dapp = useApplicationAddress();
     const { state } = useLatestState(2000);
     const { address } = useAccount();
     const playerState = state
@@ -58,7 +60,7 @@ const Play = () => {
             miw={400}
             now={now}
             onClaimVictory={(params) => {
-                if (playerState.player) {
+                if (playerState.player && dapp) {
                     const address = params.address as Address;
                     const payload = encodeFunctionData({
                         abi: ABI,
@@ -69,7 +71,7 @@ const Play = () => {
                 }
             }}
             onCreate={(params) => {
-                if (playerState.player) {
+                if (playerState.player && dapp) {
                     const { bet, timeControl, minRating, maxRating } = params;
                     const payload = encodeFunctionData({
                         abi: ABI,
@@ -85,7 +87,7 @@ const Play = () => {
                 }
             }}
             onMove={(params) => {
-                if (playerState.player) {
+                if (playerState.player && dapp) {
                     const address = params.address as Address;
                     const move = params.move;
                     const payload = encodeFunctionData({
@@ -97,7 +99,7 @@ const Play = () => {
                 }
             }}
             onResign={(params) => {
-                if (playerState.player) {
+                if (playerState.player && dapp) {
                     const address = params.address as Address;
                     const payload = encodeFunctionData({
                         abi: ABI,
