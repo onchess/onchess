@@ -17,7 +17,7 @@
         "storybook": "storybook dev -p 6006"
     },
     "dependencies": {
-        "@apollo/client": "^3.10.5",
+        "@apollo/client": "^3.10.6",
         "@cartesi/rollups": "^1.4.0",
         "@deroll/core": "^0.1.1",
         "@mantine/core": "^7.10.2",
@@ -26,9 +26,9 @@
         "@onchess/core": "workspace:*",
         "@reduxjs/toolkit": "^2.2.5",
         "@tabler/icons-react": "^3.6.0",
-        "@tanstack/react-query": "5.45.0",
-        "@wagmi/core": "^2.11.2",
-        "@web3modal/wagmi": "^5.0.2",
+        "@tanstack/react-query": "^5.45.1",
+        "@wagmi/core": "^2.11.4",
+        "@web3modal/wagmi": "^5.0.3",
         "chess-fen": "^1.0.2",
         "chess.js": "1.0.0-beta.8",
         "encoding": "^0.1.13",
@@ -40,11 +40,11 @@
         "react-dom": "^18.3.1",
         "react-fen-chess-board": "^2.0.6",
         "react-redux": "^9.1.2",
-        "viem": "^2.15.1",
-        "wagmi": "^2.10.2"
+        "viem": "^2.16.1",
+        "wagmi": "^2.10.4"
     },
     "devDependencies": {
-        "@biomejs/biome": "^1.8.1",
+        "@biomejs/biome": "^1.8.2",
         "@graphql-codegen/cli": "^5.0.2",
         "@graphql-codegen/client-preset": "^4.3.0",
         "@graphql-typed-document-node/core": "^3.2.0",
@@ -60,18 +60,18 @@
         "@storybook/test": "^8.1.10",
         "@sunodo/wagmi-plugin-hardhat-deploy": "^0.3.0",
         "@types/humanize-duration": "^3.27.4",
-        "@types/node": "^20.14.4",
+        "@types/node": "^20.14.8",
         "@types/react": "^18.3.3",
         "@types/react-dom": "^18.3.0",
         "@wagmi/cli": "^2.1.10",
         "buffer": "^6.0.3",
-        "graphql": "^16.8.2",
+        "graphql": "^16.9.0",
         "npm-run-all": "^4.1.5",
         "postcss": "^8.4.38",
         "postcss-preset-mantine": "^1.15.0",
         "postcss-simple-vars": "^7.0.1",
         "storybook": "^8.1.10",
-        "storybook-dark-mode": "^4.0.1",
-        "typescript": "^5.4.5"
+        "storybook-dark-mode": "^4.0.2",
+        "typescript": "^5.5.2"
     }
 }
