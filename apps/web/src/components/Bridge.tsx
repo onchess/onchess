@@ -27,8 +27,9 @@ export interface BridgeProps {
     chain: Chain;
     disabled: boolean;
     executing: boolean;
-    onApprove: (amount: string) => void;
-    onDeposit: (amount: string) => void;
+    onApprove?: (amount: string) => void;
+    onApproveAndDeposit?: (amount: string) => void;
+    onDeposit?: (amount: string) => void;
     onWithdraw: (amount: string) => void;
     token: Token;
 }

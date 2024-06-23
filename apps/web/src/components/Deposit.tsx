@@ -9,14 +9,17 @@ export interface DepositProps {
     balance: string;
     disabled: boolean;
     executing: boolean;
-    onApprove: (amount: string) => void;
-    onDeposit: (amount: string) => void;
+    onApprove?: (amount: string) => void;
+    onApproveAndDeposit?: (amount: string) => void;
+    onDeposit?: (amount: string) => void;
     token: Token;
 }
 
 export const Deposit: FC<DepositProps> = (props) => {
-    const { disabled, executing, onApprove, onDeposit } = props;
+    const { disabled, executing, onApprove, onApproveAndDeposit, onDeposit } =
+        props;
     const { decimals, symbol } = props.token;
+    const supportBatch = !!onApproveAndDeposit;
 
     const form = useForm({
         initialValues: { amount: "" },
@@ -69,16 +72,26 @@ export const Deposit: FC<DepositProps> = (props) => {
                 <Button
                     disabled={disabled}
                     loading={executing}
-                    onClick={() => onApprove(amount.toString())}
+                    onClick={() => {
+                        if (onApproveAndDeposit) {
+                            onApproveAndDeposit(amount.toString());
+                        } else if (onApprove) {
+                            onApprove(amount.toString());
+                        }
+                    }}
                 >
-                    Approve
+                    {supportBatch ? "Deposit" : "Approve"}
                 </Button>
             )}
             {canDeposit && (
                 <Button
                     disabled={disabled}
                     loading={executing}
-                    onClick={() => onDeposit(amount.toString())}
+                    onClick={() => {
+                        if (onDeposit) {
+                            onDeposit(amount.toString());
+                        }
+                    }}
                 >
                     Deposit
                 </Button>

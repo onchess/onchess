@@ -38,6 +38,20 @@ export const Default: Story = {
     },
 };
 
+export const Batch: Story = {
+    args: {
+        allowance: amount(0),
+        applicationBalance: amount(10),
+        balance: amount(120),
+        chain: base,
+        disabled: false,
+        executing: false,
+        onApproveAndDeposit: fn(),
+        onWithdraw: fn(),
+        token,
+    },
+};
+
 export const Disabled: Story = {
     args: {
         allowance: amount(1000000000),
