@@ -1,5 +1,5 @@
 "use client";
-import { Box, Stack } from "@mantine/core";
+import { Group, Stack } from "@mantine/core";
 import { ABI, createPlayer } from "@onchess/core";
 import { useState } from "react";
 import { Hash, encodeFunctionData, erc20Abi, getAddress } from "viem";
@@ -76,7 +76,7 @@ export default function ProfilePage() {
     return (
         <Stack>
             <Header player={player} token={token} />
-            <Box p={20}>
+            <Group p={20} justify="center">
                 {hasData && (
                     <Bridge
                         applicationBalance={player.balance}
@@ -118,7 +118,7 @@ export default function ProfilePage() {
                         }}
                     />
                 )}
-            </Box>
+            </Group>
         </Stack>
     );
 }

@@ -1,18 +1,28 @@
-import { Badge, Button, Stack, TextInput } from "@mantine/core";
+"use client";
+import {
+    Badge,
+    Button,
+    Group,
+    Paper,
+    Stack,
+    Text,
+    TextInput,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { Token } from "@onchess/core";
 import { FC } from "react";
-import { parseUnits } from "viem";
+import { formatUnits, parseUnits } from "viem";
 
 export interface WithdrawProps {
     applicationBalance: string;
+    disabled: boolean;
     executing: boolean;
     onWithdraw: (amount: string) => void;
     token: Token;
 }
 
 export const Withdraw: FC<WithdrawProps> = (props) => {
-    const { executing, onWithdraw } = props;
+    const { disabled, executing, onWithdraw } = props;
     const { decimals, symbol } = props.token;
 
     const form = useForm({
@@ -48,14 +58,39 @@ export const Withdraw: FC<WithdrawProps> = (props) => {
     const canWithdraw = amount > 0n && applicationBalance >= amount;
     return (
         <Stack>
-            <TextInput
-                withAsterisk
-                label="Amount"
-                key={form.key("amount")}
-                {...form.getInputProps("amount")}
-                rightSection={<Badge variant="white">{symbol}</Badge>}
-                rightSectionWidth={60}
-            />
+            <Paper p={20} radius="md" bg="gray.1">
+                <Stack gap={0}>
+                    <TextInput
+                        label="Withdraw"
+                        key={form.key("amount")}
+                        {...form.getInputProps("amount")}
+                        rightSection={
+                            <Badge size="lg" variant="white">
+                                {symbol}
+                            </Badge>
+                        }
+                        placeholder="0"
+                        size="xxl"
+                        variant="unstyled"
+                    />
+                    <Group justify="flex-end" gap={0}>
+                        <Text size="sm">{`${formatUnits(applicationBalance, decimals)} ${symbol} available`}</Text>
+                        <Button
+                            disabled={disabled || applicationBalance <= 0n}
+                            size="compact-xs"
+                            variant="transparent"
+                            onClick={() =>
+                                form.setFieldValue(
+                                    "amount",
+                                    formatUnits(applicationBalance, decimals),
+                                )
+                            }
+                        >
+                            max
+                        </Button>
+                    </Group>
+                </Stack>
+            </Paper>
             {waitAmount && <Button disabled>Enter amount</Button>}
             {insufficientBalance && (
                 <Button disabled>Insufficient balance</Button>
@@ -63,6 +98,7 @@ export const Withdraw: FC<WithdrawProps> = (props) => {
             {canWithdraw && (
                 <Button
                     loading={executing}
+                    disabled={disabled}
                     onClick={() => onWithdraw(amount.toString())}
                 >
                     Withdraw

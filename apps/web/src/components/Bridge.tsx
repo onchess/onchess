@@ -1,31 +1,31 @@
+"use client";
 import {
+    Alert,
     Avatar,
     Center,
     Grid,
     Group,
-    Paper,
     SegmentedControl,
-    SimpleGrid,
     Stack,
+    StackProps,
     Text,
-    Title,
+    Textarea,
 } from "@mantine/core";
 import { Token } from "@onchess/core";
-import {
-    IconSquareArrowLeftFilled,
-    IconSquareArrowRightFilled,
-} from "@tabler/icons-react";
+import { IconArrowRight } from "@tabler/icons-react";
 import { FC, useState } from "react";
-import { Chain, formatUnits } from "viem";
+import { Chain } from "viem";
 import { Deposit } from "./Deposit";
+import { Faucet } from "./Faucet";
 import { Withdraw } from "./Withdraw";
 
-export interface BridgeProps {
+export interface BridgeProps extends StackProps {
     allowance: string;
     applicationBalance: string;
     balance: string;
     chain: Chain;
     disabled: boolean;
+    error?: string;
     executing: boolean;
     onApprove?: (amount: string) => void;
     onApproveAndDeposit?: (amount: string) => void;
@@ -35,83 +35,129 @@ export interface BridgeProps {
 }
 
 export const Bridge: FC<BridgeProps> = (props) => {
-    const { chain } = props;
-    const { decimals, symbol } = props.token;
-
-    const balance = BigInt(props.balance);
-    const applicationBalance = BigInt(props.applicationBalance);
-
+    const {
+        allowance,
+        applicationBalance,
+        balance,
+        chain,
+        disabled,
+        error,
+        executing,
+        onApprove,
+        onApproveAndDeposit,
+        onDeposit,
+        onWithdraw,
+        token,
+        ...stackProps
+    } = props;
     const [operation, setOperation] = useState("deposit");
 
     return (
-        <Grid>
-            <Grid.Col span={3}>
-                <Paper p={20} withBorder h="100%">
-                    <Group gap={30} justify="space-between">
-                        <Stack gap={0}>
-                            <Text>{`Balance (${chain.name})`}</Text>
-                            <Group gap={3} align="baseline">
-                                <Title order={2}>
-                                    {formatUnits(balance, decimals)}
-                                </Title>
-                                <Text size="sm">{symbol}</Text>
-                            </Group>
-                        </Stack>
-                        <Avatar src="/img/base_icon.svg" size="md" />
-                    </Group>
-                </Paper>
-            </Grid.Col>
-            <Grid.Col span={6}>
-                <Stack>
-                    <SegmentedControl
-                        data={[
-                            { label: "Deposit", value: "deposit" },
-                            { label: "Withdraw", value: "withdraw" },
-                        ]}
-                        value={operation}
-                        onChange={setOperation}
-                        w="100%"
+        <Stack {...stackProps}>
+            {chain.testnet && <Faucet />}
+            <SegmentedControl
+                data={[
+                    { label: "Deposit", value: "deposit" },
+                    { label: "Withdraw", value: "withdraw" },
+                ]}
+                value={operation}
+                onChange={setOperation}
+                w="100%"
+            />
+            {operation === "deposit" && (
+                <Grid>
+                    <Grid.Col span={5}>
+                        <Group gap={5} justify="flex-start">
+                            <Avatar src="/img/base_icon.svg" size="md" />
+                            <Stack gap={0} align="flex-start">
+                                <Text size="sm">From</Text>
+                                <Text size="sm" fw={800}>
+                                    {chain.name}
+                                </Text>
+                            </Stack>
+                        </Group>
+                    </Grid.Col>
+                    <Grid.Col span={2}>
+                        <Center>
+                            <IconArrowRight size={30} />
+                        </Center>
+                    </Grid.Col>
+                    <Grid.Col span={5}>
+                        <Group gap={5} justify="flex-end">
+                            <Stack gap={0} align="flex-end">
+                                <Text size="sm">To</Text>
+                                <Text size="sm" fw={800}>
+                                    OnChess
+                                </Text>
+                            </Stack>
+                            <Avatar src="/img/onchess_logo.png" size="md" />
+                        </Group>
+                    </Grid.Col>
+                </Grid>
+            )}
+            {operation === "withdraw" && (
+                <Grid>
+                    <Grid.Col span={5}>
+                        <Group gap={5} justify="flex-start">
+                            <Avatar src="/img/onchess_logo.png" size="md" />
+                            <Stack gap={0} align="flex-start">
+                                <Text size="sm">From</Text>
+                                <Text size="sm" fw={800}>
+                                    OnChess
+                                </Text>
+                            </Stack>
+                        </Group>
+                    </Grid.Col>
+                    <Grid.Col span={2}>
+                        <Center>
+                            <IconArrowRight size={30} />
+                        </Center>
+                    </Grid.Col>
+                    <Grid.Col span={5}>
+                        <Group gap={5} justify="flex-end">
+                            <Stack gap={0} align="flex-end">
+                                <Text size="sm">To</Text>
+                                <Text size="sm" fw={800}>
+                                    {chain.name}
+                                </Text>
+                            </Stack>
+                            <Avatar src="/img/base_icon.svg" size="md" />
+                        </Group>
+                    </Grid.Col>
+                </Grid>
+            )}
+
+            {operation === "deposit" && (
+                <Deposit
+                    allowance={allowance}
+                    balance={balance}
+                    disabled={disabled}
+                    executing={executing}
+                    token={token}
+                    onApprove={onApprove}
+                    onApproveAndDeposit={onApproveAndDeposit}
+                    onDeposit={onDeposit}
+                />
+            )}
+            {operation === "withdraw" && (
+                <Withdraw
+                    applicationBalance={applicationBalance}
+                    disabled={disabled}
+                    executing={executing}
+                    onWithdraw={onWithdraw}
+                    token={token}
+                />
+            )}
+            {error && (
+                <Alert color="red" title="Error">
+                    <Textarea
+                        readOnly
+                        rows={5}
+                        value={error}
+                        variant="unstyled"
                     />
-                    {operation === "deposit" && (
-                        <SimpleGrid cols={2}>
-                            <Deposit {...props} />
-                            <Center>
-                                <IconSquareArrowRightFilled
-                                    color="lightgray"
-                                    size={50}
-                                />
-                            </Center>
-                        </SimpleGrid>
-                    )}
-                    {operation === "withdraw" && (
-                        <SimpleGrid cols={2}>
-                            <Center>
-                                <IconSquareArrowLeftFilled
-                                    color="lightgray"
-                                    size={50}
-                                />
-                            </Center>
-                            <Withdraw {...props} />
-                        </SimpleGrid>
-                    )}
-                </Stack>
-            </Grid.Col>
-            <Grid.Col span={3}>
-                <Paper p={20} withBorder h="100%">
-                    <Group gap={30} justify="space-between">
-                        <Stack gap={0}>
-                            <Text>Balance (OnChess)</Text>
-                            <Group gap={3} align="baseline">
-                                <Title order={2}>
-                                    {formatUnits(applicationBalance, decimals)}
-                                </Title>
-                                <Text size="sm">{symbol}</Text>
-                            </Group>
-                        </Stack>
-                        <Avatar src="/img/onchess_logo.png" size="md" />
-                    </Group>
-                </Paper>
-            </Grid.Col>
-        </Grid>
+                </Alert>
+            )}
+        </Stack>
     );
 };

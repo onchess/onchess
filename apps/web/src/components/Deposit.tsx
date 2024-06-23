@@ -1,8 +1,17 @@
-import { Badge, Button, Stack, TextInput } from "@mantine/core";
+"use client";
+import {
+    Badge,
+    Button,
+    Group,
+    Paper,
+    Stack,
+    Text,
+    TextInput,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { Token } from "@onchess/core";
 import { FC } from "react";
-import { parseUnits } from "viem";
+import { formatUnits, parseUnits } from "viem";
 
 export interface DepositProps {
     allowance: string;
@@ -55,15 +64,40 @@ export const Deposit: FC<DepositProps> = (props) => {
     const needApproval = amount > 0n && balance >= amount && allowance < amount;
     return (
         <Stack>
-            <TextInput
-                withAsterisk
-                disabled={disabled}
-                label="Amount"
-                key={form.key("amount")}
-                {...form.getInputProps("amount")}
-                rightSection={<Badge variant="white">{symbol}</Badge>}
-                rightSectionWidth={60}
-            />
+            <Paper p={20} radius="md" bg="gray.1">
+                <Stack gap={0}>
+                    <TextInput
+                        {...form.getInputProps("amount")}
+                        disabled={disabled}
+                        key={form.key("amount")}
+                        label="Deposit"
+                        placeholder="0"
+                        size="xxl"
+                        rightSection={
+                            <Badge size="lg" variant="white">
+                                {symbol}
+                            </Badge>
+                        }
+                        variant="unstyled"
+                    />
+                    <Group justify="flex-end" gap={0}>
+                        <Text size="sm">{`${formatUnits(balance, decimals)} ${symbol} available`}</Text>
+                        <Button
+                            disabled={disabled || balance <= 0n}
+                            size="compact-xs"
+                            variant="transparent"
+                            onClick={() =>
+                                form.setFieldValue(
+                                    "amount",
+                                    formatUnits(balance, decimals),
+                                )
+                            }
+                        >
+                            max
+                        </Button>
+                    </Group>
+                </Stack>
+            </Paper>
             {waitAmount && <Button disabled>Enter amount</Button>}
             {insufficientBalance && (
                 <Button disabled>Insufficient balance</Button>
