@@ -1,55 +1,78 @@
 "use client";
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { createWeb3Modal } from "@web3modal/wagmi/react";
-import { defaultWagmiConfig } from "@web3modal/wagmi/react/config";
-import { FC, ReactNode } from "react";
-import { WagmiProvider } from "wagmi";
-import { baseSepolia, foundry } from "wagmi/chains";
+import { FC, PropsWithChildren } from "react";
+import { base, baseSepolia, foundry } from "wagmi/chains";
+import { WalletConnectWalletProvider } from "./wallet/walletconnect";
+import { ZeroDevWalletProvider } from "./wallet/zerodev";
 
-const projectId = "2fc593e6b8e9da2434799b1111634ff0";
-const metadata = {
-    name: "OnChess",
-    description: "OnChess is onchain chess",
-    url: "https://onchess.xyz",
-    icons: ["https://onchess.xyz/img/onchess_logo.png"],
+export type WalletProviderType = "ZeroDev" | "WalletConnect";
+
+const extractChain = () => {
+    const chainId = process.env.NEXT_PUBLIC_CHAIN_ID;
+    if (!chainId) {
+        throw new Error("Missing NEXT_PUBLIC_CHAIN_ID");
+    }
+    if (isNaN(parseInt(chainId))) {
+        throw new Error("Invalid NEXT_PUBLIC_CHAIN_ID");
+    }
+    switch (parseInt(chainId)) {
+        case base.id:
+            return base;
+        case baseSepolia.id:
+            return baseSepolia;
+        case foundry.id:
+            return foundry;
+        default:
+            return foundry;
+    }
 };
 
-export const config = defaultWagmiConfig({
-    chains: [baseSepolia, foundry],
-    metadata,
-    projectId,
-    ssr: true,
-});
-
-createWeb3Modal({
-    enableAnalytics: true,
-    themeMode: "light",
-    projectId,
-    themeVariables: {
-        "--w3m-border-radius-master": "1px",
-    },
-    wagmiConfig: config,
-});
-
-declare module "wagmi" {
-    interface Register {
-        config: typeof config;
+export const getProviderType = (): WalletProviderType => {
+    const type = process.env.NEXT_PUBLIC_WALLET_PROVIDER;
+    if (!type) {
+        throw new Error("Missing NEXT_PUBLIC_WALLET_PROVIDER");
     }
-}
+    switch (type) {
+        case "WalletConnect":
+            return "WalletConnect";
+        case "ZeroDev":
+            return "ZeroDev";
+    }
+    throw new Error("Invalid NEXT_PUBLIC_WALLET_PROVIDER");
+};
 
-const queryClient = new QueryClient();
+export const WalletProvider: FC<PropsWithChildren> = ({ children }) => {
+    // read chain configuration from env
+    const chain = extractChain();
 
-export interface WalletProviderProps {
-    children: ReactNode[] | ReactNode;
-}
+    // read provider configuration from env
+    const provider = getProviderType();
 
-export const WalletProvider: FC<WalletProviderProps> = ({ children }) => {
-    return (
-        <WagmiProvider config={config}>
-            <QueryClientProvider client={queryClient}>
-                {children}
-            </QueryClientProvider>
-        </WagmiProvider>
-    );
+    switch (provider) {
+        case "WalletConnect": {
+            const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID;
+            if (!projectId) {
+                throw new Error("Missing NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID");
+            }
+            return (
+                <WalletConnectWalletProvider
+                    chain={chain}
+                    projectId={projectId}
+                >
+                    {children}
+                </WalletConnectWalletProvider>
+            );
+        }
+        case "ZeroDev": {
+            const projectId = process.env.NEXT_PUBLIC_ZERODEV_PROJECT_ID;
+            if (!projectId) {
+                throw new Error("Missing NEXT_PUBLIC_ZERODEV_PROJECT_ID");
+            }
+            return (
+                <ZeroDevWalletProvider chain={chain} projectId={projectId}>
+                    {children}
+                </ZeroDevWalletProvider>
+            );
+        }
+    }
 };

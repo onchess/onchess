@@ -22,6 +22,8 @@ import {
 import Link from "next/link";
 import { FC, useMemo } from "react";
 import { formatUnits } from "viem";
+import { getProviderType } from "../providers/wallet";
+import { ConnectButton } from "./ConnectButton";
 
 export type HeaderProps = {
     address?: string;
@@ -38,6 +40,8 @@ const chessIcons = [
 ];
 
 export const Header: FC<HeaderProps> = ({ player, token }) => {
+    const provider = getProviderType();
+
     // choose a random wallet icon (just to be playful)
     const iconIndex = useMemo(
         () =>
@@ -59,7 +63,8 @@ export const Header: FC<HeaderProps> = ({ player, token }) => {
                 </Text>
             </Group>
             <Flex justify="flex-end" align="center" gap={5}>
-                <w3m-button />
+                {provider === "WalletConnect" && <w3m-button />}
+                {provider === "ZeroDev" && <ConnectButton />}
                 {player && token && (
                     <Link href="/bridge">
                         <Badge
