@@ -10,15 +10,11 @@ import {
     Stack,
     Text,
 } from "@mantine/core";
-import {
-    CreateGamePayload,
-    INITIAL_RATING,
-    Player,
-    parseTimeControl,
-} from "@onchess/core";
-import humanizeDuration from "humanize-duration";
+import { CreateGamePayload, INITIAL_RATING, Player } from "@onchess/core";
+import { IconBusinessplan, IconClock, IconStar } from "@tabler/icons-react";
 import { FC, useState } from "react";
 import { formatUnits, parseUnits } from "viem";
+import { formatTimeControl } from "../util/format";
 
 export interface CreateGameProps extends PaperProps {
     player?: Player;
@@ -44,25 +40,12 @@ export const CreateGame: FC<CreateGameProps> = (props) => {
             {formatUnits(value, decimals)} {symbol}
         </Text>
     );
-    const timeControlFormat = (value: string): string => {
-        const parsed = parseTimeControl(value);
-        if (parsed) {
-            if (parsed[1] > 0) {
-                return `${humanizeDuration(parsed[0] * 1000)} per player + ${humanizeDuration(parsed[1] * 1000)} per move`;
-            } else {
-                return `${humanizeDuration(parsed[0] * 1000)} per player`;
-            }
-        } else {
-            return "Unsupported time control";
-        }
-    };
 
     // bet
     const [bet, setBet] = useState(bets[0].toString());
 
     // supported time controls
     const [timeControl, setTimeControl] = useState(timeControls[0]);
-    const timeControlMessage = timeControlFormat(timeControl);
 
     // opponent rating
     const playerRating = player ? player.rating : INITIAL_RATING;
@@ -74,17 +57,13 @@ export const CreateGame: FC<CreateGameProps> = (props) => {
     ]);
 
     return (
-        <Paper
-            {...otherProps}
-            h="100%"
-            p={20}
-            withBorder
-            shadow="md"
-            bg="var(--mantine-primary-color-light)"
-        >
-            <Stack justify="space-around" h="100%" gap={30}>
-                <Stack gap={2}>
-                    <Text fw={800}>Bet</Text>
+        <Paper {...otherProps} p={20} withBorder>
+            <Stack justify="space-around" gap={30}>
+                <Stack gap={5}>
+                    <Group gap={5}>
+                        <IconBusinessplan size={16} />
+                        <Text fw={800}>Bet</Text>
+                    </Group>
                     <SegmentedControl
                         value={bet}
                         onChange={setBet}
@@ -94,17 +73,25 @@ export const CreateGame: FC<CreateGameProps> = (props) => {
                         }))}
                     />
                 </Stack>
-                <Stack gap={2}>
-                    <Text fw={800}>Time Control</Text>
+                <Stack gap={5}>
+                    <Group gap={5}>
+                        <IconClock size={16} />
+                        <Text fw={800}>Time Control</Text>
+                    </Group>
                     <SegmentedControl
                         value={timeControl}
                         onChange={setTimeControl}
-                        data={timeControls}
+                        data={timeControls.map((value) => ({
+                            value,
+                            label: formatTimeControl(value),
+                        }))}
                     />
-                    <Text>{timeControlMessage}</Text>
                 </Stack>
-                <Stack gap={2}>
-                    <Text fw={800}>Opponent Rating</Text>
+                <Stack gap={5}>
+                    <Group gap={5}>
+                        <IconStar size={16} />
+                        <Text fw={800}>Opponent Rating</Text>
+                    </Group>
                     <RangeSlider
                         mt={40}
                         min={0}

@@ -14,8 +14,8 @@ type Story = StoryObj<typeof meta>;
 
 export const Disconnected: Story = {
     args: {
-        decimals: 18,
-        symbol: "TEST",
+        decimals: 6,
+        symbol: "USDC",
         onCreate: fn(),
         onConnect: fn(),
     },
@@ -23,8 +23,8 @@ export const Disconnected: Story = {
 
 export const Connected: Story = {
     args: {
-        decimals: 18,
-        symbol: "TEST",
+        decimals: 6,
+        symbol: "USDC",
         onCreate: fn(),
         player: createPlayer("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
     },
@@ -32,12 +32,12 @@ export const Connected: Story = {
 
 export const Balance3: Story = {
     args: {
-        decimals: 18,
-        symbol: "TEST",
+        decimals: 6,
+        symbol: "USDC",
         onCreate: fn(),
         player: {
             address: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
-            balance: (3n * 10n ** 18n).toString(),
+            balance: (3n * 10n ** 6n).toString(),
             draws: 0,
             losses: 0,
             played: 0,
