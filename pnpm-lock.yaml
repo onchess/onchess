@@ -87,6 +87,9 @@ importers:
       '@web3modal/wagmi':
         specifier: ^5.0.3
         version: 5.0.3(ilfnnhrtgfsatwkklhjrwvyici)
+      '@zerodev/permissions':
+        specifier: ^5.3.0
+        version: 5.3.0(@zerodev/sdk@5.2.19(permissionless@0.1.31(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8)))(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8)))(permissionless@0.1.31(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8)))(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8))
       '@zerodev/wallet':
         specifier: ^0.0.10
         version: 0.0.10(permissionless@0.1.31(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8)))(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8))(wagmi@2.10.4(@tanstack/query-core@5.45.0)(@tanstack/react-query@5.45.1(react@18.3.1))(@types/react@18.3.3)(bufferutil@4.0.8)(encoding@0.1.13)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react-i18next@13.5.0(i18next@22.5.1)(react-dom@18.3.1(react@18.3.1))(react-native@0.74.2(@babel/core@7.24.7)(@babel/preset-env@7.24.7(@babel/core@7.24.7))(@types/react@18.3.3)(bufferutil@4.0.8)(encoding@0.1.13)(react@18.3.1))(react@18.3.1))(react-native@0.74.2(@babel/core@7.24.7)(@babel/preset-env@7.24.7(@babel/core@7.24.7))(@types/react@18.3.3)(bufferutil@4.0.8)(encoding@0.1.13)(react@18.3.1))(react@18.3.1)(rollup@4.18.0)(typescript@5.5.2)(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8))(zod@3.23.8))
@@ -4003,6 +4006,13 @@ packages:
       '@zerodev/sdk': ^5.2.13
       permissionless: ^0.1.18
       viem: ^2.9.17
+
+  '@zerodev/permissions@5.3.0':
+    resolution: {integrity: sha512-mXWklZl0+fUFfG9HvcJGjN0DK2vGCq662PeOtFMbPJlAXYlj8U8KcSXnjZG4xg8WxS7ZrUPOtSpUu1Xgq0F4Dg==}
+    peerDependencies:
+      '@zerodev/sdk': ^5.2.13
+      permissionless: ^0.1.18
+      viem: ^2.15.1
 
   '@zerodev/sdk@5.2.19':
     resolution: {integrity: sha512-5+hwh5zAAWdcvhXuKiD+JxTJuH+h9b5rjLBOh6CbXujSFzDEXbF5KqyZGchCaU8mzhoDQt+X3IGZCXPJ/oOBlQ==}
@@ -14195,10 +14205,10 @@ snapshots:
     dependencies:
       '@types/yargs-parser': 21.0.3
 
-  '@typescript-eslint/eslint-plugin@7.13.0(@typescript-eslint/parser@7.13.0(eslint@9.5.0)(typescript@5.4.5))(eslint@9.5.0)(typescript@5.4.5)':
+  '@typescript-eslint/eslint-plugin@7.13.0(@typescript-eslint/parser@8.0.0-alpha.30(eslint@9.5.0)(typescript@5.4.5))(eslint@9.5.0)(typescript@5.4.5)':
     dependencies:
       '@eslint-community/regexpp': 4.10.1
-      '@typescript-eslint/parser': 7.13.0(eslint@9.5.0)(typescript@5.4.5)
+      '@typescript-eslint/parser': 8.0.0-alpha.30(eslint@9.5.0)(typescript@5.4.5)
       '@typescript-eslint/scope-manager': 7.13.0
       '@typescript-eslint/type-utils': 7.13.0(eslint@9.5.0)(typescript@5.4.5)
       '@typescript-eslint/utils': 7.13.0(eslint@9.5.0)(typescript@5.4.5)
@@ -14405,16 +14415,16 @@ snapshots:
       '@babel/core': 7.24.7
       '@babel/eslint-parser': 7.24.7(@babel/core@7.24.7)(eslint@9.5.0)
       '@rushstack/eslint-patch': 1.10.3
-      '@typescript-eslint/eslint-plugin': 7.13.0(@typescript-eslint/parser@7.13.0(eslint@9.5.0)(typescript@5.4.5))(eslint@9.5.0)(typescript@5.4.5)
+      '@typescript-eslint/eslint-plugin': 7.13.0(@typescript-eslint/parser@8.0.0-alpha.30(eslint@9.5.0)(typescript@5.4.5))(eslint@9.5.0)(typescript@5.4.5)
       '@typescript-eslint/parser': 7.13.0(eslint@9.5.0)(typescript@5.4.5)
       eslint-config-prettier: 9.1.0(eslint@9.5.0)
       eslint-import-resolver-alias: 1.1.2(eslint-plugin-import@2.29.1(@typescript-eslint/parser@7.13.0(eslint@9.5.0)(typescript@5.4.5))(eslint-import-resolver-typescript@3.6.1)(eslint@9.5.0))
       eslint-import-resolver-typescript: 3.6.1(@typescript-eslint/parser@7.13.0(eslint@9.5.0)(typescript@5.4.5))(eslint-plugin-import@2.29.1)(eslint@9.5.0)
       eslint-plugin-eslint-comments: 3.2.0(eslint@9.5.0)
       eslint-plugin-import: 2.29.1(@typescript-eslint/parser@8.0.0-alpha.30(eslint@9.5.0)(typescript@5.4.5))(eslint@9.5.0)
-      eslint-plugin-jest: 27.9.0(@typescript-eslint/eslint-plugin@7.13.0(@typescript-eslint/parser@8.0.0-alpha.30(eslint@9.5.0)(typescript@5.4.5))(eslint@9.5.0)(typescript@5.4.5))(eslint@9.5.0)(typescript@5.4.5)
+      eslint-plugin-jest: 27.9.0(@typescript-eslint/eslint-plugin@7.13.0(@typescript-eslint/parser@7.13.0(eslint@9.5.0)(typescript@5.4.5))(eslint@9.5.0)(typescript@5.4.5))(eslint@9.5.0)(typescript@5.4.5)
       eslint-plugin-jsx-a11y: 6.8.0(eslint@9.5.0)
-      eslint-plugin-playwright: 1.6.2(eslint-plugin-jest@27.9.0(@typescript-eslint/eslint-plugin@7.13.0(@typescript-eslint/parser@8.0.0-alpha.30(eslint@9.5.0)(typescript@5.4.5))(eslint@9.5.0)(typescript@5.4.5))(eslint@9.5.0)(typescript@5.4.5))(eslint@9.5.0)
+      eslint-plugin-playwright: 1.6.2(eslint-plugin-jest@27.9.0(@typescript-eslint/eslint-plugin@7.13.0(@typescript-eslint/parser@7.13.0(eslint@9.5.0)(typescript@5.4.5))(eslint@9.5.0)(typescript@5.4.5))(eslint@9.5.0)(typescript@5.4.5))(eslint@9.5.0)
       eslint-plugin-react: 7.34.2(eslint@9.5.0)
       eslint-plugin-react-hooks: 4.6.2(eslint@9.5.0)
       eslint-plugin-testing-library: 6.2.2(eslint@9.5.0)(typescript@5.4.5)
@@ -15528,6 +15538,14 @@ snapshots:
       viem: 2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8)
 
   '@zerodev/permissions@5.2.10(@zerodev/sdk@5.2.19(permissionless@0.1.31(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8)))(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8)))(permissionless@0.1.31(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8)))(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8))':
+    dependencies:
+      '@simplewebauthn/browser': 9.0.1
+      '@zerodev/sdk': 5.2.19(permissionless@0.1.31(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8)))(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8))
+      merkletreejs: 0.3.11
+      permissionless: 0.1.31(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8))
+      viem: 2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8)
+
+  '@zerodev/permissions@5.3.0(@zerodev/sdk@5.2.19(permissionless@0.1.31(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8)))(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8)))(permissionless@0.1.31(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8)))(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8))':
     dependencies:
       '@simplewebauthn/browser': 9.0.1
       '@zerodev/sdk': 5.2.19(permissionless@0.1.31(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8)))(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8))
@@ -17229,12 +17247,12 @@ snapshots:
       - eslint-import-resolver-webpack
       - supports-color
 
-  eslint-plugin-jest@27.9.0(@typescript-eslint/eslint-plugin@7.13.0(@typescript-eslint/parser@8.0.0-alpha.30(eslint@9.5.0)(typescript@5.4.5))(eslint@9.5.0)(typescript@5.4.5))(eslint@9.5.0)(typescript@5.4.5):
+  eslint-plugin-jest@27.9.0(@typescript-eslint/eslint-plugin@7.13.0(@typescript-eslint/parser@7.13.0(eslint@9.5.0)(typescript@5.4.5))(eslint@9.5.0)(typescript@5.4.5))(eslint@9.5.0)(typescript@5.4.5):
     dependencies:
       '@typescript-eslint/utils': 5.62.0(eslint@9.5.0)(typescript@5.4.5)
       eslint: 9.5.0
     optionalDependencies:
-      '@typescript-eslint/eslint-plugin': 7.13.0(@typescript-eslint/parser@7.13.0(eslint@9.5.0)(typescript@5.4.5))(eslint@9.5.0)(typescript@5.4.5)
+      '@typescript-eslint/eslint-plugin': 7.13.0(@typescript-eslint/parser@8.0.0-alpha.30(eslint@9.5.0)(typescript@5.4.5))(eslint@9.5.0)(typescript@5.4.5)
     transitivePeerDependencies:
       - supports-color
       - typescript
@@ -17261,12 +17279,12 @@ snapshots:
 
   eslint-plugin-only-warn@1.1.0: {}
 
-  eslint-plugin-playwright@1.6.2(eslint-plugin-jest@27.9.0(@typescript-eslint/eslint-plugin@7.13.0(@typescript-eslint/parser@8.0.0-alpha.30(eslint@9.5.0)(typescript@5.4.5))(eslint@9.5.0)(typescript@5.4.5))(eslint@9.5.0)(typescript@5.4.5))(eslint@9.5.0):
+  eslint-plugin-playwright@1.6.2(eslint-plugin-jest@27.9.0(@typescript-eslint/eslint-plugin@7.13.0(@typescript-eslint/parser@7.13.0(eslint@9.5.0)(typescript@5.4.5))(eslint@9.5.0)(typescript@5.4.5))(eslint@9.5.0)(typescript@5.4.5))(eslint@9.5.0):
     dependencies:
       eslint: 9.5.0
       globals: 13.24.0
     optionalDependencies:
-      eslint-plugin-jest: 27.9.0(@typescript-eslint/eslint-plugin@7.13.0(@typescript-eslint/parser@8.0.0-alpha.30(eslint@9.5.0)(typescript@5.4.5))(eslint@9.5.0)(typescript@5.4.5))(eslint@9.5.0)(typescript@5.4.5)
+      eslint-plugin-jest: 27.9.0(@typescript-eslint/eslint-plugin@7.13.0(@typescript-eslint/parser@7.13.0(eslint@9.5.0)(typescript@5.4.5))(eslint@9.5.0)(typescript@5.4.5))(eslint@9.5.0)(typescript@5.4.5)
 
   eslint-plugin-react-hooks@4.6.2(eslint@9.5.0):
     dependencies:
@@ -17339,7 +17357,7 @@ snapshots:
       '@typescript-eslint/utils': 7.13.0(eslint@9.5.0)(typescript@5.4.5)
       eslint: 9.5.0
     optionalDependencies:
-      '@typescript-eslint/eslint-plugin': 7.13.0(@typescript-eslint/parser@7.13.0(eslint@9.5.0)(typescript@5.4.5))(eslint@9.5.0)(typescript@5.4.5)
+      '@typescript-eslint/eslint-plugin': 7.13.0(@typescript-eslint/parser@8.0.0-alpha.30(eslint@9.5.0)(typescript@5.4.5))(eslint@9.5.0)(typescript@5.4.5)
       vitest: 1.6.0(@types/node@20.14.8)(sugarss@4.0.1(postcss@8.4.38))(terser@5.31.1)
     transitivePeerDependencies:
       - supports-color

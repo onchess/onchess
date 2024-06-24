@@ -1,4 +1,4 @@
-import { Badge, Button, Group, GroupProps } from "@mantine/core";
+import { Badge, Button, Group, GroupProps, Switch } from "@mantine/core";
 import { Color } from "chess.js";
 import { Address } from "viem";
 import { getTimeLeft } from "../hooks/clock";
@@ -11,10 +11,13 @@ export interface PlayerBarProps extends GroupProps {
     disabled: boolean;
     now: number;
     onClaimVictory: () => void;
+    onCreateSession?: () => void;
     onResign: () => void;
     opponentTime: number;
     player?: Address;
     result: 1 | 0 | 0.5 | undefined;
+    sessionExpiry?: number;
+    sessionId?: string;
     time: number;
     turn: Color;
     updatedAt: number;
@@ -27,10 +30,13 @@ export const PlayerBar: React.FC<PlayerBarProps> = (props) => {
         disabled,
         now,
         onClaimVictory,
+        onCreateSession,
         onResign,
         opponentTime,
         player,
         result,
+        sessionExpiry,
+        sessionId,
         time,
         turn,
         updatedAt,
@@ -57,6 +63,11 @@ export const PlayerBar: React.FC<PlayerBarProps> = (props) => {
         result === undefined &&
         opponentTimeLeft === 0;
 
+    // show create session if the capability is there
+    const showCreateSession =
+        player === address && result === undefined && !!onCreateSession;
+    const hasSession = !!sessionId && sessionExpiry && now < sessionExpiry;
+
     const win =
         (color === "w" && result === 1) || (color === "b" && result === 0);
 
@@ -80,6 +91,13 @@ export const PlayerBar: React.FC<PlayerBarProps> = (props) => {
                 >
                     Claim Victory
                 </Button>
+            )}
+            {showCreateSession && (
+                <Switch
+                    defaultChecked={!hasSession}
+                    label="Sign every move"
+                    onClick={() => onCreateSession()}
+                />
             )}
             {win && (
                 <Badge bg="yellow" size="lg">

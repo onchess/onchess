@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, LoadingOverlay, Stack } from "@mantine/core";
+import { Alert, Box, LoadingOverlay, Stack, Textarea } from "@mantine/core";
 import { Game, GameBasePayload, MovePiecePayload, Player } from "@onchess/core";
 import { Position } from "chess-fen";
 import { Chess } from "chess.js";
@@ -17,6 +17,7 @@ import {
 import { PlayerBar } from "./PlayerBar";
 
 export type GameboardProps = {
+    error?: string;
     game: Game;
     submitting: boolean;
     now: number;
@@ -25,6 +26,8 @@ export type GameboardProps = {
     onMove: (params: Omit<MovePiecePayload, "metadata" | "sender">) => void;
     onResign: (params: Omit<GameBasePayload, "metadata">) => void;
     player?: Player; // optional, so we can support "expectators"
+    sessionExpiry?: number;
+    sessionId?: string;
 };
 
 export interface Promotion {
@@ -38,8 +41,19 @@ function getErrorMessage(error: unknown) {
 }
 
 export const Gameboard: FC<GameboardProps> = (props) => {
-    const { game, now, onClaimVictory, onMove, onResign, player, submitting } =
-        props;
+    const {
+        error,
+        game,
+        now,
+        onClaimVictory,
+        onCreateSession,
+        onMove,
+        onResign,
+        player,
+        sessionExpiry,
+        sessionId,
+        submitting,
+    } = props;
 
     // create a Chess instance and load the PGN
     const chess = new Chess();
@@ -80,9 +94,12 @@ export const Gameboard: FC<GameboardProps> = (props) => {
             now={now}
             onResign={handleResign}
             onClaimVictory={handleClaimVictory}
+            onCreateSession={onCreateSession}
             opponentTime={game.blackTime}
             player={player?.address}
             result={result}
+            sessionExpiry={sessionExpiry}
+            sessionId={sessionId}
             time={game.whiteTime}
             turn={turn}
             updatedAt={game.updatedAt}
@@ -97,9 +114,12 @@ export const Gameboard: FC<GameboardProps> = (props) => {
             now={now}
             onResign={handleResign}
             onClaimVictory={handleClaimVictory}
+            onCreateSession={onCreateSession}
             opponentTime={game.whiteTime}
             player={player?.address}
             result={result}
+            sessionExpiry={sessionExpiry}
+            sessionId={sessionId}
             time={game.blackTime}
             turn={turn}
             updatedAt={game.updatedAt}
@@ -164,6 +184,16 @@ export const Gameboard: FC<GameboardProps> = (props) => {
 
     return (
         <Stack miw={600}>
+            {error && (
+                <Alert color="red" title="Error">
+                    <Textarea
+                        readOnly
+                        rows={5}
+                        value={error}
+                        variant="unstyled"
+                    />
+                </Alert>
+            )}
             {!rotated && blackBar}
             {rotated && whiteBar}
             <ChessBoardDndProvider>

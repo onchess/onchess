@@ -17,6 +17,7 @@ import { Header } from "./Header";
 import { WaitOpponent } from "./WaitOpponent";
 
 export interface PlayPageProps extends StackProps {
+    error?: string;
     game?: Game;
     lobby?: LobbyItem;
     now: number;
@@ -26,12 +27,15 @@ export interface PlayPageProps extends StackProps {
     onMove: (params: Omit<MovePiecePayload, "metadata" | "sender">) => void;
     onResign: (params: Omit<GameBasePayload, "metadata">) => void;
     player?: Player;
+    sessionExpiry?: number;
+    sessionId?: string;
     submitting: boolean;
     token?: Token;
 }
 
 export const PlayPage: FC<PlayPageProps> = (props) => {
     const {
+        error,
         game,
         lobby,
         now,
@@ -41,6 +45,8 @@ export const PlayPage: FC<PlayPageProps> = (props) => {
         onMove,
         onResign,
         player,
+        sessionExpiry,
+        sessionId,
         submitting,
         token,
         ...stackProps
@@ -64,6 +70,7 @@ export const PlayPage: FC<PlayPageProps> = (props) => {
                 <Center>
                     {showGame && (
                         <Gameboard
+                            error={error}
                             game={game}
                             now={now}
                             onClaimVictory={onClaimVictory}
@@ -71,6 +78,8 @@ export const PlayPage: FC<PlayPageProps> = (props) => {
                             onMove={onMove}
                             onResign={onResign}
                             player={player}
+                            sessionExpiry={sessionExpiry}
+                            sessionId={sessionId}
                             submitting={submitting}
                         />
                     )}
@@ -78,6 +87,7 @@ export const PlayPage: FC<PlayPageProps> = (props) => {
                 <Center>
                     {showCreate && (
                         <CreateGame
+                            error={error}
                             miw={600}
                             player={player}
                             symbol={token.symbol}

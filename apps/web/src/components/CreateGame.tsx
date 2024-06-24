@@ -1,6 +1,7 @@
 "use client";
 
 import {
+    Alert,
     Button,
     Group,
     Paper,
@@ -9,6 +10,7 @@ import {
     SegmentedControl,
     Stack,
     Text,
+    Textarea,
 } from "@mantine/core";
 import { CreateGamePayload, INITIAL_RATING, Player } from "@onchess/core";
 import { IconClock, IconCoin, IconStar } from "@tabler/icons-react";
@@ -17,6 +19,7 @@ import { formatUnits, parseUnits } from "viem";
 import { formatTimeControl } from "../util/format";
 
 export interface CreateGameProps extends PaperProps {
+    error?: string;
     player?: Player;
     decimals: number;
     symbol: string;
@@ -27,8 +30,15 @@ export interface CreateGameProps extends PaperProps {
 export const timeControls = ["1500", "2700", "1500+10", "2700+10"];
 
 export const CreateGame: FC<CreateGameProps> = (props) => {
-    const { decimals, onConnect, onCreate, player, symbol, ...otherProps } =
-        props;
+    const {
+        decimals,
+        error,
+        onConnect,
+        onCreate,
+        player,
+        symbol,
+        ...otherProps
+    } = props;
 
     // player balance
     const balance = player ? BigInt(player.balance) : undefined;
@@ -104,6 +114,16 @@ export const CreateGame: FC<CreateGameProps> = (props) => {
                         labelAlwaysOn
                     />
                 </Stack>
+                {error && (
+                    <Alert color="red" title="Error">
+                        <Textarea
+                            readOnly
+                            rows={5}
+                            value={error}
+                            variant="unstyled"
+                        />
+                    </Alert>
+                )}
                 <Group>
                     {player &&
                         balance !== undefined &&
