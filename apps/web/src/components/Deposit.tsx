@@ -4,12 +4,14 @@ import {
     Button,
     Group,
     Paper,
+    Space,
     Stack,
     Text,
     TextInput,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { Token } from "@onchess/core";
+import { IconCircleCheckFilled, IconCornerLeftUp } from "@tabler/icons-react";
 import { FC } from "react";
 import { formatUnits, parseUnits } from "viem";
 
@@ -80,21 +82,46 @@ export const Deposit: FC<DepositProps> = (props) => {
                         }
                         variant="unstyled"
                     />
-                    <Group justify="flex-end" gap={0}>
-                        <Text size="sm">{`${formatUnits(balance, decimals)} ${symbol} available`}</Text>
-                        <Button
-                            disabled={disabled || balance <= 0n}
-                            size="compact-xs"
-                            variant="transparent"
-                            onClick={() =>
-                                form.setFieldValue(
-                                    "amount",
-                                    formatUnits(balance, decimals),
-                                )
-                            }
-                        >
-                            max
-                        </Button>
+                    <Group justify="space-between">
+                        {supportBatch ? (
+                            <Group gap={3}>
+                                <IconCircleCheckFilled
+                                    size={16}
+                                    color="green"
+                                />
+                                <Text c="green" size="xs">
+                                    batch supported
+                                </Text>
+                            </Group>
+                        ) : (
+                            <Space />
+                        )}
+                        <Group gap={3}>
+                            <Text size="xs">{`${formatUnits(balance, decimals)} ${symbol} available`}</Text>
+                            <Button
+                                disabled={disabled || balance <= 0n}
+                                size="compact-xs"
+                                variant="transparent"
+                                onClick={() =>
+                                    form.setFieldValue(
+                                        "amount",
+                                        formatUnits(balance, decimals),
+                                    )
+                                }
+                            >
+                                <Group gap={0}>
+                                    <IconCornerLeftUp
+                                        color={
+                                            disabled || balance <= 0n
+                                                ? "lightgray"
+                                                : "blue"
+                                        }
+                                        size={12}
+                                    />
+                                    <Text size="xs">max</Text>
+                                </Group>
+                            </Button>
+                        </Group>
                     </Group>
                 </Stack>
             </Paper>
