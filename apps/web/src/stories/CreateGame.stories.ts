@@ -17,6 +17,7 @@ export const Disconnected: Story = {
         decimals: 18,
         symbol: "TEST",
         onCreate: fn(),
+        onConnect: fn(),
     },
 };
 
@@ -29,14 +30,14 @@ export const Connected: Story = {
     },
 };
 
-export const Balance80: Story = {
+export const Balance3: Story = {
     args: {
         decimals: 18,
         symbol: "TEST",
         onCreate: fn(),
         player: {
             address: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
-            balance: (80n * 10n ** 18n).toString(),
+            balance: (3n * 10n ** 18n).toString(),
             draws: 0,
             losses: 0,
             played: 0,

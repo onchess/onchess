@@ -16,7 +16,6 @@ import {
     Player,
     parseTimeControl,
 } from "@onchess/core";
-import { useWeb3Modal } from "@web3modal/wagmi/react";
 import humanizeDuration from "humanize-duration";
 import { FC, useState } from "react";
 import { formatUnits, parseUnits } from "viem";
@@ -25,13 +24,15 @@ export interface CreateGameProps extends PaperProps {
     player?: Player;
     decimals: number;
     symbol: string;
+    onConnect?: () => {};
     onCreate: (params: Omit<CreateGamePayload, "metadata">) => void;
 }
 
 export const timeControls = ["1500", "2700", "1500+10", "2700+10"];
 
 export const CreateGame: FC<CreateGameProps> = (props) => {
-    const { decimals, onCreate, player, symbol, ...otherProps } = props;
+    const { decimals, onConnect, onCreate, player, symbol, ...otherProps } =
+        props;
 
     // player balance
     const balance = player ? BigInt(player.balance) : undefined;
@@ -71,8 +72,6 @@ export const CreateGame: FC<CreateGameProps> = (props) => {
         minRating,
         maxRating,
     ]);
-
-    const { open } = useWeb3Modal();
 
     return (
         <Paper
@@ -140,7 +139,9 @@ export const CreateGame: FC<CreateGameProps> = (props) => {
                         BigInt(bet) > balance && (
                             <Button disabled>Insufficient balance</Button>
                         )}
-                    {!player && <Button onClick={() => open()}>Connect</Button>}
+                    {!player && onConnect && (
+                        <Button onClick={onConnect}>Connect</Button>
+                    )}
                 </Group>
             </Stack>
         </Paper>
