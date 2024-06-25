@@ -4,9 +4,10 @@ import {
     Group,
     LoadingOverlay,
     Stack,
-    Tooltip,
+    ThemeIcon,
 } from "@mantine/core";
 import { LobbyItem, Token } from "@onchess/core";
+import { IconClock, IconCoin, IconStar } from "@tabler/icons-react";
 import { Chess } from "chess.js";
 import { FC } from "react";
 import { BoardTheme, ChessBoard } from "react-fen-chess-board";
@@ -42,19 +43,31 @@ export const WaitOpponent: FC<WaitOpponentProps> = (props) => {
                 <ChessBoard fen={fen} boardTheme={boardTheme} />
             </Box>
             <Group justify="space-between">
-                <AddressText address={lobby.player} />
-                <Badge size="lg">
-                    {formatAmount(BigInt(lobby.bet), token)}
-                </Badge>
-                <Badge size="lg">
-                    {lobby.minRating} - {lobby.maxRating}
-                </Badge>
-                <Tooltip
-                    label={formatTimeControl(lobby.timeControl)}
-                    position="bottom"
-                >
-                    <Badge size="lg">{lobby.timeControl}</Badge>
-                </Tooltip>
+                <AddressText address={lobby.player} fw={600} ff="monospace" />
+                <Group gap={3}>
+                    <ThemeIcon variant="transparent">
+                        <IconCoin />
+                    </ThemeIcon>
+                    <Badge size="lg" variant="outline">
+                        {formatAmount(BigInt(lobby.bet), token)}
+                    </Badge>
+                </Group>
+                <Group gap={3}>
+                    <ThemeIcon variant="transparent">
+                        <IconStar />
+                    </ThemeIcon>
+                    <Badge size="lg" variant="outline">
+                        {lobby.minRating} - {lobby.maxRating}
+                    </Badge>
+                </Group>
+                <Group gap={3}>
+                    <ThemeIcon variant="transparent">
+                        <IconClock />
+                    </ThemeIcon>
+                    <Badge size="lg" variant="outline">
+                        {formatTimeControl(lobby.timeControl)}
+                    </Badge>
+                </Group>
                 <Badge color="gray" variant="dot" size="lg">
                     Waiting opponent...
                 </Badge>
