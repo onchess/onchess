@@ -22,6 +22,7 @@ export interface PlayPageProps extends StackProps {
     now: number;
     onClaimVictory: (params: Omit<GameBasePayload, "metadata">) => void;
     onCreate: (params: Omit<CreateGamePayload, "metadata">) => void;
+    onCreateSession?: () => void;
     onMove: (params: Omit<MovePiecePayload, "metadata" | "sender">) => void;
     onResign: (params: Omit<GameBasePayload, "metadata">) => void;
     player?: Player;
@@ -36,6 +37,7 @@ export const PlayPage: FC<PlayPageProps> = (props) => {
         now,
         onClaimVictory,
         onCreate,
+        onCreateSession,
         onMove,
         onResign,
         player,
@@ -65,6 +67,7 @@ export const PlayPage: FC<PlayPageProps> = (props) => {
                             game={game}
                             now={now}
                             onClaimVictory={onClaimVictory}
+                            onCreateSession={onCreateSession}
                             onMove={onMove}
                             onResign={onResign}
                             player={player}

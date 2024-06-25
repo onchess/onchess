@@ -41,6 +41,30 @@ export const Opening: Story = {
     },
 };
 
+export const SessionSupport: Story = {
+    args: {
+        game: {
+            address: "0x90F79bf6EB2c4f870365E785982E1f101E93b906",
+            black: bob,
+            blackTime: 25 * 60,
+            pgn: new Chess().pgn(),
+            pot: (10n * 10n ** 18n).toString(),
+            timeControl: "1500",
+            updatedAt: now,
+            white: alice,
+            whiteTime: 25 * 60,
+            result: undefined,
+        },
+        now,
+        onClaimVictory: fn(),
+        onCreateSession: fn(),
+        onMove: fn(),
+        onResign: fn(),
+        player: createPlayer(alice),
+        submitting: false,
+    },
+};
+
 export const Submitting: Story = {
     args: {
         game: {
@@ -102,7 +126,7 @@ export const TimeOver: Story = {
             updatedAt: now,
             white: alice,
             whiteTime: 60, // 1 minute
-            result: 1,
+            result: undefined,
         },
         now,
         onClaimVictory: fn(),

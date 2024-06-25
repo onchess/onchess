@@ -1,13 +1,6 @@
 "use client";
 
-import {
-    Badge,
-    Box,
-    Button,
-    Group,
-    LoadingOverlay,
-    Stack,
-} from "@mantine/core";
+import { Box, LoadingOverlay, Stack } from "@mantine/core";
 import { Game, GameBasePayload, MovePiecePayload, Player } from "@onchess/core";
 import { Position } from "chess-fen";
 import { Chess } from "chess.js";
@@ -21,15 +14,14 @@ import {
     SquareRendererFunc,
     defaultRenderSquare,
 } from "react-fen-chess-board";
-import { getTimeLeft } from "../hooks/clock";
-import { Clock } from "./Clock";
-import { PlayerText } from "./PlayerText";
+import { PlayerBar } from "./PlayerBar";
 
 export type GameboardProps = {
     game: Game;
     submitting: boolean;
     now: number;
     onClaimVictory: (params: Omit<GameBasePayload, "metadata">) => void;
+    onCreateSession?: () => void;
     onMove: (params: Omit<MovePiecePayload, "metadata" | "sender">) => void;
     onResign: (params: Omit<GameBasePayload, "metadata">) => void;
     player?: Player; // optional, so we can support "expectators"
@@ -69,8 +61,6 @@ export const Gameboard: FC<GameboardProps> = (props) => {
     // rotate board if black is playing
     const rotated = isBlack;
 
-    const showWhiteResign = isWhite && result === undefined;
-    const showBlackResign = isBlack && result === undefined;
     const whiteTurn = isWhite && turn === "w" && result == undefined;
     const blackTurn = isBlack && turn === "b" && result == undefined;
     const playerTurn = whiteTurn || blackTurn;
@@ -78,94 +68,42 @@ export const Gameboard: FC<GameboardProps> = (props) => {
     const [promotion, setPromotion] = useState<Promotion | null>(null);
     const fen = chess.fen();
 
-    // flag that indicates if white player can claim vitory
-    const whiteTimeLeft = getTimeLeft(
-        now,
-        game.whiteTime,
-        game.updatedAt,
-        turn === "w",
-    );
-    const blackTimeLeft = getTimeLeft(
-        now,
-        game.blackTime,
-        game.updatedAt,
-        turn === "b",
-    );
-    const whiteClaimVictory =
-        isWhite && turn === "b" && !chess.isGameOver() && blackTimeLeft === 0;
-    const blackClaimVictory =
-        isBlack && turn === "w" && !chess.isGameOver() && whiteTimeLeft === 0;
+    const handleClaimVictory = () => onClaimVictory({ address: game.address });
+    const handleResign = () => onResign({ address: game.address });
 
-    const whiteWin = result == 1;
-    const blackWin = result == 0;
-    // players addresses
-    const whiteAddress = (
-        <Group justify="space-between">
-            <PlayerText address={game.white} color="w" isTurn={whiteTurn} />
-            {showWhiteResign && (
-                <Button
-                    disabled={submitting}
-                    onClick={() => onResign({ address: game.address })}
-                    size="xs"
-                >
-                    Resign
-                </Button>
-            )}
-            {whiteClaimVictory && (
-                <Button
-                    disabled={submitting}
-                    onClick={() => onClaimVictory({ address: game.address })}
-                >
-                    Claim Victory
-                </Button>
-            )}
-            {whiteWin && (
-                <Badge bg="yellow" size="lg">
-                    Winner
-                </Badge>
-            )}
-            <Clock
-                active={turn === "w" && result === undefined}
-                now={now}
-                size="lg"
-                secondsRemaining={game.whiteTime}
-                startTime={game.updatedAt}
-            />
-        </Group>
+    // players bars
+    const whiteBar = (
+        <PlayerBar
+            address={game.white}
+            color="w"
+            disabled={submitting}
+            now={now}
+            onResign={handleResign}
+            onClaimVictory={handleClaimVictory}
+            opponentTime={game.blackTime}
+            player={player?.address}
+            result={result}
+            time={game.whiteTime}
+            turn={turn}
+            updatedAt={game.updatedAt}
+        />
     );
-    const blackAddress = (
-        <Group justify="space-between">
-            <PlayerText address={game.black} color="b" isTurn={blackTurn} />
-            {showBlackResign && (
-                <Button
-                    disabled={submitting}
-                    onClick={() => onResign({ address: game.address })}
-                    size="xs"
-                >
-                    Resign
-                </Button>
-            )}
-            {blackClaimVictory && (
-                <Button
-                    disabled={submitting}
-                    onClick={() => onClaimVictory({ address: game.address })}
-                >
-                    Claim Victory
-                </Button>
-            )}
-            {blackWin && (
-                <Badge bg="yellow" size="lg">
-                    Winner
-                </Badge>
-            )}
-            <Clock
-                active={turn === "b" && result === undefined}
-                now={now}
-                size="lg"
-                secondsRemaining={game.blackTime}
-                startTime={game.updatedAt}
-            />
-        </Group>
+
+    const blackBar = (
+        <PlayerBar
+            address={game.black}
+            color="b"
+            disabled={submitting}
+            now={now}
+            onResign={handleResign}
+            onClaimVictory={handleClaimVictory}
+            opponentTime={game.whiteTime}
+            player={player?.address}
+            result={result}
+            time={game.blackTime}
+            turn={turn}
+            updatedAt={game.updatedAt}
+        />
     );
 
     // change default board theme
@@ -226,8 +164,8 @@ export const Gameboard: FC<GameboardProps> = (props) => {
 
     return (
         <Stack miw={600}>
-            {!rotated && blackAddress}
-            {rotated && whiteAddress}
+            {!rotated && blackBar}
+            {rotated && whiteBar}
             <ChessBoardDndProvider>
                 <Box pos="relative">
                     <LoadingOverlay
@@ -246,8 +184,8 @@ export const Gameboard: FC<GameboardProps> = (props) => {
                     />
                 </Box>
             </ChessBoardDndProvider>
-            {rotated && blackAddress}
-            {!rotated && whiteAddress}
+            {rotated && blackBar}
+            {!rotated && whiteBar}
         </Stack>
     );
 };
