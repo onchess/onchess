@@ -89,7 +89,10 @@ importers:
         version: 5.0.3(ilfnnhrtgfsatwkklhjrwvyici)
       '@zerodev/permissions':
         specifier: ^5.3.0
-        version: 5.3.0(@zerodev/sdk@5.2.19(permissionless@0.1.31(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8)))(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8)))(permissionless@0.1.31(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8)))(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8))
+        version: 5.3.0(@zerodev/sdk@5.3.1(permissionless@0.1.31(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8)))(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8)))(permissionless@0.1.31(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8)))(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8))
+      '@zerodev/sdk':
+        specifier: ^5.3.1
+        version: 5.3.1(permissionless@0.1.31(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8)))(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8))
       '@zerodev/wallet':
         specifier: ^0.0.10
         version: 0.0.10(permissionless@0.1.31(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8)))(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8))(wagmi@2.10.4(@tanstack/query-core@5.45.0)(@tanstack/react-query@5.45.1(react@18.3.1))(@types/react@18.3.3)(bufferutil@4.0.8)(encoding@0.1.13)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react-i18next@13.5.0(i18next@22.5.1)(react-dom@18.3.1(react@18.3.1))(react-native@0.74.2(@babel/core@7.24.7)(@babel/preset-env@7.24.7(@babel/core@7.24.7))(@types/react@18.3.3)(bufferutil@4.0.8)(encoding@0.1.13)(react@18.3.1))(react@18.3.1))(react-native@0.74.2(@babel/core@7.24.7)(@babel/preset-env@7.24.7(@babel/core@7.24.7))(@types/react@18.3.3)(bufferutil@4.0.8)(encoding@0.1.13)(react@18.3.1))(react@18.3.1)(rollup@4.18.0)(typescript@5.5.2)(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8))(zod@3.23.8))
@@ -4020,6 +4023,12 @@ packages:
       permissionless: ^0.1.18
       viem: ^2.9.17
 
+  '@zerodev/sdk@5.3.1':
+    resolution: {integrity: sha512-zH2iVhgwuWm9UVzQA/eny5CAQxgZIfktpz+rxW9rw/W3FIErIghTzCYKdJMJ7HbNw2q1pqyQ/IfaFabhcsz0cQ==}
+    peerDependencies:
+      permissionless: ^0.1.18
+      viem: ^2.15.1
+
   '@zerodev/wallet@0.0.10':
     resolution: {integrity: sha512-VLZfYv2CnfZuv7zEZLENBqAoRyqwv2rrc9D4KmwaMi9iXrIFsmp66zKWRhG+oC29BbB1vJ9b3FignRPCu31N2w==}
     peerDependencies:
@@ -5779,10 +5788,6 @@ packages:
 
   flow-enums-runtime@0.0.6:
     resolution: {integrity: sha512-3PYnM29RFXwvAN6Pc/scUfkI7RwhQ/xqyLUyPNlXUp9S40zI8nup9tUSrTLSVnWGBN38FNiGWbwZOB6uR4OGdw==}
-
-  flow-parser@0.238.0:
-    resolution: {integrity: sha512-VE7XSv1epljsIN2YeBnxCmGJihpNIAnLLu/pPOdA+Gkso7qDltJwUi6vfHjgxdBbjSdAuPGnhuOHJUQG+yYwIg==}
-    engines: {node: '>=0.4.0'}
 
   flow-parser@0.238.1:
     resolution: {integrity: sha512-96yrrXJO44F/KxtJpNTDIefEseVHni6vG8b6OVDoI2Of39nigCt4NotZT/VlbrjNOBdmInkw4Wn+mKUcVjEpVA==}
@@ -15545,15 +15550,21 @@ snapshots:
       permissionless: 0.1.31(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8))
       viem: 2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8)
 
-  '@zerodev/permissions@5.3.0(@zerodev/sdk@5.2.19(permissionless@0.1.31(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8)))(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8)))(permissionless@0.1.31(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8)))(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8))':
+  '@zerodev/permissions@5.3.0(@zerodev/sdk@5.3.1(permissionless@0.1.31(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8)))(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8)))(permissionless@0.1.31(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8)))(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8))':
     dependencies:
       '@simplewebauthn/browser': 9.0.1
-      '@zerodev/sdk': 5.2.19(permissionless@0.1.31(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8)))(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8))
+      '@zerodev/sdk': 5.3.1(permissionless@0.1.31(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8)))(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8))
       merkletreejs: 0.3.11
       permissionless: 0.1.31(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8))
       viem: 2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8)
 
   '@zerodev/sdk@5.2.19(permissionless@0.1.31(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8)))(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8))':
+    dependencies:
+      permissionless: 0.1.31(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8))
+      semver: 7.6.2
+      viem: 2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8)
+
+  '@zerodev/sdk@5.3.1(permissionless@0.1.31(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8)))(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8))':
     dependencies:
       permissionless: 0.1.31(viem@2.16.1(bufferutil@4.0.8)(typescript@5.5.2)(zod@3.23.8))
       semver: 7.6.2
@@ -17743,8 +17754,6 @@ snapshots:
 
   flow-enums-runtime@0.0.6: {}
 
-  flow-parser@0.238.0: {}
-
   flow-parser@0.238.1: {}
 
   for-each@0.3.3:
@@ -18628,7 +18637,7 @@ snapshots:
       '@babel/register': 7.24.6(@babel/core@7.24.7)
       babel-core: 7.0.0-bridge.0(@babel/core@7.24.7)
       chalk: 4.1.2
-      flow-parser: 0.238.0
+      flow-parser: 0.238.1
       graceful-fs: 4.2.11
       micromatch: 4.0.7
       neo-async: 2.6.2
