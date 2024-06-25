@@ -11,7 +11,7 @@ import {
     Text,
 } from "@mantine/core";
 import { CreateGamePayload, INITIAL_RATING, Player } from "@onchess/core";
-import { IconBusinessplan, IconClock, IconStar } from "@tabler/icons-react";
+import { IconClock, IconCoin, IconStar } from "@tabler/icons-react";
 import { FC, useState } from "react";
 import { formatUnits, parseUnits } from "viem";
 import { formatTimeControl } from "../util/format";
@@ -61,7 +61,7 @@ export const CreateGame: FC<CreateGameProps> = (props) => {
             <Stack justify="space-around" gap={30}>
                 <Stack gap={5}>
                     <Group gap={5}>
-                        <IconBusinessplan size={16} />
+                        <IconCoin size={16} />
                         <Text fw={800}>Bet</Text>
                     </Group>
                     <SegmentedControl
