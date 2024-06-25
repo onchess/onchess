@@ -10,6 +10,7 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { Token } from "@onchess/core";
+import { IconCornerLeftUp } from "@tabler/icons-react";
 import { FC } from "react";
 import { formatUnits, parseUnits } from "viem";
 
@@ -73,8 +74,8 @@ export const Withdraw: FC<WithdrawProps> = (props) => {
                         size="xxl"
                         variant="unstyled"
                     />
-                    <Group justify="flex-end" gap={0}>
-                        <Text size="sm">{`${formatUnits(applicationBalance, decimals)} ${symbol} available`}</Text>
+                    <Group justify="flex-end" gap={3}>
+                        <Text size="xs">{`${formatUnits(applicationBalance, decimals)} ${symbol} available`}</Text>
                         <Button
                             disabled={disabled || applicationBalance <= 0n}
                             size="compact-xs"
@@ -86,7 +87,17 @@ export const Withdraw: FC<WithdrawProps> = (props) => {
                                 )
                             }
                         >
-                            max
+                            <Group gap={0}>
+                                <IconCornerLeftUp
+                                    color={
+                                        disabled || applicationBalance <= 0n
+                                            ? "lightgray"
+                                            : "blue"
+                                    }
+                                    size={12}
+                                />
+                                <Text size="xs">max</Text>
+                            </Group>
                         </Button>
                     </Group>
                 </Stack>
