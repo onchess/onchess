@@ -17,10 +17,16 @@ export type AccountProps = {
 
 export const Account: FC<AccountProps> = (props) => {
     const { address, ensName, ensAvatar } = props;
+
+    // use user avatar, or generate a jazzicon
     const avatar = ensAvatar || buildDataUrl(address);
+
+    // if ensName is present, use a larger avatar because there are two text lines
+    const avatarSize = ensName ? "md" : "sm";
+
     return (
         <Group gap="xs">
-            <Avatar src={avatar} />
+            <Avatar src={avatar} size={avatarSize} />
             <Stack gap={0}>
                 <Text size="md">{ensName}</Text>
                 <AddressText address={address} size={ensName ? "xs" : "md"} />
