@@ -22,6 +22,7 @@ export const AddressText: FC<AddressTextProps> = (props) => {
     const text = shorten
         ? address.slice(0, 6).concat("...").concat(address.slice(-4))
         : address;
+    const size = textProps.size;
     return (
         <Group gap={2}>
             <Text {...textProps}>{text}</Text>
@@ -36,12 +37,21 @@ export const AddressText: FC<AddressTextProps> = (props) => {
                             <ActionIcon
                                 color={copied ? "teal" : "gray"}
                                 variant="subtle"
+                                size={size}
                                 onClick={copy}
                             >
                                 {copied ? (
-                                    <IconCheck style={{ width: rem(16) }} />
+                                    <IconCheck
+                                        style={{
+                                            width: rem(size === "xs" ? 12 : 16),
+                                        }}
+                                    />
                                 ) : (
-                                    <IconCopy style={{ width: rem(16) }} />
+                                    <IconCopy
+                                        style={{
+                                            width: rem(size === "xs" ? 12 : 16),
+                                        }}
+                                    />
                                 )}
                             </ActionIcon>
                         </Tooltip>
