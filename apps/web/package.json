@@ -24,6 +24,7 @@
         "@mantine/form": "^7.10.2",
         "@mantine/hooks": "^7.10.2",
         "@onchess/core": "workspace:*",
+        "@raugfer/jazzicon": "^1.0.6",
         "@reduxjs/toolkit": "^2.2.5",
         "@tabler/icons-react": "^3.7.0",
         "@tanstack/react-query": "^5.48.0",
