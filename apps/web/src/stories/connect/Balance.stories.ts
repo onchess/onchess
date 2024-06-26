@@ -47,3 +47,17 @@ export const RightIcon: Story = {
         iconPosition: "right",
     },
 };
+
+export const Loading: Story = {
+    args: {
+        token,
+        loading: true,
+    },
+};
+
+export const Error: Story = {
+    args: {
+        error: "Error loading",
+        token,
+    },
+};
