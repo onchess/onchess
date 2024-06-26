@@ -1,10 +1,9 @@
 "use client";
 
-import { passkeyConnector, wrapSmartWallet } from "@zerodev/wallet";
+import { passkeyConnector } from "@zerodev/wallet";
 import { FC, PropsWithChildren } from "react";
 import { createConfig, http } from "wagmi";
 import { Chain } from "wagmi/chains";
-import { metaMask } from "wagmi/connectors";
 import { BasicWalletProvider } from "./basic";
 
 export type ZeroDevWalletProviderProps = PropsWithChildren<{
@@ -18,18 +17,7 @@ export const ZeroDevWalletProvider: FC<ZeroDevWalletProviderProps> = (
     const { chain, projectId } = props;
     const config = createConfig({
         chains: [chain],
-        connectors: [
-            wrapSmartWallet(
-                metaMask({
-                    dappMetadata: {
-                        name: "OnChess",
-                    },
-                }),
-                projectId,
-                "v3",
-            ),
-            passkeyConnector(projectId, chain, "v3", "OnChess"),
-        ],
+        connectors: [passkeyConnector(projectId, chain, "v3", "OnChess")],
         ssr: true,
         transports: {
             [chain.id]: http(),
