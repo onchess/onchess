@@ -158,3 +158,27 @@ export const Expectator: Story = {
         submitting: false,
     },
 };
+
+export const Error: Story = {
+    args: {
+        error: "You are not using a paymaster, and the 0x8128886ba96Ebbd2906ebE0C6Ad47e2d765b167C address did not have enough native tokens to cover the gas costs associated with the user",
+        game: {
+            address: "0x90F79bf6EB2c4f870365E785982E1f101E93b906",
+            black: bob,
+            blackTime: 25 * 60,
+            pgn: new Chess().pgn(),
+            pot: (10n * 10n ** 18n).toString(),
+            timeControl: "1500",
+            updatedAt: now,
+            white: alice,
+            whiteTime: 25 * 60,
+            result: undefined,
+        },
+        now,
+        onClaimVictory: fn(),
+        onMove: fn(),
+        onResign: fn(),
+        player: createPlayer(alice),
+        submitting: false,
+    },
+};

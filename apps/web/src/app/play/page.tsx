@@ -180,14 +180,35 @@ const Play = () => {
 
     const handleResign = async (params: Omit<GameBasePayload, "metadata">) => {
         if (playerState.player && dapp) {
-            const address = params.address as Address;
-            const payload = encodeFunctionData({
-                abi: ABI,
-                functionName: "resign",
-                args: [address],
-            });
-            const hash = await addInput({ args: [dapp, payload] });
-            setHash(hash);
+            // reset error
+            setError(undefined);
+            try {
+                const address = params.address as Address;
+                const payload = encodeFunctionData({
+                    abi: ABI,
+                    functionName: "resign",
+                    args: [address],
+                });
+                const capabilities: WalletCapabilities = {};
+                if (paymasterSupported && paymasterUrl) {
+                    capabilities.paymasterService = { url: paymasterUrl };
+                }
+                const hash = await writeContractsAsync({
+                    contracts: [
+                        {
+                            address: inputBoxAddress,
+                            abi: inputBoxAbi,
+                            functionName: "addInput",
+                            args: [dapp, payload],
+                        },
+                    ],
+                    capabilities,
+                });
+                console.log(hash);
+            } catch (e: any) {
+                setError(e.message);
+                console.log(e.message);
+            }
         }
     };
 
@@ -195,14 +216,33 @@ const Play = () => {
         params: Omit<GameBasePayload, "metadata">,
     ) => {
         if (playerState.player && dapp) {
-            const address = params.address as Address;
-            const payload = encodeFunctionData({
-                abi: ABI,
-                functionName: "claim",
-                args: [address],
-            });
-            const hash = await addInput({ args: [dapp, payload] });
-            setHash(hash);
+            // reset error
+            setError(undefined);
+            try {
+                const address = params.address as Address;
+                const payload = encodeFunctionData({
+                    abi: ABI,
+                    functionName: "claim",
+                    args: [address],
+                });
+                const capabilities: WalletCapabilities = {};
+                if (paymasterSupported && paymasterUrl) {
+                    capabilities.paymasterService = { url: paymasterUrl };
+                }
+                const hash = await writeContractsAsync({
+                    contracts: [
+                        {
+                            address: inputBoxAddress,
+                            abi: inputBoxAbi,
+                            functionName: "addInput",
+                            args: [dapp, payload],
+                        },
+                    ],
+                    capabilities,
+                });
+            } catch (e: any) {
+                setError(e.message);
+            }
         }
     };
 
