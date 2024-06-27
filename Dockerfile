@@ -1,11 +1,11 @@
 # syntax=docker.io/docker/dockerfile:1
-FROM node:20.8.0-bookworm as base
+FROM node:20.8.0-bookworm AS base
 
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
 
-FROM base as builder
+FROM base AS builder
 
 # install turbo globally
 RUN pnpm add -g turbo@2.0.3
@@ -20,7 +20,7 @@ COPY . .
 RUN turbo prune @onchess/backend --docker
 
 # First install the dependencies (as they change less often)
-FROM base as installer
+FROM base AS installer
 WORKDIR /app
 COPY --from=builder /app/out/json/ .
 RUN pnpm install
@@ -34,7 +34,7 @@ RUN pnpm run build --filter=@onchess/backend
 # Here the image's platform MUST be linux/riscv64.
 # Give preference to small base images, which lead to better start-up
 # performance when loading the Cartesi Machine.
-FROM --platform=linux/riscv64 cartesi/node:20.8.0-jammy-slim as runtime
+FROM --platform=linux/riscv64 cartesi/node:20.8.0-jammy-slim AS runtime
 
 ARG MACHINE_EMULATOR_TOOLS_VERSION=0.14.1
 ADD https://github.com/cartesi/machine-emulator-tools/releases/download/v${MACHINE_EMULATOR_TOOLS_VERSION}/machine-emulator-tools-v${MACHINE_EMULATOR_TOOLS_VERSION}.deb /
@@ -64,10 +64,10 @@ ENV ROLLUP_HTTP_SERVER_URL="http://127.0.0.1:5004"
 ENTRYPOINT ["rollup-init"]
 CMD ["node", "index.js"]
 
-FROM runtime as mainnet
+FROM runtime AS mainnet
 ENV CHAIN_ID=8453
 
-FROM runtime as testnet
+FROM runtime AS testnet
 ENV CHAIN_ID=84532
 
 FROM runtime
