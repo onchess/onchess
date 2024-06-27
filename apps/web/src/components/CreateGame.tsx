@@ -22,6 +22,7 @@ export interface CreateGameProps extends PaperProps {
     error?: string;
     player?: Player;
     decimals: number;
+    executing: boolean;
     symbol: string;
     onConnect?: () => {};
     onCreate: (params: Omit<CreateGamePayload, "metadata">) => void;
@@ -32,6 +33,7 @@ export const timeControls = ["1500", "2700", "1500+10", "2700+10"];
 export const CreateGame: FC<CreateGameProps> = (props) => {
     const {
         decimals,
+        executing,
         error,
         onConnect,
         onCreate,
@@ -129,6 +131,7 @@ export const CreateGame: FC<CreateGameProps> = (props) => {
                         balance !== undefined &&
                         BigInt(bet) <= balance && (
                             <Button
+                                loading={executing}
                                 onClick={() => {
                                     onCreate({
                                         bet,

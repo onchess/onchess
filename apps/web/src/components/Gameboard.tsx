@@ -4,7 +4,7 @@ import { Alert, Box, LoadingOverlay, Stack, Textarea } from "@mantine/core";
 import { Game, GameBasePayload, MovePiecePayload, Player } from "@onchess/core";
 import { Position } from "chess-fen";
 import { Chess } from "chess.js";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import {
     BoardTheme,
     ChessBoard,
@@ -61,7 +61,7 @@ export const Gameboard: FC<GameboardProps> = (props) => {
         chess.loadPgn(game.pgn);
     } catch {
         // XXX: do what?
-        // XXX: happenened when player resigns before any move
+        // XXX: happened when player resigns before any move
     }
     const turn = chess.turn();
     const result = game.result;
@@ -75,12 +75,16 @@ export const Gameboard: FC<GameboardProps> = (props) => {
     // rotate board if black is playing
     const rotated = isBlack;
 
-    const whiteTurn = isWhite && turn === "w" && result == undefined;
-    const blackTurn = isBlack && turn === "b" && result == undefined;
+    const whiteTurn = isWhite && turn === "w" && result === undefined;
+    const blackTurn = isBlack && turn === "b" && result === undefined;
     const playerTurn = whiteTurn || blackTurn;
 
     const [promotion, setPromotion] = useState<Promotion | null>(null);
-    const fen = chess.fen();
+    const [fen, setFen] = useState(chess.fen());
+    useEffect(() => {
+        const fen = chess.fen();
+        setFen(fen);
+    }, [game.pgn]);
 
     const handleClaimVictory = () => onClaimVictory({ address: game.address });
     const handleResign = () => onResign({ address: game.address });
@@ -149,6 +153,7 @@ export const Gameboard: FC<GameboardProps> = (props) => {
                 from: fromPosition.toCoordinate(),
                 to: toPosition.toCoordinate(),
             });
+            setFen(chess.fen());
             onMove({ address: game.address, move: move.san });
         } catch (error) {
             console.warn(getErrorMessage(error));

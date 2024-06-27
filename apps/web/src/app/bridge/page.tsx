@@ -120,11 +120,16 @@ export default function BridgePage() {
     }, [supported]);
 
     // smart contracts actions
-    const { writeContractAsync: approve } = useWriteErc20Approve();
-    const { writeContractAsync: deposit } =
+    const { writeContractAsync: approve, isPending: approvePending } =
+        useWriteErc20Approve();
+    const { writeContractAsync: deposit, isPending: depositPending } =
         useWriteErc20PortalDepositErc20Tokens();
-    const { writeContractAsync: addInput } = useWriteInputBoxAddInput();
-    const { writeContractsAsync: approveAndDeposit } = useWriteContracts();
+    const { writeContractAsync: addInput, isPending: addInputPending } =
+        useWriteInputBoxAddInput();
+    const {
+        writeContractsAsync: approveAndDeposit,
+        isPending: approveAndDepositPending,
+    } = useWriteContracts();
 
     // transaction processing
     const [error, setError] = useState<string | undefined>(undefined);
@@ -194,7 +199,14 @@ export default function BridgePage() {
                         balance={balance.toString()}
                         disabled={!dapp}
                         error={error}
-                        executing={isFetching || isBatchFetching}
+                        executing={
+                            isFetching ||
+                            isBatchFetching ||
+                            approvePending ||
+                            depositPending ||
+                            addInputPending ||
+                            approveAndDepositPending
+                        }
                         token={token}
                         onApprove={handleApprove}
                         onApproveAndDeposit={handleApproveAndDeposit}

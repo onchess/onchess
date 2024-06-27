@@ -88,6 +88,7 @@ export const PlayPage: FC<PlayPageProps> = (props) => {
                     {showCreate && (
                         <CreateGame
                             error={error}
+                            executing={submitting}
                             miw={600}
                             player={player}
                             symbol={token.symbol}
@@ -96,7 +97,7 @@ export const PlayPage: FC<PlayPageProps> = (props) => {
                         />
                     )}
                     {showWait && (
-                        <WaitOpponent lobby={lobby} maw={500} token={token} />
+                        <WaitOpponent lobby={lobby} maw={600} token={token} />
                     )}
                 </Center>
             </Stack>
