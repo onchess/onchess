@@ -15,6 +15,7 @@ type Story = StoryObj<typeof meta>;
 export const Disconnected: Story = {
     args: {
         decimals: 6,
+        executing: false,
         symbol: "USDC",
         onCreate: fn(),
         onConnect: fn(),
@@ -24,6 +25,7 @@ export const Disconnected: Story = {
 export const Connected: Story = {
     args: {
         decimals: 6,
+        executing: false,
         symbol: "USDC",
         onCreate: fn(),
         player: createPlayer("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
@@ -33,6 +35,7 @@ export const Connected: Story = {
 export const Balance3: Story = {
     args: {
         decimals: 6,
+        executing: false,
         symbol: "USDC",
         onCreate: fn(),
         player: {
@@ -50,6 +53,7 @@ export const Balance3: Story = {
 export const Error: Story = {
     args: {
         decimals: 6,
+        executing: false,
         error: `The paymaster simulated the user operation to estimate the gas cost and found that the execution will revert.
 
 To troubleshoot this error, we recommend double-checking the logic that you used to create the user operation's callData. If you are batching calls, test each call separately to identify the culprit. If you are unable to quickly identify the issue, you may need to simulate the user operation.`,
