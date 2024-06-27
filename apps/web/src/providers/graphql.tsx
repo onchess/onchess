@@ -2,38 +2,15 @@
 
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 import { FC, ReactNode, useMemo } from "react";
-import { baseSepolia, foundry } from "viem/chains";
-import { useChainId } from "wagmi";
 
 export const GraphQLProvider: FC<{ children: ReactNode[] | ReactNode }> = ({
     children,
 }) => {
-    const chainId = useChainId();
+    const uri = process.env.NEXT_PUBLIC_CARTESI_URL;
+    if (!uri) {
+        throw new Error("Missing NEXT_PUBLIC_CARTESI_URL");
+    }
     const cache = new InMemoryCache();
-    const client = useMemo(() => {
-        switch (chainId) {
-            /*case base.id:
-                return new ApolloClient({
-                    uri: "http://base.api.onchess.xyz/graphql",
-                    cache,
-                });*/
-            case baseSepolia.id:
-                return new ApolloClient({
-                    uri: "https://base-sepolia.api.onchess.xyz/graphql",
-                    cache,
-                });
-            case foundry.id:
-                return new ApolloClient({
-                    uri: "http://localhost:8080/graphql",
-                    cache,
-                });
-            default:
-                return new ApolloClient({
-                    // uri: "http://base.api.onchess.xyz/graphql", // TODO: change to mainnet when we have it
-                    uri: "http://localhost:8080/graphql",
-                    cache,
-                });
-        }
-    }, [chainId]);
+    const client = useMemo(() => new ApolloClient({ uri, cache }), [uri]);
     return <ApolloProvider client={client}>{children}</ApolloProvider>;
 };
