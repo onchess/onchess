@@ -2,7 +2,13 @@
 import { Group, Stack } from "@mantine/core";
 import { ABI, createPlayer } from "@onchess/core";
 import { useEffect, useState } from "react";
-import { Hash, encodeFunctionData, erc20Abi, getAddress } from "viem";
+import {
+    Hash,
+    WalletCapabilities,
+    encodeFunctionData,
+    erc20Abi,
+    getAddress,
+} from "viem";
 import {
     useAccount,
     useReadContracts,
@@ -11,11 +17,16 @@ import {
 import { useCallsStatus, useWriteContracts } from "wagmi/experimental";
 import { Bridge } from "../../components/Bridge";
 import { Header } from "../../components/Header";
-import { useAtomicBatchSupport } from "../../hooks/capabilities";
+import {
+    useAtomicBatchSupport,
+    usePaymasterServiceSupport,
+} from "../../hooks/capabilities";
 import { useApplicationAddress } from "../../hooks/config";
 import {
     erc20PortalAbi,
     erc20PortalAddress,
+    inputBoxAbi,
+    inputBoxAddress,
     useWriteErc20Approve,
     useWriteErc20PortalDepositErc20Tokens,
     useWriteInputBoxAddInput,
@@ -66,6 +77,8 @@ export default function BridgePage() {
         balance !== undefined &&
         token !== undefined;
 
+    // paymaster support
+    const { supported: paymasterSupported } = usePaymasterServiceSupport();
     const paymasterUrl = process.env.NEXT_PUBLIC_PAYMASTER_URL;
 
     // batch transactions capability
@@ -80,7 +93,7 @@ export default function BridgePage() {
                       if (dapp && token) {
                           setError(undefined);
                           try {
-                              const id = await approveAndDeposit({
+                              const id = await writeContractsAsync({
                                   contracts: [
                                       {
                                           abi: erc20Abi,
@@ -126,10 +139,7 @@ export default function BridgePage() {
         useWriteErc20PortalDepositErc20Tokens();
     const { writeContractAsync: addInput, isPending: addInputPending } =
         useWriteInputBoxAddInput();
-    const {
-        writeContractsAsync: approveAndDeposit,
-        isPending: approveAndDepositPending,
-    } = useWriteContracts();
+    const { writeContractsAsync, isPending } = useWriteContracts();
 
     // transaction processing
     const [error, setError] = useState<string | undefined>(undefined);
@@ -179,8 +189,22 @@ export default function BridgePage() {
                     functionName: "withdraw",
                     args: [BigInt(amount)],
                 });
-                const hash = await addInput({ args: [dapp, payload] });
-                setHash(hash);
+                const capabilities: WalletCapabilities = {};
+                if (paymasterSupported && paymasterUrl) {
+                    capabilities.paymasterService = { url: paymasterUrl };
+                }
+                const id = await writeContractsAsync({
+                    contracts: [
+                        {
+                            address: inputBoxAddress,
+                            abi: inputBoxAbi,
+                            functionName: "addInput",
+                            args: [dapp, payload],
+                        },
+                    ],
+                    capabilities,
+                });
+                setCallId(id);
             } catch (e: any) {
                 setError(e.message);
             }
@@ -205,7 +229,7 @@ export default function BridgePage() {
                             approvePending ||
                             depositPending ||
                             addInputPending ||
-                            approveAndDepositPending
+                            isPending
                         }
                         token={token}
                         onApprove={handleApprove}
