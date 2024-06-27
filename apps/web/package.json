@@ -17,12 +17,12 @@
         "storybook": "storybook dev -p 6006"
     },
     "dependencies": {
-        "@apollo/client": "^3.10.6",
+        "@apollo/client": "^3.10.7",
         "@cartesi/rollups": "^1.4.0",
         "@deroll/core": "^0.1.1",
-        "@mantine/core": "^7.10.2",
-        "@mantine/form": "^7.10.2",
-        "@mantine/hooks": "^7.10.2",
+        "@mantine/core": "^7.11.0",
+        "@mantine/form": "^7.11.0",
+        "@mantine/hooks": "^7.11.0",
         "@onchess/core": "workspace:*",
         "@raugfer/jazzicon": "^1.0.6",
         "@reduxjs/toolkit": "^2.2.5",
@@ -44,7 +44,7 @@
         "react-dom": "^18.3.1",
         "react-fen-chess-board": "^2.0.6",
         "react-redux": "^9.1.2",
-        "viem": "^2.16.2",
+        "viem": "2.16.1",
         "wagmi": "^2.10.7"
     },
     "devDependencies": {
