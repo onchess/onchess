@@ -19,4 +19,5 @@ export default {
     players: {},
     rake: "0",
     vouchers: [],
+    isShutdown: false,
 } as State;

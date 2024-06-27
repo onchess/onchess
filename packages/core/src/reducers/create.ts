@@ -17,6 +17,15 @@ export default (state: State, action: PayloadAction<CreateGamePayload>) => {
     // get player (add player if not exists)
     const player = getPlayer(state, msg_sender);
 
+    // deny if application is shutdown
+    if (state.isShutdown) {
+        player.message = createError({
+            text: "Application is shutdown",
+            timestamp,
+        });
+        return;
+    }
+
     // get game parameters
     const { timeControl, minRating, maxRating } = action.payload;
     const bet = BigInt(action.payload.bet);

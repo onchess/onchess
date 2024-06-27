@@ -14,6 +14,7 @@ export const ABI = parseAbi([
     "function withdraw(uint256 amount)",
     "function withdrawRake()",
     "function setRakeDivider(uint32 rake)",
+    "function shutdown()",
     "function transferOwnership(address newOwner)",
     "function upgrade(address dapp)",
 ]);
@@ -32,6 +33,7 @@ const makeActionCreator = (config: Config, chess: ChessSlice) => {
         move,
         resign,
         setRakeDivider,
+        shutdown,
         transferOwnership,
         upgrade,
         withdraw,
@@ -102,6 +104,10 @@ const makeActionCreator = (config: Config, chess: ChessSlice) => {
             case "setRakeDivider": {
                 const [value] = args;
                 return setRakeDivider({ metadata, value });
+            }
+
+            case "shutdown": {
+                return shutdown({ metadata });
             }
 
             case "transferOwnership": {

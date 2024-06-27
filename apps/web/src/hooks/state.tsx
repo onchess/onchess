@@ -48,6 +48,7 @@ export const useLatestState = (pollInterval: number = 2000): StateResponse => {
         lobby: [],
         players: {},
         vouchers: [],
+        isShutdown: false,
     });
 
     // query for latest input notice, with polling
@@ -86,6 +87,7 @@ export const useLatestState = (pollInterval: number = 2000): StateResponse => {
                     lobby: [],
                     players: {},
                     vouchers: [],
+                    isShutdown: false,
                 });
             }
         }

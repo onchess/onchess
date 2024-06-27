@@ -26,6 +26,7 @@ const initialState: State = {
     players: {},
     rake: "0",
     vouchers: [],
+    isShutdown: false,
 };
 createChess(app, initialState);
 

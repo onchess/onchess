@@ -14,6 +14,7 @@ const initialState: State = {
     players: {},
     rake: "0",
     vouchers: [],
+    isShutdown: false,
 };
 
 const chess = chessSlice(initialState);

@@ -240,4 +240,5 @@ export default {
     },
     rake: "0",
     vouchers: [],
+    isShutdown: false,
 } as State;

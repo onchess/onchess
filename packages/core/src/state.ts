@@ -138,4 +138,7 @@ export interface State {
 
     // list of created vouchers
     vouchers: Voucher[];
+
+    // flag to indicate if the app is shutting down
+    isShutdown: boolean;
 }

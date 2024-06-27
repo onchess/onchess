@@ -5,6 +5,7 @@ export { default as depositReducer } from "./deposit.js";
 export { default as moveReducer } from "./move.js";
 export { default as resignReducer } from "./resign.js";
 export { default as setRakeDividerReducer } from "./setRakeDivider.js";
+export { default as shutdownReducer } from "./shutdown.js";
 export { default as transferOwnershipReducer } from "./transferOwnership.js";
 export { default as upgradeReducer } from "./upgrade.js";
 export { default as withdrawReducer } from "./withdraw.js";

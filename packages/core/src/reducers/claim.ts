@@ -36,6 +36,15 @@ export default (state: State, action: PayloadAction<GameBasePayload>) => {
         return;
     }
 
+    // deny if game is already terminated
+    if (game.result !== undefined) {
+        player.message = createError({
+            text: "Game already terminated",
+            timestamp,
+        });
+        return;
+    }
+
     // load chess game
     const chess = new Chess();
     chess.loadPgn(game.pgn);
