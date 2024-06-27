@@ -41,10 +41,10 @@ export const Balance: FC<BalanceProps> = (props) => {
         >
             {balance && (
                 <Group align="baseline" gap={2}>
-                    <Text size="lg" c={c}>
+                    <Text size="lg" c={c} fw={800}>
                         {formatUnits(BigInt(balance), token.decimals)}
                     </Text>
-                    <Text size="xs" c={c}>
+                    <Text size="xs" c={c} fw={800}>
                         {token.symbol}
                     </Text>
                 </Group>
