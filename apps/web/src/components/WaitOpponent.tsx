@@ -4,23 +4,25 @@ import {
     Group,
     LoadingOverlay,
     Stack,
+    StackProps,
     ThemeIcon,
 } from "@mantine/core";
 import { LobbyItem, Token } from "@onchess/core";
-import { IconClock, IconCoin, IconStar } from "@tabler/icons-react";
+import { IconClock, IconStar } from "@tabler/icons-react";
 import { Chess } from "chess.js";
 import { FC } from "react";
 import { BoardTheme, ChessBoard } from "react-fen-chess-board";
-import { formatAmount, formatTimeControl } from "../util/format";
+import { formatTimeControl } from "../util/format";
 import { AddressText } from "./AddressText";
+import { Balance } from "./connect/Balance";
 
-export interface WaitOpponentProps {
+export interface WaitOpponentProps extends StackProps {
     lobby: LobbyItem;
     token: Token;
 }
 
 export const WaitOpponent: FC<WaitOpponentProps> = (props) => {
-    const { lobby, token } = props;
+    const { lobby, token, ...stackProps } = props;
     const chess = new Chess();
     const fen = chess.fen();
 
@@ -31,7 +33,38 @@ export const WaitOpponent: FC<WaitOpponentProps> = (props) => {
     };
 
     return (
-        <Stack miw={600}>
+        <Stack {...stackProps}>
+            <Group justify="space-between">
+                <Group gap={3}>
+                    <Balance token={token} balance={lobby.bet} />
+                </Group>
+                <Group gap={3}>
+                    <Badge
+                        size="lg"
+                        variant="outline"
+                        leftSection={
+                            <ThemeIcon variant="transparent">
+                                <IconStar />
+                            </ThemeIcon>
+                        }
+                    >
+                        {lobby.minRating} - {lobby.maxRating}
+                    </Badge>
+                </Group>
+                <Group gap={3}>
+                    <Badge
+                        size="lg"
+                        variant="outline"
+                        leftSection={
+                            <ThemeIcon variant="transparent">
+                                <IconClock />
+                            </ThemeIcon>
+                        }
+                    >
+                        {formatTimeControl(lobby.timeControl)}
+                    </Badge>
+                </Group>
+            </Group>
             <Box pos="relative">
                 <LoadingOverlay
                     visible
@@ -44,30 +77,6 @@ export const WaitOpponent: FC<WaitOpponentProps> = (props) => {
             </Box>
             <Group justify="space-between">
                 <AddressText address={lobby.player} fw={600} ff="monospace" />
-                <Group gap={3}>
-                    <ThemeIcon variant="transparent">
-                        <IconCoin />
-                    </ThemeIcon>
-                    <Badge size="lg" variant="outline">
-                        {formatAmount(BigInt(lobby.bet), token)}
-                    </Badge>
-                </Group>
-                <Group gap={3}>
-                    <ThemeIcon variant="transparent">
-                        <IconStar />
-                    </ThemeIcon>
-                    <Badge size="lg" variant="outline">
-                        {lobby.minRating} - {lobby.maxRating}
-                    </Badge>
-                </Group>
-                <Group gap={3}>
-                    <ThemeIcon variant="transparent">
-                        <IconClock />
-                    </ThemeIcon>
-                    <Badge size="lg" variant="outline">
-                        {formatTimeControl(lobby.timeControl)}
-                    </Badge>
-                </Group>
                 <Badge color="gray" variant="dot" size="lg">
                     Waiting opponent...
                 </Badge>

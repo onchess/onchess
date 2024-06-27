@@ -95,7 +95,9 @@ export const PlayPage: FC<PlayPageProps> = (props) => {
                             onCreate={onCreate}
                         />
                     )}
-                    {showWait && <WaitOpponent lobby={lobby} token={token} />}
+                    {showWait && (
+                        <WaitOpponent lobby={lobby} maw={500} token={token} />
+                    )}
                 </Center>
             </Stack>
         </Stack>

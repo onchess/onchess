@@ -15,16 +15,16 @@ const alice = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266";
 
 const now = Math.floor(Date.now() / 1000);
 const token: Token = {
-    address: "0x92C6bcA388E99d6B304f1Af3c3Cd749Ff0b591e2",
-    decimals: 18,
-    name: "Test",
-    symbol: "TEST",
+    address: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913", // USDC
+    decimals: 6,
+    name: "USD Coin",
+    symbol: "USDC",
 };
 
 export const Default: Story = {
     args: {
         lobby: {
-            bet: (10n * 10n ** BigInt(token.decimals)).toString(),
+            bet: (1n * 10n ** BigInt(token.decimals)).toString(),
             createdAt: now,
             minRating: 800,
             maxRating: 1200,
