@@ -21,10 +21,11 @@ import { Deposit } from "./Deposit";
 import { Withdraw } from "./Withdraw";
 
 export interface BridgeProps extends StackProps {
-    allowance: string;
-    applicationBalance: string;
-    balance: string;
+    allowance?: string;
+    applicationBalance?: string;
+    balance?: string;
     chain: Chain;
+    connecting: boolean;
     disabled: boolean;
     error?: string;
     executing: boolean;
@@ -32,6 +33,7 @@ export interface BridgeProps extends StackProps {
     initialWithdrawAmount: string | undefined | null;
     onApprove?: (amount: string) => void;
     onApproveAndDeposit?: (amount: string) => void;
+    onConnect: () => void;
     onDeposit?: (amount: string) => void;
     onExecuteVoucher: (voucher: ExecutableVoucher) => void;
     onWithdraw: (amount: string) => void;
@@ -45,6 +47,7 @@ export const Bridge: FC<BridgeProps> = (props) => {
         applicationBalance,
         balance,
         chain,
+        connecting,
         disabled,
         error,
         executing,
@@ -52,6 +55,7 @@ export const Bridge: FC<BridgeProps> = (props) => {
         initialWithdrawAmount,
         onApprove,
         onApproveAndDeposit,
+        onConnect,
         onDeposit,
         onExecuteVoucher,
         onWithdraw,
@@ -142,21 +146,25 @@ export const Bridge: FC<BridgeProps> = (props) => {
                 <Deposit
                     allowance={allowance}
                     balance={balance}
+                    connecting={connecting}
                     disabled={disabled}
                     executing={executing}
                     initialAmount={initialDepositAmount}
                     token={token}
                     onApprove={onApprove}
                     onApproveAndDeposit={onApproveAndDeposit}
+                    onConnect={onConnect}
                     onDeposit={onDeposit}
                 />
             )}
             {operation === "withdraw" && (
                 <Withdraw
                     applicationBalance={applicationBalance}
+                    connecting={connecting}
                     disabled={disabled}
                     executing={executing}
                     initialAmount={initialWithdrawAmount}
+                    onConnect={onConnect}
                     onExecuteVoucher={onExecuteVoucher}
                     onWithdraw={onWithdraw}
                     token={token}

@@ -12,6 +12,7 @@ import {
 } from "viem";
 import {
     useAccount,
+    useConnect,
     useReadContracts,
     useWaitForTransactionReceipt,
 } from "wagmi";
@@ -36,6 +37,7 @@ import {
 } from "../../hooks/contracts";
 import { useLatestState } from "../../hooks/state";
 import { ExecutableVoucher, useVouchers } from "../../hooks/voucher";
+import { extractChain } from "../../providers/wallet";
 import { destination, toEVM, transferTo } from "../../util/voucher";
 
 const BridgePage = () => {
@@ -43,10 +45,13 @@ const BridgePage = () => {
     const depositAmount = searchParams?.get("deposit");
     const withdrawAmount = searchParams?.get("withdraw");
 
+    // read chain from environment variable configuration
+    const chain = extractChain();
+
     const { state } = useLatestState(20000);
 
     const token = state?.config.token;
-    const { address, chain } = useAccount();
+    const { address } = useAccount();
     const dapp = useApplicationAddress();
     const player = address
         ? state && state.players
@@ -91,12 +96,11 @@ const BridgePage = () => {
     const { result: allowance } = data?.[0] || {};
     const { result: balance } = data?.[1] || {};
 
-    const hasData =
-        chain &&
-        player &&
-        allowance !== undefined &&
-        balance !== undefined &&
-        token !== undefined;
+    // connection
+    const { connect, connectors, isPending: isConnecting } = useConnect();
+    const handleConnect = () => connect({ connector: connectors[0] });
+
+    const hasData = token !== undefined;
 
     // paymaster support
     const { supported: paymasterSupported } = usePaymasterServiceSupport();
@@ -268,10 +272,11 @@ const BridgePage = () => {
             <Group p={20} justify="center">
                 {hasData && (
                     <Bridge
-                        applicationBalance={player.balance}
-                        allowance={allowance.toString()}
+                        applicationBalance={player?.balance}
+                        allowance={allowance?.toString()}
                         chain={chain}
-                        balance={balance.toString()}
+                        connecting={isConnecting}
+                        balance={balance?.toString()}
                         disabled={!dapp}
                         error={error}
                         executing={
@@ -286,6 +291,7 @@ const BridgePage = () => {
                         initialWithdrawAmount={withdrawAmount}
                         onApprove={handleApprove}
                         onApproveAndDeposit={handleApproveAndDeposit}
+                        onConnect={handleConnect}
                         onDeposit={handleDeposit}
                         onExecuteVoucher={handleExecuteVoucher}
                         onWithdraw={handleWithdraw}

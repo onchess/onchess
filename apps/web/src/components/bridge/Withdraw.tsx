@@ -23,10 +23,12 @@ import { ExecutableVoucher } from "../../hooks/voucher";
 import { Vouchers } from "./Vouchers";
 
 export interface WithdrawProps {
-    applicationBalance: string;
+    applicationBalance?: string;
+    connecting: boolean;
     disabled: boolean;
     executing: boolean;
     initialAmount: string | undefined | null;
+    onConnect: () => void;
     onExecuteVoucher: (voucher: ExecutableVoucher) => void;
     onWithdraw: (amount: string) => void;
     token: Token;
@@ -35,9 +37,11 @@ export interface WithdrawProps {
 
 export const Withdraw: FC<WithdrawProps> = (props) => {
     const {
+        connecting,
         disabled,
         executing,
         initialAmount,
+        onConnect,
         onExecuteVoucher,
         onWithdraw,
         token,
@@ -73,12 +77,13 @@ export const Withdraw: FC<WithdrawProps> = (props) => {
         validateInputOnChange: true,
     });
 
-    const applicationBalance = BigInt(props.applicationBalance);
+    const applicationBalance = BigInt(props.applicationBalance || 0);
     const { amount } = form.getTransformedValues();
 
     const waitAmount = applicationBalance > 0n && amount <= 0n;
     const insufficientBalance =
-        applicationBalance < amount || applicationBalance === 0n;
+        props.applicationBalance &&
+        (applicationBalance < amount || applicationBalance === 0n);
     const canWithdraw = amount > 0n && applicationBalance >= amount;
 
     // voucher management
@@ -140,6 +145,11 @@ export const Withdraw: FC<WithdrawProps> = (props) => {
                     onClick={() => onWithdraw(amount.toString())}
                 >
                     Withdraw
+                </Button>
+            )}
+            {!props.applicationBalance && (
+                <Button loading={connecting} onClick={onConnect}>
+                    Connect
                 </Button>
             )}
             {vouchers.length > 0 && (
