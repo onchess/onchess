@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { LobbyItem } from "../components/LobbyItem";
 
 const meta = {
-    title: "LobbyItem",
+    title: "Lobby/LobbyItem",
     component: LobbyItem,
     tags: ["autodocs"],
 } satisfies Meta<typeof LobbyItem>;

@@ -5,7 +5,7 @@ import { Chess } from "chess.js";
 import { Gameboard } from "../components/Gameboard";
 
 const meta = {
-    title: "Gameboard",
+    title: "Gameplay/Gameboard",
     component: Gameboard,
     tags: ["autodocs"],
 } satisfies Meta<typeof Gameboard>;

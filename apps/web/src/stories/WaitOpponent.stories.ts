@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { WaitOpponent } from "../components/WaitOpponent";
 
 const meta = {
-    title: "WaitOpponent",
+    title: "Lobby/WaitOpponent",
     component: WaitOpponent,
     tags: ["autodocs"],
 } satisfies Meta<typeof WaitOpponent>;

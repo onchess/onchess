@@ -13,9 +13,9 @@ export type BalanceProps = BadgeProps & {
 };
 
 export const Balance: FC<BalanceProps> = (props) => {
-    const { balance, error, loading, token, ...badgeProps } = props;
+    const { balance, error, iconPosition, loading, token, ...badgeProps } =
+        props;
     const c = balance === "0" ? "dimmed" : undefined;
-    const iconPosition = props.iconPosition || "left";
 
     return (
         <Badge

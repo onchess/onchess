@@ -62,6 +62,7 @@ export const CreateGame: FC<CreateGameProps> = (props) => {
             <Balance
                 token={token}
                 balance={value.toString()}
+                iconPosition="left"
                 variant="transparent"
             />
         </Center>

@@ -16,23 +16,27 @@ import {
     useWaitForTransactionReceipt,
 } from "wagmi";
 import { useCallsStatus, useWriteContracts } from "wagmi/experimental";
-import { Bridge } from "../../components/Bridge";
 import { Header } from "../../components/Header";
+import { Bridge } from "../../components/bridge/Bridge";
 import {
     useAtomicBatchSupport,
     usePaymasterServiceSupport,
 } from "../../hooks/capabilities";
 import { useApplicationAddress } from "../../hooks/config";
 import {
+    cartesiDAppAbi,
     erc20PortalAbi,
     erc20PortalAddress,
     inputBoxAbi,
     inputBoxAddress,
+    useWriteCartesiDAppExecuteVoucher,
     useWriteErc20Approve,
     useWriteErc20PortalDepositErc20Tokens,
     useWriteInputBoxAddInput,
 } from "../../hooks/contracts";
 import { useLatestState } from "../../hooks/state";
+import { ExecutableVoucher, useVouchers } from "../../hooks/voucher";
+import { destination, toEVM, transferTo } from "../../util/voucher";
 
 const BridgePage = () => {
     const searchParams = useSearchParams();
@@ -50,6 +54,18 @@ const BridgePage = () => {
               createPlayer(getAddress(address))
             : createPlayer(getAddress(address))
         : undefined;
+
+    // all vouchers in the state
+    const { data: vouchers } = useVouchers();
+    console.log(vouchers);
+
+    // filter only vouchers that are ERC-20 transfers to the player
+    const playerVouchers =
+        token && player
+            ? vouchers
+                  .filter(destination(token.address))
+                  .filter(transferTo(player.address))
+            : [];
 
     const { data } = useReadContracts({
         contracts: [
@@ -145,6 +161,10 @@ const BridgePage = () => {
     const { writeContractAsync: addInput, isPending: addInputPending } =
         useWriteInputBoxAddInput();
     const { writeContractsAsync, isPending } = useWriteContracts();
+    const {
+        writeContractAsync: executeVoucher,
+        isPending: executeVoucherPending,
+    } = useWriteCartesiDAppExecuteVoucher();
 
     // transaction processing
     const [error, setError] = useState<string | undefined>(undefined);
@@ -164,6 +184,32 @@ const BridgePage = () => {
                     args: [token.address, dapp, BigInt(amount), "0x"],
                 });
                 setHash(hash);
+            } catch (e: any) {
+                setError(e.message);
+            }
+        }
+    };
+
+    const handleExecuteVoucher = async (voucher: ExecutableVoucher) => {
+        if (dapp && voucher.proof) {
+            setError(undefined);
+            try {
+                const capabilities: WalletCapabilities = {};
+                if (paymasterSupported && paymasterUrl) {
+                    capabilities.paymasterService = { url: paymasterUrl };
+                }
+                const id = await writeContractsAsync({
+                    contracts: [
+                        {
+                            abi: cartesiDAppAbi,
+                            functionName: "executeVoucher",
+                            address: dapp,
+                            args: toEVM(voucher),
+                        },
+                    ],
+                    capabilities,
+                });
+                setCallId(id);
             } catch (e: any) {
                 setError(e.message);
             }
@@ -241,8 +287,10 @@ const BridgePage = () => {
                         onApprove={handleApprove}
                         onApproveAndDeposit={handleApproveAndDeposit}
                         onDeposit={handleDeposit}
+                        onExecuteVoucher={handleExecuteVoucher}
                         onWithdraw={handleWithdraw}
                         token={token}
+                        vouchers={playerVouchers}
                     />
                 )}
             </Group>

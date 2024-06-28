@@ -19,11 +19,11 @@ export const ConnectedButton: FC<ConnectedButtonProps> = (props) => {
                         ensName={props.ensName}
                     />
                     <Balance
-                        variant="transparent"
                         balance={props.balance}
+                        iconPosition="right"
                         loading={props.loading}
                         token={props.token}
-                        iconPosition="right"
+                        variant="transparent"
                     />
                 </Group>
             </Paper>

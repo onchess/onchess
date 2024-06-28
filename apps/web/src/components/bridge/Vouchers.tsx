@@ -1,30 +1,25 @@
-import { Voucher } from "@deroll/core";
 import { Stack } from "@mantine/core";
-import { Player, Token } from "@onchess/core";
-import { FC } from "react";
-import { Hex } from "viem";
-import { destination, transferTo } from "../../util/voucher";
-import { Voucher as VoucherComponent } from "./Voucher";
+import { Token } from "@onchess/core";
+import { FC, PropsWithChildren } from "react";
+import { ExecutableVoucher } from "../../hooks/voucher";
+import { WithdrawVoucher } from "./WithdrawVoucher";
 
-export type VoucherProps = {
-    player: Player;
+export type VouchersProps = PropsWithChildren & {
+    onExecute: (voucher: ExecutableVoucher) => void;
     token: Token;
-    vouchers: Voucher[];
+    vouchers: ExecutableVoucher[];
 };
 
-export const Vouchers: FC<VoucherProps> = ({ player, token, vouchers }) => {
-    // filter only vouchers that are ERC-20 transfers to the player
-    const playerVouchers = vouchers
-        .filter(destination(token.address))
-        .filter(transferTo(player.address));
-
+export const Vouchers: FC<VouchersProps> = (props) => {
+    const { onExecute, token, vouchers } = props;
     return (
         <Stack>
-            {playerVouchers.map((voucher, i) => (
-                <VoucherComponent
-                    destination={voucher.destination}
-                    payload={voucher.payload as Hex}
+            {vouchers.map((voucher, i) => (
+                <WithdrawVoucher
                     key={i}
+                    executing={false} // XXX: implementing executing
+                    onExecute={() => onExecute(voucher)}
+                    voucher={voucher}
                     token={token}
                 />
             ))}
