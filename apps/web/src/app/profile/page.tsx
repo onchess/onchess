@@ -2,7 +2,7 @@
 import { Box, Stack } from "@mantine/core";
 import { createPlayer } from "@onchess/core";
 import { getAddress } from "viem";
-import { useAccount } from "wagmi";
+import { useAccount, useConnect, useDisconnect } from "wagmi";
 import { Header } from "../../components/Header";
 import { Profile } from "../../components/Profile";
 import { useLatestState } from "../../hooks/state";
@@ -10,7 +10,13 @@ import { useLatestState } from "../../hooks/state";
 export default function ProfilePage() {
     const { state } = useLatestState(20000);
     const token = state?.config.token;
-    const { address } = useAccount();
+
+    // connection
+    const { address, isConnected } = useAccount();
+    const { connect, connectors, isPending: isConnecting } = useConnect();
+    const { disconnect } = useDisconnect();
+    const handleConnect = () => connect({ connector: connectors[0] });
+
     const player = address
         ? state && state.players
             ? state.players[getAddress(address)] ??
@@ -20,7 +26,15 @@ export default function ProfilePage() {
 
     return (
         <Stack>
-            <Header player={player} token={token} />
+            <Header
+                address={address}
+                isConnecting={isConnecting}
+                isConnected={isConnected}
+                onConnect={handleConnect}
+                onDisconnect={disconnect}
+                player={player}
+                token={token}
+            />
             <Box p={20}>{player && <Profile player={player} />}</Box>
         </Stack>
     );

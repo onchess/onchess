@@ -1,61 +1,72 @@
 "use client";
-import { Button, Group } from "@mantine/core";
+import { ActionIcon, Button, Group, Tooltip } from "@mantine/core";
 import { Token } from "@onchess/core";
+import { IconLogout } from "@tabler/icons-react";
 import { FC } from "react";
-import {
-    useAccount,
-    useConnect,
-    useConnectors,
-    useDisconnect,
-    useEnsAvatar,
-    useEnsName,
-} from "wagmi";
+import { Address } from "viem";
+import { useEnsAvatar, useEnsName } from "wagmi";
 import { ConnectedButton } from "./connect/ConnectedButton";
 
 export type ConnectButtonProps = {
+    address?: Address;
     balance?: string;
-    onClick?: () => void;
+    isConnected: boolean;
+    isConnecting: boolean;
+    onConnect: () => void;
+    onDisconnect: () => void;
     token?: Token;
 };
 
 export const ConnectButton: FC<ConnectButtonProps> = (props) => {
-    const { balance, onClick, token } = props;
-    const connectors = useConnectors();
-    const { connect, isPending } = useConnect();
-    const { address, isConnected } = useAccount();
+    const {
+        address,
+        balance,
+        isConnecting,
+        isConnected,
+        onConnect,
+        onDisconnect,
+        token,
+    } = props;
     const { data: ensName } = useEnsName({ address });
     const { data: ensAvatar } = useEnsAvatar({ name: ensName! });
-    const { disconnect } = useDisconnect();
 
     return (
         <Group>
-            {!isConnected ? (
-                connectors
-                    .filter((c) => c.id === "zerodevPasskeySDK")
-                    .map((connector, index) => (
-                        <Button
-                            key={index}
-                            disabled={isPending}
-                            onClick={() => connect({ connector })}
-                        >
-                            {isPending ? "Connecting..." : "Connect"}
-                        </Button>
-                    ))
-            ) : (
-                <Group>
-                    {address && token && (
-                        <ConnectedButton
-                            address={address}
-                            balance={balance}
-                            ensAvatar={ensAvatar}
-                            ensName={ensName}
-                            loading={false}
-                            onClick={onClick}
-                            token={token}
+            {!isConnected && (
+                <Button
+                    disabled={isConnecting}
+                    loading={isConnecting}
+                    onClick={onConnect}
+                >
+                    Connect
+                </Button>
+            )}
+            {address && token && (
+                <ConnectedButton
+                    address={address}
+                    balance={balance}
+                    ensAvatar={ensAvatar}
+                    ensName={ensName}
+                    loading={false}
+                    token={token}
+                />
+            )}
+
+            {isConnected && (
+                <Tooltip label="Disconnect">
+                    <ActionIcon
+                        aria-label="Disconnect"
+                        onClick={onDisconnect}
+                        variant="subtle"
+                        size="lg"
+                        radius="lg"
+                    >
+                        <IconLogout
+                            style={{ width: "70%", height: "70%" }}
+                            stroke={1.5}
                         />
-                    )}
-                    <Button onClick={() => disconnect()}>Disconnect</Button>
-                </Group>
+                    </ActionIcon>
+                </Tooltip>
             )}
         </Group>
     );

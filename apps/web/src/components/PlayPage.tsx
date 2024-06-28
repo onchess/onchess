@@ -11,14 +11,18 @@ import {
     Token,
 } from "@onchess/core";
 import { FC } from "react";
+import { Address } from "viem";
 import { CreateGame } from "./CreateGame";
 import { Gameboard } from "./Gameboard";
 import { Header } from "./Header";
 import { WaitOpponent } from "./WaitOpponent";
 
 export interface PlayPageProps extends StackProps {
+    address?: Address;
     error?: string;
     game?: Game;
+    isConnected: boolean;
+    isConnecting: boolean;
     lobby?: LobbyItem;
     now: number;
     onClaimVictory: (params: Omit<GameBasePayload, "metadata">) => void;
@@ -26,6 +30,7 @@ export interface PlayPageProps extends StackProps {
     onCreate: (params: Omit<CreateGamePayload, "metadata">) => void;
     onCreateSession?: () => void;
     onDeposit: (amount: string) => void;
+    onDisconnect: () => void;
     onMove: (params: Omit<MovePiecePayload, "metadata" | "sender">) => void;
     onResign: (params: Omit<GameBasePayload, "metadata">) => void;
     player?: Player;
@@ -37,15 +42,19 @@ export interface PlayPageProps extends StackProps {
 
 export const PlayPage: FC<PlayPageProps> = (props) => {
     const {
+        address,
         error,
         game,
         lobby,
         now,
+        isConnected,
+        isConnecting,
         onClaimVictory,
         onConnect,
         onCreate,
         onCreateSession,
         onDeposit,
+        onDisconnect,
         onMove,
         onResign,
         player,
@@ -69,7 +78,15 @@ export const PlayPage: FC<PlayPageProps> = (props) => {
     const showGame = !showWait && game !== undefined;
     return (
         <Stack {...stackProps}>
-            <Header player={player} token={token} />
+            <Header
+                address={address}
+                isConnected={isConnected}
+                isConnecting={isConnecting}
+                onConnect={onConnect}
+                onDisconnect={onDisconnect}
+                player={player}
+                token={token}
+            />
             <Stack p={20}>
                 <Center>
                     {showGame && (
