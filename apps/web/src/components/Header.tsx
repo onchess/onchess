@@ -1,6 +1,15 @@
 "use client";
 
-import { ActionIcon, Anchor, Flex, Group, Text } from "@mantine/core";
+import {
+    ActionIcon,
+    Anchor,
+    Flex,
+    Group,
+    Image,
+    Text,
+    em,
+} from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import { Player, Token } from "@onchess/core";
 import { IconBrandGithub, IconBrandX } from "@tabler/icons-react";
 import { FC } from "react";
@@ -30,19 +39,24 @@ export const Header: FC<HeaderProps> = (props) => {
     } = props;
     const provider = getProviderType();
 
+    const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
+
     return (
         <Group justify="space-between" py={10} px={20}>
-            <Group align="baseline">
-                <Text ff="Cardo" fz={26}>
-                    OnChess
-                </Text>
+            <Group gap={5}>
+                <Image src="/img/onchess_logo.png" h={40} />
+                {!isMobile && (
+                    <Text ff="Cardo" fz={26}>
+                        OnChess
+                    </Text>
+                )}
             </Group>
             <Flex justify="flex-end" align="center" gap={5}>
                 {provider === "WalletConnect" && <w3m-button />}
                 {token && provider === "ZeroDev" && (
                     <ConnectButton
-                        balance={player?.balance}
                         address={address}
+                        balance={player?.balance}
                         isConnecting={isConnecting}
                         isConnected={isConnected}
                         onConnect={onConnect}
