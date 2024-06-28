@@ -40,7 +40,7 @@ export const Balance: FC<BalanceProps> = (props) => {
             }
         >
             {balance && (
-                <Group align="baseline" gap={2}>
+                <Group align="baseline" gap={2} wrap="nowrap">
                     <Text size="lg" c={c} fw={800}>
                         {formatUnits(BigInt(balance), token.decimals)}
                     </Text>
