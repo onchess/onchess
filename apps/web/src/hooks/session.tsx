@@ -22,12 +22,13 @@ export const useSessionId = () => {
     ): Promise<void> => {
         if (walletClient) {
             const extendedClient = walletClient?.extend(walletActionsErc7715());
-            const permissions = await extendedClient.issuePermissions({
+            const permissions = await extendedClient.grantPermissions({
                 expiry,
                 permissions: [
                     {
                         type: "contract-call",
                         data: {
+                            // @ts-ignore : The spec is WIP so ignore the type error for now. Below struct is supported.
                             permissions: [
                                 {
                                     target: inputBoxAddress,
