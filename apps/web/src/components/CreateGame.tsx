@@ -3,6 +3,7 @@
 import {
     Alert,
     Button,
+    Center,
     Group,
     Paper,
     PaperProps,
@@ -11,36 +12,45 @@ import {
     Stack,
     Text,
     Textarea,
+    em,
 } from "@mantine/core";
-import { CreateGamePayload, INITIAL_RATING, Player } from "@onchess/core";
+import { useMediaQuery } from "@mantine/hooks";
+import {
+    CreateGamePayload,
+    INITIAL_RATING,
+    Player,
+    Token,
+} from "@onchess/core";
 import { IconClock, IconCoin, IconStar } from "@tabler/icons-react";
 import { FC, useState } from "react";
-import { formatUnits, parseUnits } from "viem";
+import { parseUnits } from "viem";
 import { formatTimeControl } from "../util/format";
+import { Balance } from "./connect/Balance";
 
 export interface CreateGameProps extends PaperProps {
     error?: string;
     player?: Player;
-    decimals: number;
     executing: boolean;
-    symbol: string;
-    onConnect?: () => {};
+    onConnect?: () => void;
     onCreate: (params: Omit<CreateGamePayload, "metadata">) => void;
+    onDeposit?: (amount: string) => void;
+    token: Token;
 }
 
 export const timeControls = ["1500", "2700", "1500+10", "2700+10"];
 
 export const CreateGame: FC<CreateGameProps> = (props) => {
     const {
-        decimals,
         executing,
         error,
         onConnect,
         onCreate,
+        onDeposit,
         player,
-        symbol,
+        token,
         ...otherProps
     } = props;
+    const { decimals, symbol } = token;
 
     // player balance
     const balance = player ? BigInt(player.balance) : undefined;
@@ -48,9 +58,13 @@ export const CreateGame: FC<CreateGameProps> = (props) => {
     // possible bets
     const bets = ["0.5", "1", "5"].map((v) => parseUnits(v, decimals));
     const betFormat = (value: bigint) => (
-        <Text>
-            {formatUnits(value, decimals)} {symbol}
-        </Text>
+        <Center mih={50}>
+            <Balance
+                token={token}
+                balance={value.toString()}
+                variant="transparent"
+            />
+        </Center>
     );
 
     // bet
@@ -68,6 +82,8 @@ export const CreateGame: FC<CreateGameProps> = (props) => {
         maxRating,
     ]);
 
+    const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
+
     return (
         <Paper {...otherProps} p={20} withBorder>
             <Stack justify="space-around" gap={30}>
@@ -77,12 +93,14 @@ export const CreateGame: FC<CreateGameProps> = (props) => {
                         <Text fw={800}>Bet</Text>
                     </Group>
                     <SegmentedControl
-                        value={bet}
-                        onChange={setBet}
                         data={bets.map((v) => ({
                             value: v.toString(),
                             label: betFormat(v),
                         }))}
+                        fullWidth
+                        onChange={setBet}
+                        orientation={isMobile ? "vertical" : "horizontal"}
+                        value={bet}
                     />
                 </Stack>
                 <Stack gap={5}>
@@ -91,12 +109,18 @@ export const CreateGame: FC<CreateGameProps> = (props) => {
                         <Text fw={800}>Time Control</Text>
                     </Group>
                     <SegmentedControl
-                        value={timeControl}
-                        onChange={setTimeControl}
                         data={timeControls.map((value) => ({
                             value,
-                            label: formatTimeControl(value),
+                            label: (
+                                <Center mih={50}>
+                                    <Text>{formatTimeControl(value)}</Text>
+                                </Center>
+                            ),
                         }))}
+                        fullWidth
+                        onChange={setTimeControl}
+                        orientation={isMobile ? "vertical" : "horizontal"}
+                        value={timeControl}
                     />
                 </Stack>
                 <Stack gap={5}>
@@ -147,10 +171,17 @@ export const CreateGame: FC<CreateGameProps> = (props) => {
                     {player &&
                         balance !== undefined &&
                         BigInt(bet) > balance && (
-                            <Button disabled>Insufficient balance</Button>
+                            <>
+                                <Button disabled>Insufficient balance</Button>
+                                <Button onClick={() => onDeposit?.(bet)}>
+                                    Deposit
+                                </Button>
+                            </>
                         )}
-                    {!player && onConnect && (
-                        <Button onClick={onConnect}>Connect</Button>
+                    {!player && (
+                        <Button onClick={onConnect} loading={executing}>
+                            Connect
+                        </Button>
                     )}
                 </Group>
             </Stack>

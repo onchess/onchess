@@ -18,16 +18,21 @@ export interface WithdrawProps {
     applicationBalance: string;
     disabled: boolean;
     executing: boolean;
+    initialAmount: string | undefined | null;
     onWithdraw: (amount: string) => void;
     token: Token;
 }
 
 export const Withdraw: FC<WithdrawProps> = (props) => {
-    const { disabled, executing, onWithdraw } = props;
+    const { disabled, executing, initialAmount, onWithdraw } = props;
     const { decimals, symbol } = props.token;
 
     const form = useForm({
-        initialValues: { amount: "" },
+        initialValues: {
+            amount: initialAmount
+                ? formatUnits(BigInt(initialAmount), decimals)
+                : "",
+        },
         transformValues: ({ amount }) => {
             let parsed = 0n;
             try {
