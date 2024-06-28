@@ -22,9 +22,11 @@ const token: Token = {
 export const Default: Story = {
     args: {
         applicationBalance: "800000",
+        connecting: false,
         disabled: false,
         executing: false,
         initialAmount: undefined,
+        onConnect: fn(),
         onExecuteVoucher: fn(),
         onWithdraw: fn(),
         token,
@@ -35,9 +37,11 @@ export const Default: Story = {
 export const ZeroBalance: Story = {
     args: {
         applicationBalance: "0",
+        connecting: false,
         disabled: false,
         executing: false,
         initialAmount: undefined,
+        onConnect: fn(),
         onExecuteVoucher: fn(),
         onWithdraw: fn(),
         token,
@@ -48,9 +52,11 @@ export const ZeroBalance: Story = {
 export const InitialAmount: Story = {
     args: {
         applicationBalance: "800000",
+        connecting: false,
         disabled: false,
         executing: false,
         initialAmount: "250000",
+        onConnect: fn(),
         onExecuteVoucher: fn(),
         onWithdraw: fn(),
         token,
@@ -61,9 +67,11 @@ export const InitialAmount: Story = {
 export const Executing: Story = {
     args: {
         applicationBalance: "800000",
+        connecting: false,
         disabled: false,
         executing: true,
         initialAmount: "250000",
+        onConnect: fn(),
         onExecuteVoucher: fn(),
         onWithdraw: fn(),
         token,
@@ -74,9 +82,11 @@ export const Executing: Story = {
 export const Disabled: Story = {
     args: {
         applicationBalance: "800000",
+        connecting: false,
         disabled: true,
         executing: false,
         initialAmount: "250000",
+        onConnect: fn(),
         onExecuteVoucher: fn(),
         onWithdraw: fn(),
         token,
@@ -87,9 +97,11 @@ export const Disabled: Story = {
 export const Vouchers: Story = {
     args: {
         applicationBalance: "800000",
+        connecting: false,
         disabled: false,
         executing: false,
         initialAmount: "250000",
+        onConnect: fn(),
         onExecuteVoucher: fn(),
         onWithdraw: fn(),
         token,

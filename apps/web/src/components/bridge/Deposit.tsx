@@ -16,24 +16,28 @@ import { FC } from "react";
 import { formatUnits, parseUnits } from "viem";
 
 export interface DepositProps {
-    allowance: string;
-    balance: string;
+    allowance?: string;
+    balance?: string;
+    connecting: boolean;
     disabled: boolean;
     executing: boolean;
     initialAmount: string | undefined | null;
     onApprove?: (amount: string) => void;
     onApproveAndDeposit?: (amount: string) => void;
+    onConnect: () => void;
     onDeposit?: (amount: string) => void;
     token: Token;
 }
 
 export const Deposit: FC<DepositProps> = (props) => {
     const {
+        connecting,
         disabled,
         executing,
         initialAmount,
         onApprove,
         onApproveAndDeposit,
+        onConnect,
         onDeposit,
     } = props;
     const { decimals, symbol } = props.token;
@@ -67,12 +71,13 @@ export const Deposit: FC<DepositProps> = (props) => {
         validateInputOnChange: true,
     });
 
-    const allowance = BigInt(props.allowance);
-    const balance = BigInt(props.balance);
+    const allowance = BigInt(props.allowance || 0);
+    const balance = BigInt(props.balance || 0);
     const { amount } = form.getTransformedValues();
 
     const waitAmount = balance > 0n && amount <= 0n;
-    const insufficientBalance = balance < amount || balance === 0n;
+    const insufficientBalance =
+        props.balance && (balance < amount || balance === 0n);
     const canDeposit = amount > 0n && balance >= amount && allowance >= amount;
     const needApproval = amount > 0n && balance >= amount && allowance < amount;
     return (
@@ -166,6 +171,11 @@ export const Deposit: FC<DepositProps> = (props) => {
                     }}
                 >
                     Deposit
+                </Button>
+            )}
+            {(!props.allowance || !props.balance) && (
+                <Button loading={connecting} onClick={onConnect}>
+                    Connect
                 </Button>
             )}
         </Stack>

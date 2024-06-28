@@ -7,7 +7,7 @@ import { ZeroDevWalletProvider } from "./wallet/zerodev";
 
 export type WalletProviderType = "ZeroDev" | "WalletConnect";
 
-const extractChain = () => {
+export const extractChain = () => {
     const chainId = process.env.NEXT_PUBLIC_CHAIN_ID;
     if (!chainId) {
         throw new Error("Missing NEXT_PUBLIC_CHAIN_ID");
