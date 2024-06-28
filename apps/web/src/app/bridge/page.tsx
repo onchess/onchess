@@ -1,7 +1,8 @@
 "use client";
 import { Group, Stack } from "@mantine/core";
 import { ABI, createPlayer } from "@onchess/core";
-import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
 import {
     Hash,
     WalletCapabilities,
@@ -33,7 +34,11 @@ import {
 } from "../../hooks/contracts";
 import { useLatestState } from "../../hooks/state";
 
-export default function BridgePage() {
+const BridgePage = () => {
+    const searchParams = useSearchParams();
+    const depositAmount = searchParams?.get("deposit");
+    const withdrawAmount = searchParams?.get("withdraw");
+
     const { state } = useLatestState(20000);
 
     const token = state?.config.token;
@@ -231,14 +236,24 @@ export default function BridgePage() {
                             addInputPending ||
                             isPending
                         }
-                        token={token}
+                        initialDepositAmount={depositAmount}
+                        initialWithdrawAmount={withdrawAmount}
                         onApprove={handleApprove}
                         onApproveAndDeposit={handleApproveAndDeposit}
                         onDeposit={handleDeposit}
                         onWithdraw={handleWithdraw}
+                        token={token}
                     />
                 )}
             </Group>
         </Stack>
     );
-}
+};
+
+export default () => {
+    return (
+        <Suspense>
+            <BridgePage />
+        </Suspense>
+    );
+};

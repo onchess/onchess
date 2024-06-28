@@ -8,6 +8,7 @@ import {
     State,
     createPlayer,
 } from "@onchess/core";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import {
     Address,
@@ -16,7 +17,7 @@ import {
     encodeFunctionData,
     getAddress,
 } from "viem";
-import { useAccount, useWaitForTransactionReceipt } from "wagmi";
+import { useAccount, useConnect, useWaitForTransactionReceipt } from "wagmi";
 import { useWriteContracts } from "wagmi/experimental";
 import { PlayPage } from "../../components/PlayPage";
 import { usePaymasterServiceSupport } from "../../hooks/capabilities";
@@ -92,6 +93,9 @@ const Play = () => {
         requestPermissionsAsync,
         supported: sessionSupported,
     } = useSessionId();
+
+    // navigation
+    const router = useRouter();
 
     const handleCreate = async (
         params: Omit<CreateGamePayload, "metadata">,
@@ -250,6 +254,13 @@ const Play = () => {
         await requestPermissionsAsync(now + 3600); // XXX: 1 hour
     };
 
+    const { connect, connectors, isPending: isConnecting } = useConnect();
+    const handleConnect = () => connect({ connector: connectors[0] });
+
+    const handleDeposit = async (amount: string) => {
+        router.push(`/bridge?deposit=${amount}`);
+    };
+
     return (
         <PlayPage
             error={error}
@@ -259,13 +270,17 @@ const Play = () => {
             now={now}
             onClaimVictory={handleClaimVictory}
             onCreate={handleCreate}
+            onConnect={handleConnect}
             onCreateSession={sessionSupported ? handleCreateSession : undefined}
+            onDeposit={handleDeposit}
             onMove={handleMove}
             onResign={handleResign}
             player={playerState.player}
             sessionExpiry={sessionExpiry}
             sessionId={sessionId}
-            submitting={isFetching || addInputPending || movePending}
+            submitting={
+                isFetching || addInputPending || movePending || isConnecting
+            }
             token={token}
         />
     );

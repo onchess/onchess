@@ -20,6 +20,7 @@ export interface DepositProps {
     balance: string;
     disabled: boolean;
     executing: boolean;
+    initialAmount: string | undefined | null;
     onApprove?: (amount: string) => void;
     onApproveAndDeposit?: (amount: string) => void;
     onDeposit?: (amount: string) => void;
@@ -27,13 +28,23 @@ export interface DepositProps {
 }
 
 export const Deposit: FC<DepositProps> = (props) => {
-    const { disabled, executing, onApprove, onApproveAndDeposit, onDeposit } =
-        props;
+    const {
+        disabled,
+        executing,
+        initialAmount,
+        onApprove,
+        onApproveAndDeposit,
+        onDeposit,
+    } = props;
     const { decimals, symbol } = props.token;
     const supportBatch = !!onApproveAndDeposit;
 
     const form = useForm({
-        initialValues: { amount: "" },
+        initialValues: {
+            amount: initialAmount
+                ? formatUnits(BigInt(initialAmount), decimals)
+                : "",
+        },
         transformValues: ({ amount }) => {
             let parsed = 0n;
             try {

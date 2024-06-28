@@ -22,8 +22,10 @@ export interface PlayPageProps extends StackProps {
     lobby?: LobbyItem;
     now: number;
     onClaimVictory: (params: Omit<GameBasePayload, "metadata">) => void;
+    onConnect: () => void;
     onCreate: (params: Omit<CreateGamePayload, "metadata">) => void;
     onCreateSession?: () => void;
+    onDeposit: (amount: string) => void;
     onMove: (params: Omit<MovePiecePayload, "metadata" | "sender">) => void;
     onResign: (params: Omit<GameBasePayload, "metadata">) => void;
     player?: Player;
@@ -40,8 +42,10 @@ export const PlayPage: FC<PlayPageProps> = (props) => {
         lobby,
         now,
         onClaimVictory,
+        onConnect,
         onCreate,
         onCreateSession,
+        onDeposit,
         onMove,
         onResign,
         player,
@@ -91,9 +95,10 @@ export const PlayPage: FC<PlayPageProps> = (props) => {
                             executing={submitting}
                             miw={600}
                             player={player}
-                            symbol={token.symbol}
-                            decimals={token.decimals}
                             onCreate={onCreate}
+                            onConnect={onConnect}
+                            onDeposit={onDeposit}
+                            token={token}
                         />
                     )}
                     {showWait && (

@@ -27,6 +27,8 @@ export interface BridgeProps extends StackProps {
     disabled: boolean;
     error?: string;
     executing: boolean;
+    initialDepositAmount: string | undefined | null;
+    initialWithdrawAmount: string | undefined | null;
     onApprove?: (amount: string) => void;
     onApproveAndDeposit?: (amount: string) => void;
     onDeposit?: (amount: string) => void;
@@ -43,6 +45,8 @@ export const Bridge: FC<BridgeProps> = (props) => {
         disabled,
         error,
         executing,
+        initialDepositAmount,
+        initialWithdrawAmount,
         onApprove,
         onApproveAndDeposit,
         onDeposit,
@@ -50,7 +54,9 @@ export const Bridge: FC<BridgeProps> = (props) => {
         token,
         ...stackProps
     } = props;
-    const [operation, setOperation] = useState("deposit");
+    const [operation, setOperation] = useState(
+        initialWithdrawAmount ? "withdraw" : "deposit",
+    );
 
     return (
         <Stack {...stackProps}>
@@ -133,6 +139,7 @@ export const Bridge: FC<BridgeProps> = (props) => {
                     balance={balance}
                     disabled={disabled}
                     executing={executing}
+                    initialAmount={initialDepositAmount}
                     token={token}
                     onApprove={onApprove}
                     onApproveAndDeposit={onApproveAndDeposit}
@@ -144,6 +151,7 @@ export const Bridge: FC<BridgeProps> = (props) => {
                     applicationBalance={applicationBalance}
                     disabled={disabled}
                     executing={executing}
+                    initialAmount={initialWithdrawAmount}
                     onWithdraw={onWithdraw}
                     token={token}
                 />
