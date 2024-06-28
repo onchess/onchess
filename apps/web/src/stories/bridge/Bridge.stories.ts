@@ -2,7 +2,7 @@ import { Token } from "@onchess/core";
 import type { Meta, StoryObj } from "@storybook/react";
 import { fn } from "@storybook/test";
 import { base, baseSepolia } from "viem/chains";
-import { Bridge } from "../components/Bridge";
+import { Bridge } from "../../components/bridge/Bridge";
 
 const meta = {
     title: "Bridge",
@@ -35,8 +35,10 @@ export const Default: Story = {
         initialWithdrawAmount: undefined,
         onApprove: fn(),
         onDeposit: fn(),
+        onExecuteVoucher: fn(),
         onWithdraw: fn(),
         token,
+        vouchers: [],
     },
 };
 
@@ -51,8 +53,10 @@ export const Batch: Story = {
         initialDepositAmount: undefined,
         initialWithdrawAmount: undefined,
         onApproveAndDeposit: fn(),
+        onExecuteVoucher: fn(),
         onWithdraw: fn(),
         token,
+        vouchers: [],
     },
 };
 
@@ -67,8 +71,10 @@ export const Testnet: Story = {
         initialDepositAmount: undefined,
         initialWithdrawAmount: undefined,
         onApproveAndDeposit: fn(),
+        onExecuteVoucher: fn(),
         onWithdraw: fn(),
         token,
+        vouchers: [],
     },
 };
 
@@ -93,8 +99,10 @@ Version: viem@2.16.1
         initialDepositAmount: undefined,
         initialWithdrawAmount: undefined,
         onApproveAndDeposit: fn(),
+        onExecuteVoucher: fn(),
         onWithdraw: fn(),
         token,
+        vouchers: [],
     },
 };
 
@@ -110,8 +118,10 @@ export const Disabled: Story = {
         initialWithdrawAmount: undefined,
         onApprove: fn(),
         onDeposit: fn(),
+        onExecuteVoucher: fn(),
         onWithdraw: fn(),
         token,
+        vouchers: [],
     },
 };
 
@@ -127,8 +137,10 @@ export const NoBalance: Story = {
         initialWithdrawAmount: undefined,
         onApprove: fn(),
         onDeposit: fn(),
+        onExecuteVoucher: fn(),
         onWithdraw: fn(),
         token,
+        vouchers: [],
     },
 };
 
@@ -144,8 +156,10 @@ export const NoAllowance: Story = {
         initialWithdrawAmount: undefined,
         onApprove: fn(),
         onDeposit: fn(),
+        onExecuteVoucher: fn(),
         onWithdraw: fn(),
         token,
+        vouchers: [],
     },
 };
 
@@ -161,8 +175,10 @@ export const Executing: Story = {
         initialWithdrawAmount: undefined,
         onApprove: fn(),
         onDeposit: fn(),
+        onExecuteVoucher: fn(),
         onWithdraw: fn(),
         token,
+        vouchers: [],
     },
 };
 
@@ -178,8 +194,10 @@ export const InitialDepositAmount: Story = {
         initialWithdrawAmount: undefined,
         onApprove: fn(),
         onDeposit: fn(),
+        onExecuteVoucher: fn(),
         onWithdraw: fn(),
         token,
+        vouchers: [],
     },
 };
 
@@ -195,7 +213,9 @@ export const InitialWithdrawAmount: Story = {
         initialWithdrawAmount: amount(8),
         onApprove: fn(),
         onDeposit: fn(),
+        onExecuteVoucher: fn(),
         onWithdraw: fn(),
         token,
+        vouchers: [],
     },
 };

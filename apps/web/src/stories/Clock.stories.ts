@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { Clock } from "../components/Clock";
 
 const meta = {
-    title: "Clock",
+    title: "Gameplay/Clock",
     component: Clock,
     tags: ["autodocs"],
 } satisfies Meta<typeof Clock>;

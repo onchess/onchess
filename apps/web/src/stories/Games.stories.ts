@@ -4,7 +4,7 @@ import { Games } from "../components/Games";
 import full from "./full";
 
 const meta: Meta<typeof Games> = {
-    title: "Games",
+    title: "Gameplay/Games",
     component: Games,
     tags: ["autodocs"],
 };

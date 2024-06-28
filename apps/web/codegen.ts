@@ -9,6 +9,7 @@ const config: CodegenConfig = {
             preset: "client",
             plugins: [],
             presetConfig: {
+                fragmentMasking: false,
                 gqlTagName: "gql",
             },
         },

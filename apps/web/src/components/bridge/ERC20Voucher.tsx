@@ -1,37 +1,54 @@
-import { Badge, Group, Stack, Text } from "@mantine/core";
+import { Badge, Button, Group, Text } from "@mantine/core";
 import { Token } from "@onchess/core";
 import { FC } from "react";
 import { Hex, decodeFunctionData, erc20Abi, formatUnits } from "viem";
-import { AddressText } from "../AddressText";
+import { ExecutableVoucher } from "../../hooks/voucher";
 
 export type ERC20VoucherProps = {
-    executed: boolean | undefined;
-    payload: Hex;
+    executing: boolean;
+    onExecute: () => void;
+    voucher: ExecutableVoucher;
     token: Token;
 };
 
-export const ERC20Voucher: FC<ERC20VoucherProps> = ({ payload, token }) => {
+const dateFormatter = new Intl.DateTimeFormat(undefined, {
+    dateStyle: "medium",
+    timeStyle: "short",
+});
+
+export const ERC20Voucher: FC<ERC20VoucherProps> = (props) => {
+    const { executing, onExecute, token, voucher } = props;
+    const { executable, executed, input, payload } = voucher;
+    const { timestamp } = input;
+
     const { functionName, args } = decodeFunctionData({
         abi: erc20Abi,
-        data: payload,
+        data: payload as Hex,
     });
+
     switch (functionName) {
         case "transfer": {
-            const [to, amount] = args;
+            const [_to, amount] = args;
+            const time = dateFormatter.format(timestamp * 1000);
+            const text = `${formatUnits(amount, token.decimals)} ${token.symbol} requested at ${time}`;
             return (
-                <Group>
-                    <Badge>Transfer</Badge>
-                    <Stack gap={0}>
-                        <Text size="xs">To</Text>
-                        <AddressText address={to} />
-                    </Stack>
-                    <Stack gap={0}>
-                        <Text size="xs">Amount</Text>
-                        <Group align="baseline" gap={5}>
-                            <Text>{formatUnits(amount, token.decimals)}</Text>
-                            <Text size="xs">{token.symbol}</Text>
-                        </Group>
-                    </Stack>
+                <Group justify="space-between">
+                    <Text size="sm">{text}</Text>
+                    {!executed && (
+                        <Button
+                            disabled={!executable}
+                            loading={executing}
+                            onClick={onExecute}
+                            size="compact-xs"
+                        >
+                            Execute
+                        </Button>
+                    )}
+                    {executed && (
+                        <Badge size="sm" variant="light">
+                            Fullfilled
+                        </Badge>
+                    )}
                 </Group>
             );
         }

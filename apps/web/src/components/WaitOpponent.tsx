@@ -36,7 +36,11 @@ export const WaitOpponent: FC<WaitOpponentProps> = (props) => {
         <Stack {...stackProps}>
             <Group justify="space-between">
                 <Group gap={3}>
-                    <Balance token={token} balance={lobby.bet} />
+                    <Balance
+                        balance={lobby.bet}
+                        iconPosition="left"
+                        token={token}
+                    />
                 </Group>
                 <Group gap={3}>
                     <Badge

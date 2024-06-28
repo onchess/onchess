@@ -4,7 +4,7 @@ import { fn } from "@storybook/test";
 import { CreateGame } from "../components/CreateGame";
 
 const meta = {
-    title: "CreateGame",
+    title: "Lobby/CreateGame",
     component: CreateGame,
     tags: ["autodocs"],
 } satisfies Meta<typeof CreateGame>;

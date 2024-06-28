@@ -2,6 +2,7 @@
 import {
     Badge,
     Button,
+    Collapse,
     Group,
     Paper,
     Stack,
@@ -9,23 +10,40 @@ import {
     TextInput,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { useDisclosure } from "@mantine/hooks";
 import { Token } from "@onchess/core";
-import { IconCornerLeftUp } from "@tabler/icons-react";
+import {
+    IconChevronDown,
+    IconChevronUp,
+    IconCornerLeftUp,
+} from "@tabler/icons-react";
 import { FC } from "react";
 import { formatUnits, parseUnits } from "viem";
+import { ExecutableVoucher } from "../../hooks/voucher";
+import { Vouchers } from "./Vouchers";
 
 export interface WithdrawProps {
     applicationBalance: string;
     disabled: boolean;
     executing: boolean;
     initialAmount: string | undefined | null;
+    onExecuteVoucher: (voucher: ExecutableVoucher) => void;
     onWithdraw: (amount: string) => void;
     token: Token;
+    vouchers: ExecutableVoucher[];
 }
 
 export const Withdraw: FC<WithdrawProps> = (props) => {
-    const { disabled, executing, initialAmount, onWithdraw } = props;
-    const { decimals, symbol } = props.token;
+    const {
+        disabled,
+        executing,
+        initialAmount,
+        onExecuteVoucher,
+        onWithdraw,
+        token,
+        vouchers,
+    } = props;
+    const { decimals, symbol } = token;
 
     const form = useForm({
         initialValues: {
@@ -62,6 +80,10 @@ export const Withdraw: FC<WithdrawProps> = (props) => {
     const insufficientBalance =
         applicationBalance < amount || applicationBalance === 0n;
     const canWithdraw = amount > 0n && applicationBalance >= amount;
+
+    // voucher management
+    const [opened, { toggle }] = useDisclosure(false);
+
     return (
         <Stack>
             <Paper p={20} radius="md" bg="gray.1">
@@ -119,6 +141,27 @@ export const Withdraw: FC<WithdrawProps> = (props) => {
                 >
                     Withdraw
                 </Button>
+            )}
+            {vouchers.length > 0 && (
+                <>
+                    <Button
+                        variant="transparent"
+                        onClick={toggle}
+                        size="xs"
+                        rightSection={
+                            opened ? <IconChevronUp /> : <IconChevronDown />
+                        }
+                    >
+                        History
+                    </Button>
+                    <Collapse in={opened}>
+                        <Vouchers
+                            onExecute={onExecuteVoucher}
+                            token={token}
+                            vouchers={vouchers}
+                        />
+                    </Collapse>
+                </>
             )}
         </Stack>
     );

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { MiniGameboard } from "../components/MiniGameboard";
 
 const meta = {
-    title: "MiniGameboard",
+    title: "Gameplay/MiniGameboard",
     component: MiniGameboard,
     tags: ["autodocs"],
 } satisfies Meta<typeof MiniGameboard>;

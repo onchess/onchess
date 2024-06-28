@@ -15,8 +15,9 @@ import { Token } from "@onchess/core";
 import { IconArrowRight } from "@tabler/icons-react";
 import { FC, useState } from "react";
 import { Chain } from "viem";
+import { ExecutableVoucher } from "../../hooks/voucher";
+import { Faucet } from "../Faucet";
 import { Deposit } from "./Deposit";
-import { Faucet } from "./Faucet";
 import { Withdraw } from "./Withdraw";
 
 export interface BridgeProps extends StackProps {
@@ -32,8 +33,10 @@ export interface BridgeProps extends StackProps {
     onApprove?: (amount: string) => void;
     onApproveAndDeposit?: (amount: string) => void;
     onDeposit?: (amount: string) => void;
+    onExecuteVoucher: (voucher: ExecutableVoucher) => void;
     onWithdraw: (amount: string) => void;
     token: Token;
+    vouchers: ExecutableVoucher[];
 }
 
 export const Bridge: FC<BridgeProps> = (props) => {
@@ -50,8 +53,10 @@ export const Bridge: FC<BridgeProps> = (props) => {
         onApprove,
         onApproveAndDeposit,
         onDeposit,
+        onExecuteVoucher,
         onWithdraw,
         token,
+        vouchers,
         ...stackProps
     } = props;
     const [operation, setOperation] = useState(
@@ -152,8 +157,10 @@ export const Bridge: FC<BridgeProps> = (props) => {
                     disabled={disabled}
                     executing={executing}
                     initialAmount={initialWithdrawAmount}
+                    onExecuteVoucher={onExecuteVoucher}
                     onWithdraw={onWithdraw}
                     token={token}
+                    vouchers={vouchers}
                 />
             )}
             {error && (
