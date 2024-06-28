@@ -1,6 +1,7 @@
 "use client";
 
-import { Center, Stack, StackProps } from "@mantine/core";
+import { Stack, StackProps, em } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import {
     CreateGamePayload,
     Game,
@@ -76,6 +77,9 @@ export const PlayPage: FC<PlayPageProps> = (props) => {
 
     // show game if is not waiting and there is a game
     const showGame = !showWait && game !== undefined;
+
+    const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
+
     return (
         <Stack {...stackProps}>
             <Header
@@ -87,41 +91,36 @@ export const PlayPage: FC<PlayPageProps> = (props) => {
                 player={player}
                 token={token}
             />
-            <Stack p={20}>
-                <Center>
-                    {showGame && (
-                        <Gameboard
-                            error={error}
-                            game={game}
-                            now={now}
-                            onClaimVictory={onClaimVictory}
-                            onCreateSession={onCreateSession}
-                            onMove={onMove}
-                            onResign={onResign}
-                            player={player}
-                            sessionExpiry={sessionExpiry}
-                            sessionId={sessionId}
-                            submitting={submitting}
-                        />
-                    )}
-                </Center>
-                <Center>
-                    {showCreate && (
-                        <CreateGame
-                            error={error}
-                            executing={submitting}
-                            miw={600}
-                            player={player}
-                            onCreate={onCreate}
-                            onConnect={onConnect}
-                            onDeposit={onDeposit}
-                            token={token}
-                        />
-                    )}
-                    {showWait && (
-                        <WaitOpponent lobby={lobby} maw={600} token={token} />
-                    )}
-                </Center>
+            <Stack p={20} align={isMobile ? undefined : "center"}>
+                {showGame && (
+                    <Gameboard
+                        error={error}
+                        game={game}
+                        now={now}
+                        onClaimVictory={onClaimVictory}
+                        onCreateSession={onCreateSession}
+                        onMove={onMove}
+                        onResign={onResign}
+                        player={player}
+                        sessionExpiry={sessionExpiry}
+                        sessionId={sessionId}
+                        submitting={submitting}
+                    />
+                )}
+                {showCreate && (
+                    <CreateGame
+                        error={error}
+                        executing={submitting}
+                        player={player}
+                        onCreate={onCreate}
+                        onConnect={onConnect}
+                        onDeposit={onDeposit}
+                        token={token}
+                    />
+                )}
+                {showWait && (
+                    <WaitOpponent lobby={lobby} maw={600} token={token} />
+                )}
             </Stack>
         </Stack>
     );
