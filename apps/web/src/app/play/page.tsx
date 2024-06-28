@@ -271,6 +271,7 @@ const Play = () => {
 
     return (
         <PlayPage
+            address={address}
             error={error}
             game={firstGame}
             isConnected={isConnected}
