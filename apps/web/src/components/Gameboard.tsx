@@ -188,7 +188,7 @@ export const Gameboard: FC<GameboardProps> = (props) => {
     };
 
     return (
-        <Stack miw={600}>
+        <Stack maw={600}>
             {error && (
                 <Alert color="red" title="Error">
                     <Textarea
