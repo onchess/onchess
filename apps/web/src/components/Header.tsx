@@ -4,16 +4,30 @@ import { ActionIcon, Anchor, Flex, Group, Text } from "@mantine/core";
 import { Player, Token } from "@onchess/core";
 import { IconBrandGithub, IconBrandX } from "@tabler/icons-react";
 import { FC } from "react";
+import { Address } from "viem";
 import { getProviderType } from "../providers/wallet";
 import { ConnectButton } from "./ConnectButton";
 
 export type HeaderProps = {
-    address?: string;
+    address?: Address;
+    isConnected: boolean;
+    isConnecting: boolean;
+    onConnect: () => void;
+    onDisconnect: () => void;
     player?: Player;
     token?: Token;
 };
 
-export const Header: FC<HeaderProps> = ({ player, token }) => {
+export const Header: FC<HeaderProps> = (props) => {
+    const {
+        address,
+        isConnected,
+        isConnecting,
+        onConnect,
+        onDisconnect,
+        player,
+        token,
+    } = props;
     const provider = getProviderType();
 
     return (
@@ -26,7 +40,15 @@ export const Header: FC<HeaderProps> = ({ player, token }) => {
             <Flex justify="flex-end" align="center" gap={5}>
                 {provider === "WalletConnect" && <w3m-button />}
                 {token && provider === "ZeroDev" && (
-                    <ConnectButton token={token} balance={player?.balance} />
+                    <ConnectButton
+                        balance={player?.balance}
+                        address={address}
+                        isConnecting={isConnecting}
+                        isConnected={isConnected}
+                        onConnect={onConnect}
+                        onDisconnect={onDisconnect}
+                        token={token}
+                    />
                 )}
                 <Anchor href="https://github.com/onchess" target="_blank">
                     <ActionIcon

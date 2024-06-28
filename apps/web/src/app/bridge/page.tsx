@@ -13,6 +13,7 @@ import {
 import {
     useAccount,
     useConnect,
+    useDisconnect,
     useReadContracts,
     useWaitForTransactionReceipt,
 } from "wagmi";
@@ -51,7 +52,13 @@ const BridgePage = () => {
     const { state } = useLatestState(20000);
 
     const token = state?.config.token;
-    const { address } = useAccount();
+
+    // connection
+    const { address, isConnected } = useAccount();
+    const { connect, connectors, isPending: isConnecting } = useConnect();
+    const { disconnect } = useDisconnect();
+    const handleConnect = () => connect({ connector: connectors[0] });
+
     const dapp = useApplicationAddress();
     const player = address
         ? state && state.players
@@ -95,10 +102,6 @@ const BridgePage = () => {
 
     const { result: allowance } = data?.[0] || {};
     const { result: balance } = data?.[1] || {};
-
-    // connection
-    const { connect, connectors, isPending: isConnecting } = useConnect();
-    const handleConnect = () => connect({ connector: connectors[0] });
 
     const hasData = token !== undefined;
 
@@ -268,7 +271,15 @@ const BridgePage = () => {
 
     return (
         <Stack>
-            <Header player={player} token={token} />
+            <Header
+                address={address}
+                isConnecting={isConnecting}
+                isConnected={isConnected}
+                onConnect={handleConnect}
+                onDisconnect={disconnect}
+                player={player}
+                token={token}
+            />
             <Group p={20} justify="center">
                 {hasData && (
                     <Bridge

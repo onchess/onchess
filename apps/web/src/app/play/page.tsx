@@ -17,7 +17,12 @@ import {
     encodeFunctionData,
     getAddress,
 } from "viem";
-import { useAccount, useConnect, useWaitForTransactionReceipt } from "wagmi";
+import {
+    useAccount,
+    useConnect,
+    useDisconnect,
+    useWaitForTransactionReceipt,
+} from "wagmi";
 import { useWriteContracts } from "wagmi/experimental";
 import { PlayPage } from "../../components/PlayPage";
 import { usePaymasterServiceSupport } from "../../hooks/capabilities";
@@ -57,7 +62,13 @@ const Play = () => {
     const dapp = useApplicationAddress();
     const { state } = useLatestState(2000);
     const token = state?.config.token;
-    const { address } = useAccount();
+
+    // connection
+    const { address, isConnected } = useAccount();
+    const { connect, connectors, isPending: isConnecting } = useConnect();
+    const handleConnect = () => connect({ connector: connectors[0] });
+    const { disconnect } = useDisconnect();
+
     const playerState = state
         ? selectPlayerState(state, address)
         : {
@@ -254,9 +265,6 @@ const Play = () => {
         await requestPermissionsAsync(now + 3600); // XXX: 1 hour
     };
 
-    const { connect, connectors, isPending: isConnecting } = useConnect();
-    const handleConnect = () => connect({ connector: connectors[0] });
-
     const handleDeposit = async (amount: string) => {
         router.push(`/bridge?deposit=${amount}`);
     };
@@ -265,12 +273,15 @@ const Play = () => {
         <PlayPage
             error={error}
             game={firstGame}
+            isConnected={isConnected}
+            isConnecting={isConnecting}
             lobby={firstLobby}
             miw={400}
             now={now}
             onClaimVictory={handleClaimVictory}
             onCreate={handleCreate}
             onConnect={handleConnect}
+            onDisconnect={disconnect}
             onCreateSession={sessionSupported ? handleCreateSession : undefined}
             onDeposit={handleDeposit}
             onMove={handleMove}

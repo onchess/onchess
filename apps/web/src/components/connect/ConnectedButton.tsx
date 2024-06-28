@@ -1,23 +1,23 @@
-import { Group, Paper, UnstyledButton } from "@mantine/core";
+import { Group, Paper, em } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import { FC } from "react";
 import { Account, AccountProps } from "./Account";
 import { Balance, BalanceProps } from "./Balance";
 
-export type ConnectedButtonProps = AccountProps &
-    BalanceProps & {
-        onClick?: () => void;
-    };
+export type ConnectedButtonProps = AccountProps & BalanceProps;
 
 export const ConnectedButton: FC<ConnectedButtonProps> = (props) => {
+    const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
+
     return (
-        <UnstyledButton onClick={props.onClick}>
-            <Paper withBorder p={5}>
-                <Group>
-                    <Account
-                        address={props.address}
-                        ensAvatar={props.ensAvatar}
-                        ensName={props.ensName}
-                    />
+        <Paper withBorder p={5} shadow="sm">
+            <Group>
+                <Account
+                    address={props.address}
+                    ensAvatar={props.ensAvatar}
+                    ensName={props.ensName}
+                />
+                {!isMobile && (
                     <Balance
                         balance={props.balance}
                         iconPosition="right"
@@ -25,8 +25,8 @@ export const ConnectedButton: FC<ConnectedButtonProps> = (props) => {
                         token={props.token}
                         variant="transparent"
                     />
-                </Group>
-            </Paper>
-        </UnstyledButton>
+                )}
+            </Group>
+        </Paper>
     );
 };
