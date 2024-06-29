@@ -5,12 +5,15 @@ export const Menu = () => {
     return (
         <>
             <Anchor href="/play">
-                <Button variant="subtle" leftSection={<IconChessQueenFilled />}>
+                <Button
+                    variant="default"
+                    leftSection={<IconChessQueenFilled />}
+                >
                     Play
                 </Button>
             </Anchor>
             <Anchor href="/bridge">
-                <Button variant="subtle" leftSection={<IconBuildingBridge />}>
+                <Button variant="default" leftSection={<IconBuildingBridge />}>
                     Bridge
                 </Button>
             </Anchor>

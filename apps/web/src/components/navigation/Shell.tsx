@@ -32,7 +32,7 @@ export const Shell: FC<ShellProps> = (props) => {
                         <Anchor href="/">
                             <Avatar src="/img/onchess_logo.png" size="md" />
                         </Anchor>
-                        <Text ff="Cardo" fz={26} visibleFrom="sm">
+                        <Text ff="Cardo" fz={26} visibleFrom="md">
                             OnChess
                         </Text>
                     </Group>

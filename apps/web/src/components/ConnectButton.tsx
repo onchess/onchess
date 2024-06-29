@@ -1,5 +1,5 @@
 "use client";
-import { ActionIcon, Button, Group, Tooltip } from "@mantine/core";
+import { ActionIcon, Button, Tooltip } from "@mantine/core";
 import { Token } from "@onchess/core";
 import { IconLogout } from "@tabler/icons-react";
 import { FC } from "react";
@@ -31,7 +31,7 @@ export const ConnectButton: FC<ConnectButtonProps> = (props) => {
     const { data: ensAvatar } = useEnsAvatar({ name: ensName! });
 
     return (
-        <Group>
+        <>
             {!isConnected && (
                 <Button
                     disabled={isConnecting}
@@ -68,6 +68,6 @@ export const ConnectButton: FC<ConnectButtonProps> = (props) => {
                     </ActionIcon>
                 </Tooltip>
             )}
-        </Group>
+        </>
     );
 };

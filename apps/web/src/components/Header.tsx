@@ -1,4 +1,4 @@
-import { Flex, Group } from "@mantine/core";
+import { Group } from "@mantine/core";
 import { Player, Token } from "@onchess/core";
 import { FC } from "react";
 import { Address } from "viem";
@@ -33,28 +33,26 @@ export const Header: FC<HeaderProps> = (props) => {
 
     return (
         <Group justify="space-between" px={10}>
-            <Group visibleFrom="sm">
+            <Group visibleFrom="sm" gap="xs">
                 <Menu />
             </Group>
-            <Flex justify="flex-end" align="center" gap={5}>
-                {provider === "WalletConnect" && <w3m-button />}
-                {token && provider === "ZeroDev" && (
-                    <ConnectButton
-                        address={address}
-                        balance={player?.balance}
-                        isConnecting={isConnecting}
-                        isConnected={isConnected}
-                        onConnect={onConnect}
-                        onDisconnect={onDisconnect}
-                        token={token}
-                    />
-                )}
-                <ColorSchemeToggle />
-                <Group visibleFrom="sm">
-                    <GitHubLink />
-                    <TwitterLink />
-                </Group>
-            </Flex>
+            {provider === "WalletConnect" && <w3m-button />}
+            {token && provider === "ZeroDev" && (
+                <ConnectButton
+                    address={address}
+                    balance={player?.balance}
+                    isConnecting={isConnecting}
+                    isConnected={isConnected}
+                    onConnect={onConnect}
+                    onDisconnect={onDisconnect}
+                    token={token}
+                />
+            )}
+            <ColorSchemeToggle />
+            <Group visibleFrom="md" gap="xs">
+                <GitHubLink />
+                <TwitterLink />
+            </Group>
         </Group>
     );
 };
