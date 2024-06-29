@@ -86,7 +86,7 @@ export const CreateGame: FC<CreateGameProps> = (props) => {
     const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
 
     return (
-        <Paper {...otherProps} p={20} withBorder>
+        <Paper {...otherProps} p={20}>
             <Stack justify="space-around" gap={30}>
                 <Stack gap={5}>
                     <Group gap={5}>
@@ -149,40 +149,34 @@ export const CreateGame: FC<CreateGameProps> = (props) => {
                         />
                     </Alert>
                 )}
-                <Group>
-                    {player &&
-                        balance !== undefined &&
-                        BigInt(bet) <= balance && (
-                            <Button
-                                loading={executing}
-                                onClick={() => {
-                                    onCreate({
-                                        bet,
-                                        timeControl,
-                                        minRating: rating[0],
-                                        maxRating: rating[1],
-                                    });
-                                }}
-                            >
-                                Play
-                            </Button>
-                        )}
-                    {player &&
-                        balance !== undefined &&
-                        BigInt(bet) > balance && (
-                            <>
-                                <Button disabled>Insufficient balance</Button>
-                                <Button onClick={() => onDeposit?.(bet)}>
-                                    Deposit
-                                </Button>
-                            </>
-                        )}
-                    {!player && (
-                        <Button onClick={onConnect} loading={executing}>
-                            Connect
+                {player && balance !== undefined && BigInt(bet) <= balance && (
+                    <Button
+                        loading={executing}
+                        onClick={() => {
+                            onCreate({
+                                bet,
+                                timeControl,
+                                minRating: rating[0],
+                                maxRating: rating[1],
+                            });
+                        }}
+                    >
+                        Play
+                    </Button>
+                )}
+                {player && balance !== undefined && BigInt(bet) > balance && (
+                    <>
+                        <Button disabled>Insufficient balance</Button>
+                        <Button onClick={() => onDeposit?.(bet)}>
+                            Deposit
                         </Button>
-                    )}
-                </Group>
+                    </>
+                )}
+                {!player && (
+                    <Button onClick={onConnect} loading={executing}>
+                        Connect
+                    </Button>
+                )}
             </Stack>
         </Paper>
     );
