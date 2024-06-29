@@ -16,6 +16,7 @@ export const ConnectedButton: FC<ConnectedButtonProps> = (props) => {
                 />
                 <Balance
                     balance={props.balance}
+                    visibleFrom="sm"
                     iconPosition="right"
                     loading={props.loading}
                     token={props.token}
