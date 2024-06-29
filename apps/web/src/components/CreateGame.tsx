@@ -165,12 +165,12 @@ export const CreateGame: FC<CreateGameProps> = (props) => {
                     </Button>
                 )}
                 {player && balance !== undefined && BigInt(bet) > balance && (
-                    <>
+                    <Group justify="space-evenly" grow>
                         <Button disabled>Insufficient balance</Button>
                         <Button onClick={() => onDeposit?.(bet)}>
                             Deposit
                         </Button>
-                    </>
+                    </Group>
                 )}
                 {!player && (
                     <Button onClick={onConnect} loading={executing}>
