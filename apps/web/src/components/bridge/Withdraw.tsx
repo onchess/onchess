@@ -91,7 +91,7 @@ export const Withdraw: FC<WithdrawProps> = (props) => {
 
     return (
         <Stack>
-            <Paper p={20} radius="md" bg="gray.1">
+            <Paper p={20} radius="md" bg={"var(--mantine-color-default-hover)"}>
                 <Stack gap={0}>
                     <TextInput
                         label="Withdraw"

@@ -58,7 +58,7 @@ export const CreateGame: FC<CreateGameProps> = (props) => {
     // possible bets
     const bets = ["0.5", "1", "5"].map((v) => parseUnits(v, decimals));
     const betFormat = (value: bigint) => (
-        <Center mih={50}>
+        <Center p="sm">
             <Balance
                 token={token}
                 balance={value.toString()}
@@ -113,9 +113,7 @@ export const CreateGame: FC<CreateGameProps> = (props) => {
                         data={timeControls.map((value) => ({
                             value,
                             label: (
-                                <Center mih={50}>
-                                    <Text>{formatTimeControl(value)}</Text>
-                                </Center>
+                                <Text p="sm">{formatTimeControl(value)}</Text>
                             ),
                         }))}
                         fullWidth

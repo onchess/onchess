@@ -80,9 +80,10 @@ export const Deposit: FC<DepositProps> = (props) => {
         props.balance && (balance < amount || balance === 0n);
     const canDeposit = amount > 0n && balance >= amount && allowance >= amount;
     const needApproval = amount > 0n && balance >= amount && allowance < amount;
+
     return (
         <Stack>
-            <Paper p={20} radius="md" bg="gray.1">
+            <Paper p={20} radius="md" bg={"var(--mantine-color-default-hover)"}>
                 <Stack gap={0}>
                     <TextInput
                         {...form.getInputProps("amount")}

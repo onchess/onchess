@@ -1,5 +1,4 @@
 "use client";
-
 import { Stack, StackProps, em } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import {
@@ -15,8 +14,8 @@ import { FC } from "react";
 import { Address } from "viem";
 import { CreateGame } from "./CreateGame";
 import { Gameboard } from "./Gameboard";
-import { Header } from "./Header";
 import { WaitOpponent } from "./WaitOpponent";
+import { Shell } from "./navigation/Shell";
 
 export interface PlayPageProps extends StackProps {
     address?: Address;
@@ -81,47 +80,48 @@ export const PlayPage: FC<PlayPageProps> = (props) => {
     const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
 
     return (
-        <Stack {...stackProps}>
-            <Header
-                address={address}
-                isConnected={isConnected}
-                isConnecting={isConnecting}
-                onConnect={onConnect}
-                onDisconnect={onDisconnect}
-                player={player}
-                token={token}
-            />
-            <Stack p={20} align={isMobile ? undefined : "center"}>
-                {showGame && (
-                    <Gameboard
-                        error={error}
-                        game={game}
-                        now={now}
-                        onClaimVictory={onClaimVictory}
-                        onCreateSession={onCreateSession}
-                        onMove={onMove}
-                        onResign={onResign}
-                        player={player}
-                        sessionExpiry={sessionExpiry}
-                        sessionId={sessionId}
-                        submitting={submitting}
-                    />
-                )}
-                {showCreate && (
-                    <CreateGame
-                        error={error}
-                        executing={submitting}
-                        player={player}
-                        onCreate={onCreate}
-                        onConnect={onConnect}
-                        onDeposit={onDeposit}
-                        token={token}
-                    />
-                )}
-                {showWait && (
-                    <WaitOpponent lobby={lobby} maw={600} token={token} />
-                )}
+        <Shell
+            address={address}
+            isConnected={isConnected}
+            isConnecting={isConnecting}
+            onConnect={onConnect}
+            onDisconnect={onDisconnect}
+            player={player}
+            token={token}
+        >
+            <Stack {...stackProps}>
+                <Stack p={20} align={isMobile ? undefined : "center"}>
+                    {showGame && (
+                        <Gameboard
+                            error={error}
+                            game={game}
+                            now={now}
+                            onClaimVictory={onClaimVictory}
+                            onCreateSession={onCreateSession}
+                            onMove={onMove}
+                            onResign={onResign}
+                            player={player}
+                            sessionExpiry={sessionExpiry}
+                            sessionId={sessionId}
+                            submitting={submitting}
+                        />
+                    )}
+                    {showCreate && (
+                        <CreateGame
+                            error={error}
+                            executing={submitting}
+                            player={player}
+                            onCreate={onCreate}
+                            onConnect={onConnect}
+                            onDeposit={onDeposit}
+                            token={token}
+                        />
+                    )}
+                    {showWait && (
+                        <WaitOpponent lobby={lobby} maw={600} token={token} />
+                    )}
+                </Stack>
             </Stack>
-        </Stack>
+        </Shell>
     );
 };

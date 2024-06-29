@@ -3,8 +3,8 @@ import { Center, Stack } from "@mantine/core";
 import { isAddress } from "viem";
 import { useAccount, useConnect, useDisconnect } from "wagmi";
 import { Gameboard } from "../../components/Gameboard";
-import { Header } from "../../components/Header";
 import { Profile } from "../../components/Profile";
+import { Shell } from "../../components/navigation/Shell";
 import { useClock } from "../../hooks/clock";
 import { useLatestState } from "../../hooks/state";
 
@@ -28,16 +28,15 @@ export default function AddressPage({
     const player = isAddress(address) ? state?.players[address] : undefined;
 
     return (
-        <Stack>
-            <Header
-                address={connectedAddress}
-                isConnecting={isConnecting}
-                isConnected={isConnected}
-                onConnect={handleConnect}
-                onDisconnect={disconnect}
-                player={player}
-                token={token}
-            />
+        <Shell
+            address={connectedAddress}
+            isConnecting={isConnecting}
+            isConnected={isConnected}
+            onConnect={handleConnect}
+            onDisconnect={disconnect}
+            player={player}
+            token={token}
+        >
             {game && (
                 <Center>
                     <Gameboard
@@ -55,6 +54,6 @@ export default function AddressPage({
                     <Profile player={player} />
                 </Stack>
             )}
-        </Stack>
+        </Shell>
     );
 }

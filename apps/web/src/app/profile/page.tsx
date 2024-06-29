@@ -1,10 +1,10 @@
 "use client";
-import { Box, Stack } from "@mantine/core";
+import { Box } from "@mantine/core";
 import { createPlayer } from "@onchess/core";
 import { getAddress } from "viem";
 import { useAccount, useConnect, useDisconnect } from "wagmi";
-import { Header } from "../../components/Header";
 import { Profile } from "../../components/Profile";
+import { Shell } from "../../components/navigation/Shell";
 import { useLatestState } from "../../hooks/state";
 
 export default function ProfilePage() {
@@ -25,17 +25,16 @@ export default function ProfilePage() {
         : undefined;
 
     return (
-        <Stack>
-            <Header
-                address={address}
-                isConnecting={isConnecting}
-                isConnected={isConnected}
-                onConnect={handleConnect}
-                onDisconnect={disconnect}
-                player={player}
-                token={token}
-            />
+        <Shell
+            address={address}
+            isConnecting={isConnecting}
+            isConnected={isConnected}
+            onConnect={handleConnect}
+            onDisconnect={disconnect}
+            player={player}
+            token={token}
+        >
             <Box p={20}>{player && <Profile player={player} />}</Box>
-        </Stack>
+        </Shell>
     );
 }

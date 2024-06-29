@@ -1,5 +1,5 @@
 "use client";
-import { Group, Stack } from "@mantine/core";
+import { Group } from "@mantine/core";
 import { ABI, createPlayer } from "@onchess/core";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
@@ -18,8 +18,8 @@ import {
     useWaitForTransactionReceipt,
 } from "wagmi";
 import { useCallsStatus, useWriteContracts } from "wagmi/experimental";
-import { Header } from "../../components/Header";
 import { Bridge } from "../../components/bridge/Bridge";
+import { Shell } from "../../components/navigation/Shell";
 import {
     useAtomicBatchSupport,
     usePaymasterServiceSupport,
@@ -270,16 +270,15 @@ const BridgePage = () => {
     };
 
     return (
-        <Stack>
-            <Header
-                address={address}
-                isConnecting={isConnecting}
-                isConnected={isConnected}
-                onConnect={handleConnect}
-                onDisconnect={disconnect}
-                player={player}
-                token={token}
-            />
+        <Shell
+            address={address}
+            isConnecting={isConnecting}
+            isConnected={isConnected}
+            onConnect={handleConnect}
+            onDisconnect={disconnect}
+            player={player}
+            token={token}
+        >
             <Group p={20} justify="center">
                 {hasData && (
                     <Bridge
@@ -311,7 +310,7 @@ const BridgePage = () => {
                     />
                 )}
             </Group>
-        </Stack>
+        </Shell>
     );
 };
 

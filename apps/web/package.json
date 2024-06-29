@@ -35,6 +35,7 @@
         "@zerodev/wallet": "^0.1.0",
         "chess-fen": "^1.0.2",
         "chess.js": "1.0.0-beta.8",
+        "clsx": "^2.1.1",
         "encoding": "^0.1.13",
         "humanize-duration": "^3.32.1",
         "next": "^14.2.4",
