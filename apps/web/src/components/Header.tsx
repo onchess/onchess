@@ -1,21 +1,13 @@
-"use client";
-
-import {
-    ActionIcon,
-    Anchor,
-    Flex,
-    Group,
-    Image,
-    Text,
-    em,
-} from "@mantine/core";
-import { useMediaQuery } from "@mantine/hooks";
+import { Flex, Group } from "@mantine/core";
 import { Player, Token } from "@onchess/core";
-import { IconBrandGithub, IconBrandX } from "@tabler/icons-react";
 import { FC } from "react";
 import { Address } from "viem";
 import { getProviderType } from "../providers/wallet";
 import { ConnectButton } from "./ConnectButton";
+import { ColorSchemeToggle } from "./navigation/ColorSchemeToggle";
+import { GitHubLink } from "./navigation/GitHubLink";
+import { Menu } from "./navigation/Menu";
+import { TwitterLink } from "./navigation/TwitterLink";
 
 export type HeaderProps = {
     address?: Address;
@@ -39,17 +31,10 @@ export const Header: FC<HeaderProps> = (props) => {
     } = props;
     const provider = getProviderType();
 
-    const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
-
     return (
-        <Group justify="space-between" py={10} px={20}>
-            <Group gap={5}>
-                <Image src="/img/onchess_logo.png" h={40} />
-                {!isMobile && (
-                    <Text ff="Cardo" fz={26}>
-                        OnChess
-                    </Text>
-                )}
+        <Group justify="space-between" px={10}>
+            <Group visibleFrom="sm">
+                <Menu />
             </Group>
             <Flex justify="flex-end" align="center" gap={5}>
                 {provider === "WalletConnect" && <w3m-button />}
@@ -64,32 +49,11 @@ export const Header: FC<HeaderProps> = (props) => {
                         token={token}
                     />
                 )}
-                <Anchor href="https://github.com/onchess" target="_blank">
-                    <ActionIcon
-                        size="lg"
-                        color="gray"
-                        variant="subtle"
-                        radius="lg"
-                    >
-                        <IconBrandGithub
-                            style={{ width: "70%", height: "70%" }}
-                            stroke={1.5}
-                        />
-                    </ActionIcon>
-                </Anchor>
-                <Anchor href="https://x.com/OnChessProject" target="_blank">
-                    <ActionIcon
-                        size="lg"
-                        color="gray"
-                        variant="subtle"
-                        radius="lg"
-                    >
-                        <IconBrandX
-                            style={{ width: "70%", height: "70%" }}
-                            stroke={1.5}
-                        />
-                    </ActionIcon>
-                </Anchor>
+                <ColorSchemeToggle />
+                <Group visibleFrom="sm">
+                    <GitHubLink />
+                    <TwitterLink />
+                </Group>
             </Flex>
         </Group>
     );
