@@ -1,0 +1,7 @@
+query InputNotice($inputIndex: Int!, $noticeIndex: Int!) {
+    input(index: $inputIndex) {
+        notice(index: $noticeIndex) {
+            payload
+        }
+    }
+}

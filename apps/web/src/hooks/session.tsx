@@ -21,7 +21,7 @@ export const useSessionId = () => {
         expiry: number,
     ): Promise<void> => {
         if (walletClient) {
-            const extendedClient = walletClient?.extend(walletActionsErc7715());
+            const extendedClient = walletClient.extend(walletActionsErc7715());
             const permissions = await extendedClient.grantPermissions({
                 expiry,
                 permissions: [
@@ -50,6 +50,7 @@ export const useSessionId = () => {
                                 },
                             ],
                         },
+                        policies: [],
                     },
                 ],
             });
