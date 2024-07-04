@@ -36,6 +36,7 @@ export interface PlayPageProps extends StackProps {
     player?: Player;
     sessionExpiry?: number;
     sessionId?: string;
+    sessionSupported?: boolean;
     submitting: boolean;
     token?: Token;
 }
@@ -60,6 +61,7 @@ export const PlayPage: FC<PlayPageProps> = (props) => {
         player,
         sessionExpiry,
         sessionId,
+        sessionSupported,
         submitting,
         token,
         ...stackProps
@@ -103,6 +105,7 @@ export const PlayPage: FC<PlayPageProps> = (props) => {
                             player={player}
                             sessionExpiry={sessionExpiry}
                             sessionId={sessionId}
+                            sessionSupported={sessionSupported}
                             submitting={submitting}
                         />
                     )}

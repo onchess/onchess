@@ -28,6 +28,7 @@ export type GameboardProps = {
     player?: Player; // optional, so we can support "expectators"
     sessionExpiry?: number;
     sessionId?: string;
+    sessionSupported?: boolean;
 };
 
 export interface Promotion {
@@ -52,6 +53,7 @@ export const Gameboard: FC<GameboardProps> = (props) => {
         player,
         sessionExpiry,
         sessionId,
+        sessionSupported,
         submitting,
     } = props;
 
@@ -104,6 +106,7 @@ export const Gameboard: FC<GameboardProps> = (props) => {
             result={result}
             sessionExpiry={sessionExpiry}
             sessionId={sessionId}
+            sessionSupported={sessionSupported}
             time={game.whiteTime}
             turn={turn}
             updatedAt={game.updatedAt}
@@ -124,6 +127,7 @@ export const Gameboard: FC<GameboardProps> = (props) => {
             result={result}
             sessionExpiry={sessionExpiry}
             sessionId={sessionId}
+            sessionSupported={sessionSupported}
             time={game.blackTime}
             turn={turn}
             updatedAt={game.updatedAt}

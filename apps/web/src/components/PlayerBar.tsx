@@ -18,6 +18,7 @@ export interface PlayerBarProps extends GroupProps {
     result: 1 | 0 | 0.5 | undefined;
     sessionExpiry?: number;
     sessionId?: string;
+    sessionSupported?: boolean;
     time: number;
     turn: Color;
     updatedAt: number;
@@ -37,6 +38,7 @@ export const PlayerBar: React.FC<PlayerBarProps> = (props) => {
         result,
         sessionExpiry,
         sessionId,
+        sessionSupported,
         time,
         turn,
         updatedAt,
@@ -95,6 +97,7 @@ export const PlayerBar: React.FC<PlayerBarProps> = (props) => {
             {showCreateSession && (
                 <Switch
                     defaultChecked={!hasSession}
+                    disabled={!sessionSupported}
                     label="Sign every move"
                     onClick={() => onCreateSession()}
                 />

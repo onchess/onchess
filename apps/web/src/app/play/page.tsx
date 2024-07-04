@@ -290,6 +290,7 @@ const Play = () => {
             player={playerState.player}
             sessionExpiry={sessionExpiry}
             sessionId={sessionId}
+            sessionSupported={sessionSupported}
             submitting={
                 isFetching || addInputPending || movePending || isConnecting
             }

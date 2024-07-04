@@ -49,7 +49,7 @@ const BridgePage = () => {
     // read chain from environment variable configuration
     const chain = extractChain();
 
-    const { state } = useLatestState(20000);
+    const { loading, state } = useLatestState(20000);
 
     const token = state?.config.token;
 
@@ -69,7 +69,6 @@ const BridgePage = () => {
 
     // all vouchers in the state
     const { data: vouchers } = useVouchers();
-    console.log(vouchers);
 
     // filter only vouchers that are ERC-20 transfers to the player
     const playerVouchers =
@@ -114,6 +113,7 @@ const BridgePage = () => {
     const [handleApproveAndDeposit, setHandleApproveAndDeposit] = useState<
         ((amount: string) => Promise<void>) | undefined
     >(undefined);
+
     useEffect(() => {
         setHandleApproveAndDeposit(
             supported
@@ -295,7 +295,8 @@ const BridgePage = () => {
                             approvePending ||
                             depositPending ||
                             addInputPending ||
-                            isPending
+                            isPending ||
+                            loading
                         }
                         initialDepositAmount={depositAmount}
                         initialWithdrawAmount={withdrawAmount}

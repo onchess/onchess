@@ -1,0 +1,10 @@
+query LatestInputNumber {
+    inputs(last: 1) {
+        edges {
+            node {
+                index
+                status
+            }
+        }
+    }
+}

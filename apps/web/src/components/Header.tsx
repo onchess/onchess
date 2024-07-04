@@ -37,7 +37,7 @@ export const Header: FC<HeaderProps> = (props) => {
                 <Menu />
             </Group>
             {provider === "WalletConnect" && <w3m-button />}
-            {token && provider === "ZeroDev" && (
+            {provider === "ZeroDev" && (
                 <ConnectButton
                     address={address}
                     balance={player?.balance}
