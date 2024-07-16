@@ -28,6 +28,10 @@ export const useSessionId = () => {
                     {
                         type: "contract-call",
                         data: {
+                            address: inputBoxAddress,
+                            calls: [
+                                "function addInput(address _dapp, bytes calldata _input) external returns (bytes32)",
+                            ],
                             // @ts-ignore : The spec is WIP so ignore the type error for now. Below struct is supported.
                             permissions: [
                                 {
