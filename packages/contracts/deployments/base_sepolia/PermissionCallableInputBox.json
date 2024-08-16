@@ -1,0 +1,342 @@
+{
+  "address": "0xB1f698732AC062523Dd87fD261C917c52E1E9378",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "contract IInputBox",
+          "name": "_inputBox",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "target",
+          "type": "address"
+        }
+      ],
+      "name": "AddressEmptyCode",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "FailedInnerCall",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes4",
+          "name": "selector",
+          "type": "bytes4"
+        }
+      ],
+      "name": "NotPermissionCallable",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "dapp",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "inputIndex",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "sender",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes",
+          "name": "input",
+          "type": "bytes"
+        }
+      ],
+      "name": "InputAdded",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_dapp",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes",
+          "name": "_input",
+          "type": "bytes"
+        }
+      ],
+      "name": "addInput",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getInputBox",
+      "outputs": [
+        {
+          "internalType": "contract IInputBox",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_dapp",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "getInputHash",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_dapp",
+          "type": "address"
+        }
+      ],
+      "name": "getNumberOfInputs",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "call",
+          "type": "bytes"
+        }
+      ],
+      "name": "permissionedCall",
+      "outputs": [
+        {
+          "internalType": "bytes",
+          "name": "res",
+          "type": "bytes"
+        }
+      ],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes4",
+          "name": "selector",
+          "type": "bytes4"
+        }
+      ],
+      "name": "supportsPermissionedCallSelector",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x35ea4c9b7f17291b43fb33d8e4ab3ee154e8d4929438e694734f15322a851d08",
+  "receipt": {
+    "to": "0x914d7Fec6aaC8cd542e72Bca78B30650d45643d7",
+    "from": "0x18930e8a66a1DbE21D00581216789AAB7460Afd0",
+    "contractAddress": null,
+    "transactionIndex": 3,
+    "gasUsed": "883202",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x476f1fdbeded6c2c88ed82cfce6530c30c75c828483a4dc158d7446ad91adaa2",
+    "transactionHash": "0x35ea4c9b7f17291b43fb33d8e4ab3ee154e8d4929438e694734f15322a851d08",
+    "logs": [],
+    "blockNumber": 14806795,
+    "cumulativeGasUsed": "1090429",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    "0x59b22D57D4f067708AB0c00552767405926dc768"
+  ],
+  "numDeployments": 1,
+  "solcInputHash": "1211c60828406d2aeb2ad67382e4c948",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.26+commit.8a97fa7a\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"contract IInputBox\",\"name\":\"_inputBox\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"target\",\"type\":\"address\"}],\"name\":\"AddressEmptyCode\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"FailedInnerCall\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"selector\",\"type\":\"bytes4\"}],\"name\":\"NotPermissionCallable\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"dapp\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"inputIndex\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"bytes\",\"name\":\"input\",\"type\":\"bytes\"}],\"name\":\"InputAdded\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_dapp\",\"type\":\"address\"},{\"internalType\":\"bytes\",\"name\":\"_input\",\"type\":\"bytes\"}],\"name\":\"addInput\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getInputBox\",\"outputs\":[{\"internalType\":\"contract IInputBox\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_dapp\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"getInputHash\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_dapp\",\"type\":\"address\"}],\"name\":\"getNumberOfInputs\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"call\",\"type\":\"bytes\"}],\"name\":\"permissionedCall\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"res\",\"type\":\"bytes\"}],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"selector\",\"type\":\"bytes4\"}],\"name\":\"supportsPermissionedCallSelector\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"pure\",\"type\":\"function\"}],\"devdoc\":{\"errors\":{\"AddressEmptyCode(address)\":[{\"details\":\"There's no code at `target` (it is not a contract).\"}],\"FailedInnerCall()\":[{\"details\":\"A call to an address target failed. The target may have reverted.\"}],\"NotPermissionCallable(bytes4)\":[{\"params\":{\"selector\":\"The function that was attempting to go through permissionedCall.\"}}]},\"events\":{\"InputAdded(address,uint256,address,bytes)\":{\"details\":\"MUST be triggered on a successful call to `addInput`.\",\"params\":{\"dapp\":\"The address of the DApp\",\"input\":\"The contents of the input\",\"inputIndex\":\"The index of the input in the input box\",\"sender\":\"The address that sent the input\"}}},\"kind\":\"dev\",\"methods\":{\"addInput(address,bytes)\":{\"details\":\"MUST fire an `InputAdded` event accordingly.      Input larger than machine limit will raise `InputSizeExceedsLimit` error.\",\"params\":{\"_dapp\":\"The address of the DApp\",\"_input\":\"The contents of the input\"},\"returns\":{\"_0\":\"The hash of the input plus some extra metadata\"}},\"getInputBox()\":{\"returns\":{\"_0\":\"The input box\"}},\"getInputHash(address,uint256)\":{\"details\":\"`_index` MUST be in the interval `[0,n)` where `n` is the number of      inputs in the DApp's input box. See the `getNumberOfInputs` function.\",\"params\":{\"_dapp\":\"The address of the DApp\",\"_index\":\"The index of the input in the DApp's input box\"},\"returns\":{\"_0\":\"The hash of the input at the provided index in the DApp's input box\"}},\"getNumberOfInputs(address)\":{\"params\":{\"_dapp\":\"The address of the DApp\"},\"returns\":{\"_0\":\"Number of inputs in the DApp's input box\"}},\"permissionedCall(bytes)\":{\"details\":\"Call data exactly matches valid selector+arguments on this contract.Call data matching required because this performs a self-delegatecall.\",\"params\":{\"call\":\"Call data exactly matching valid selector+arguments on this contract.\"},\"returns\":{\"res\":\"data returned from the inner self-delegatecall.\"}},\"supportsPermissionedCallSelector(bytes4)\":{\"params\":{\"selector\":\"the specific function to check support for.\"},\"returns\":{\"_0\":\"indicator if the selector is supported.\"}}},\"version\":1},\"userdoc\":{\"errors\":{\"NotPermissionCallable(bytes4)\":[{\"notice\":\"Call not enabled through permissionedCall and smart wallet permissions systems.\"}]},\"events\":{\"InputAdded(address,uint256,address,bytes)\":{\"notice\":\"Emitted when an input is added to a DApp's input box.\"}},\"kind\":\"user\",\"methods\":{\"addInput(address,bytes)\":{\"notice\":\"Add an input to a DApp's input box.\"},\"getInputBox()\":{\"notice\":\"Get the input box used by this input relay.\"},\"getInputHash(address,uint256)\":{\"notice\":\"Get the hash of an input in a DApp's input box.\"},\"getNumberOfInputs(address)\":{\"notice\":\"Get the number of inputs in a DApp's input box.\"},\"permissionedCall(bytes)\":{\"notice\":\"Wrap a call to the contract with a new selector.\"},\"supportsPermissionedCallSelector(bytes4)\":{\"notice\":\"Determine if a function selector is allowed via permissionedCall on this contract.\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/PermissionCallableInputBox.sol\":\"PermissionCallableInputBox\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"@cartesi/rollups/contracts/inputs/IInputBox.sol\":{\"content\":\"// (c) Cartesi and individual authors (see AUTHORS)\\n// SPDX-License-Identifier: Apache-2.0 (see LICENSE)\\n\\npragma solidity ^0.8.8;\\n\\n/// @title Input Box interface\\ninterface IInputBox {\\n    /// @notice Emitted when an input is added to a DApp's input box.\\n    /// @param dapp The address of the DApp\\n    /// @param inputIndex The index of the input in the input box\\n    /// @param sender The address that sent the input\\n    /// @param input The contents of the input\\n    /// @dev MUST be triggered on a successful call to `addInput`.\\n    event InputAdded(\\n        address indexed dapp,\\n        uint256 indexed inputIndex,\\n        address sender,\\n        bytes input\\n    );\\n\\n    /// @notice Add an input to a DApp's input box.\\n    /// @param _dapp The address of the DApp\\n    /// @param _input The contents of the input\\n    /// @return The hash of the input plus some extra metadata\\n    /// @dev MUST fire an `InputAdded` event accordingly.\\n    ///      Input larger than machine limit will raise `InputSizeExceedsLimit` error.\\n    function addInput(\\n        address _dapp,\\n        bytes calldata _input\\n    ) external returns (bytes32);\\n\\n    /// @notice Get the number of inputs in a DApp's input box.\\n    /// @param _dapp The address of the DApp\\n    /// @return Number of inputs in the DApp's input box\\n    function getNumberOfInputs(address _dapp) external view returns (uint256);\\n\\n    /// @notice Get the hash of an input in a DApp's input box.\\n    /// @param _dapp The address of the DApp\\n    /// @param _index The index of the input in the DApp's input box\\n    /// @return The hash of the input at the provided index in the DApp's input box\\n    /// @dev `_index` MUST be in the interval `[0,n)` where `n` is the number of\\n    ///      inputs in the DApp's input box. See the `getNumberOfInputs` function.\\n    function getInputHash(\\n        address _dapp,\\n        uint256 _index\\n    ) external view returns (bytes32);\\n}\\n\",\"keccak256\":\"0x95e007391405e86eeb980be9a99e5cf15b34bb5b819292d206ef8a58f9c46c25\",\"license\":\"Apache-2.0 (see LICENSE)\"},\"@cartesi/rollups/contracts/inputs/IInputRelay.sol\":{\"content\":\"// (c) Cartesi and individual authors (see AUTHORS)\\n// SPDX-License-Identifier: Apache-2.0 (see LICENSE)\\n\\npragma solidity ^0.8.8;\\n\\nimport {IInputBox} from \\\"./IInputBox.sol\\\";\\n\\n/// @title Input Relay interface\\ninterface IInputRelay {\\n    // Permissionless functions\\n\\n    /// @notice Get the input box used by this input relay.\\n    /// @return The input box\\n    function getInputBox() external view returns (IInputBox);\\n}\\n\",\"keccak256\":\"0x8c9316c43cc2c7754fbd5abccfcdbc5ed09a2f1228d993240eac6c41ea531521\",\"license\":\"Apache-2.0 (see LICENSE)\"},\"@cartesi/rollups/contracts/inputs/InputRelay.sol\":{\"content\":\"// (c) Cartesi and individual authors (see AUTHORS)\\n// SPDX-License-Identifier: Apache-2.0 (see LICENSE)\\n\\npragma solidity ^0.8.8;\\n\\nimport {IInputRelay} from \\\"./IInputRelay.sol\\\";\\nimport {IInputBox} from \\\"./IInputBox.sol\\\";\\n\\n/// @title Input Relay\\n/// @notice This contract serves as a base for all the other input relays.\\ncontract InputRelay is IInputRelay {\\n    /// @notice The input box used by the input relay.\\n    IInputBox internal immutable inputBox;\\n\\n    /// @notice Constructs the input relay.\\n    /// @param _inputBox The input box used by the input relay\\n    constructor(IInputBox _inputBox) {\\n        inputBox = _inputBox;\\n    }\\n\\n    function getInputBox() external view override returns (IInputBox) {\\n        return inputBox;\\n    }\\n}\\n\",\"keccak256\":\"0xbb489f157a0bd7a9da29b0bf3c47c4b4051d90ccd252abc3f81c8e897329e590\",\"license\":\"Apache-2.0 (see LICENSE)\"},\"@openzeppelin/contracts/utils/Address.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.0) (utils/Address.sol)\\n\\npragma solidity ^0.8.20;\\n\\n/**\\n * @dev Collection of functions related to the address type\\n */\\nlibrary Address {\\n    /**\\n     * @dev The ETH balance of the account is not enough to perform the operation.\\n     */\\n    error AddressInsufficientBalance(address account);\\n\\n    /**\\n     * @dev There's no code at `target` (it is not a contract).\\n     */\\n    error AddressEmptyCode(address target);\\n\\n    /**\\n     * @dev A call to an address target failed. The target may have reverted.\\n     */\\n    error FailedInnerCall();\\n\\n    /**\\n     * @dev Replacement for Solidity's `transfer`: sends `amount` wei to\\n     * `recipient`, forwarding all available gas and reverting on errors.\\n     *\\n     * https://eips.ethereum.org/EIPS/eip-1884[EIP1884] increases the gas cost\\n     * of certain opcodes, possibly making contracts go over the 2300 gas limit\\n     * imposed by `transfer`, making them unable to receive funds via\\n     * `transfer`. {sendValue} removes this limitation.\\n     *\\n     * https://consensys.net/diligence/blog/2019/09/stop-using-soliditys-transfer-now/[Learn more].\\n     *\\n     * IMPORTANT: because control is transferred to `recipient`, care must be\\n     * taken to not create reentrancy vulnerabilities. Consider using\\n     * {ReentrancyGuard} or the\\n     * https://solidity.readthedocs.io/en/v0.8.20/security-considerations.html#use-the-checks-effects-interactions-pattern[checks-effects-interactions pattern].\\n     */\\n    function sendValue(address payable recipient, uint256 amount) internal {\\n        if (address(this).balance < amount) {\\n            revert AddressInsufficientBalance(address(this));\\n        }\\n\\n        (bool success, ) = recipient.call{value: amount}(\\\"\\\");\\n        if (!success) {\\n            revert FailedInnerCall();\\n        }\\n    }\\n\\n    /**\\n     * @dev Performs a Solidity function call using a low level `call`. A\\n     * plain `call` is an unsafe replacement for a function call: use this\\n     * function instead.\\n     *\\n     * If `target` reverts with a revert reason or custom error, it is bubbled\\n     * up by this function (like regular Solidity function calls). However, if\\n     * the call reverted with no returned reason, this function reverts with a\\n     * {FailedInnerCall} error.\\n     *\\n     * Returns the raw returned data. To convert to the expected return value,\\n     * use https://solidity.readthedocs.io/en/latest/units-and-global-variables.html?highlight=abi.decode#abi-encoding-and-decoding-functions[`abi.decode`].\\n     *\\n     * Requirements:\\n     *\\n     * - `target` must be a contract.\\n     * - calling `target` with `data` must not revert.\\n     */\\n    function functionCall(address target, bytes memory data) internal returns (bytes memory) {\\n        return functionCallWithValue(target, data, 0);\\n    }\\n\\n    /**\\n     * @dev Same as {xref-Address-functionCall-address-bytes-}[`functionCall`],\\n     * but also transferring `value` wei to `target`.\\n     *\\n     * Requirements:\\n     *\\n     * - the calling contract must have an ETH balance of at least `value`.\\n     * - the called Solidity function must be `payable`.\\n     */\\n    function functionCallWithValue(address target, bytes memory data, uint256 value) internal returns (bytes memory) {\\n        if (address(this).balance < value) {\\n            revert AddressInsufficientBalance(address(this));\\n        }\\n        (bool success, bytes memory returndata) = target.call{value: value}(data);\\n        return verifyCallResultFromTarget(target, success, returndata);\\n    }\\n\\n    /**\\n     * @dev Same as {xref-Address-functionCall-address-bytes-}[`functionCall`],\\n     * but performing a static call.\\n     */\\n    function functionStaticCall(address target, bytes memory data) internal view returns (bytes memory) {\\n        (bool success, bytes memory returndata) = target.staticcall(data);\\n        return verifyCallResultFromTarget(target, success, returndata);\\n    }\\n\\n    /**\\n     * @dev Same as {xref-Address-functionCall-address-bytes-}[`functionCall`],\\n     * but performing a delegate call.\\n     */\\n    function functionDelegateCall(address target, bytes memory data) internal returns (bytes memory) {\\n        (bool success, bytes memory returndata) = target.delegatecall(data);\\n        return verifyCallResultFromTarget(target, success, returndata);\\n    }\\n\\n    /**\\n     * @dev Tool to verify that a low level call to smart-contract was successful, and reverts if the target\\n     * was not a contract or bubbling up the revert reason (falling back to {FailedInnerCall}) in case of an\\n     * unsuccessful call.\\n     */\\n    function verifyCallResultFromTarget(\\n        address target,\\n        bool success,\\n        bytes memory returndata\\n    ) internal view returns (bytes memory) {\\n        if (!success) {\\n            _revert(returndata);\\n        } else {\\n            // only check if target is a contract if the call was successful and the return data is empty\\n            // otherwise we already know that it was a contract\\n            if (returndata.length == 0 && target.code.length == 0) {\\n                revert AddressEmptyCode(target);\\n            }\\n            return returndata;\\n        }\\n    }\\n\\n    /**\\n     * @dev Tool to verify that a low level call was successful, and reverts if it wasn't, either by bubbling the\\n     * revert reason or with a default {FailedInnerCall} error.\\n     */\\n    function verifyCallResult(bool success, bytes memory returndata) internal pure returns (bytes memory) {\\n        if (!success) {\\n            _revert(returndata);\\n        } else {\\n            return returndata;\\n        }\\n    }\\n\\n    /**\\n     * @dev Reverts with returndata if present. Otherwise reverts with {FailedInnerCall}.\\n     */\\n    function _revert(bytes memory returndata) private pure {\\n        // Look for revert reason and bubble it up if present\\n        if (returndata.length > 0) {\\n            // The easiest way to bubble the revert reason is using memory via assembly\\n            /// @solidity memory-safe-assembly\\n            assembly {\\n                let returndata_size := mload(returndata)\\n                revert(add(32, returndata), returndata_size)\\n            }\\n        } else {\\n            revert FailedInnerCall();\\n        }\\n    }\\n}\\n\",\"keccak256\":\"0xaf28a975a78550e45f65e559a3ad6a5ad43b9b8a37366999abd1b7084eb70721\",\"license\":\"MIT\"},\"contracts/IPermissionCallable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.23;\\n\\n/// @title IPermissionCallable\\n///\\n/// @notice Interface for external contracts to support Session Keys permissionlessly.\\n///\\n/// @author Coinbase (https://github.com/coinbase/smart-wallet-permissions)\\ninterface IPermissionCallable {\\n    /// @notice Wrap a call to the contract with a new selector.\\n    ///\\n    /// @dev Call data exactly matches valid selector+arguments on this contract.\\n    /// @dev Call data matching required because this performs a self-delegatecall.\\n    ///\\n    /// @param call Call data exactly matching valid selector+arguments on this contract.\\n    ///\\n    /// @return res data returned from the inner self-delegatecall.\\n    function permissionedCall(\\n        bytes calldata call\\n    ) external payable returns (bytes memory res);\\n\\n    /// @notice Determine if a function selector is allowed via permissionedCall on this contract.\\n    ///\\n    /// @param selector the specific function to check support for.\\n    ///\\n    /// @return supported indicator if the selector is supported.\\n    function supportsPermissionedCallSelector(\\n        bytes4 selector\\n    ) external view returns (bool supported);\\n}\\n\",\"keccak256\":\"0xdd04d5c9d1caa47642d062108074430d8d81365bbeffe509068ad6c02b6a2de7\",\"license\":\"MIT\"},\"contracts/PermissionCallable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.23;\\n\\nimport {Address} from \\\"@openzeppelin/contracts/utils/Address.sol\\\";\\n\\nimport {IPermissionCallable} from \\\"./IPermissionCallable.sol\\\";\\n\\n/// @title PermissionCallable\\n///\\n/// @notice Abstract contract to add permissioned userOp support to smart contracts.\\n///\\n/// @author Coinbase (https://github.com/coinbase/smart-wallet-permissions)\\nabstract contract PermissionCallable is IPermissionCallable {\\n    /// @notice Call not enabled through permissionedCall and smart wallet permissions systems.\\n    ///\\n    /// @param selector The function that was attempting to go through permissionedCall.\\n    error NotPermissionCallable(bytes4 selector);\\n\\n    /// @inheritdoc IPermissionCallable\\n    function permissionedCall(\\n        bytes calldata call\\n    ) external payable returns (bytes memory res) {\\n        // check if call selector is allowed through permissionedCall\\n        if (!supportsPermissionedCallSelector(bytes4(call)))\\n            revert NotPermissionCallable(bytes4(call));\\n        // make self-delegatecall with provided call data\\n        return Address.functionDelegateCall(address(this), call);\\n    }\\n\\n    /// @inheritdoc IPermissionCallable\\n    function supportsPermissionedCallSelector(\\n        bytes4 selector\\n    ) public view virtual returns (bool);\\n}\\n\",\"keccak256\":\"0x4d9fcfbccec2e7ee116fa9631e5fe58aa81ab508e8cdd1f1d8b4b2fc1f36b7dc\",\"license\":\"MIT\"},\"contracts/PermissionCallableInputBox.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.23;\\n\\nimport {IInputBox} from \\\"@cartesi/rollups/contracts/inputs/IInputBox.sol\\\";\\nimport {InputRelay} from \\\"@cartesi/rollups/contracts/inputs/InputRelay.sol\\\";\\nimport {Address} from \\\"@openzeppelin/contracts/utils/Address.sol\\\";\\n\\nimport {PermissionCallable} from \\\"./PermissionCallable.sol\\\";\\n\\ncontract PermissionCallableInputBox is\\n    IInputBox,\\n    InputRelay,\\n    PermissionCallable\\n{\\n    constructor(IInputBox _inputBox) InputRelay(_inputBox) {}\\n\\n    function addInput(\\n        address _dapp,\\n        bytes calldata _input\\n    ) external returns (bytes32) {\\n        // encode original msg sender (smart wallet)\\n        bytes memory input = abi.encodePacked(msg.sender, _input);\\n        return this.getInputBox().addInput(_dapp, input);\\n    }\\n\\n    function getInputHash(\\n        address _dapp,\\n        uint256 _index\\n    ) external view returns (bytes32) {\\n        return this.getInputBox().getInputHash(_dapp, _index);\\n    }\\n\\n    function getNumberOfInputs(address _dapp) external view returns (uint256) {\\n        return this.getInputBox().getNumberOfInputs(_dapp);\\n    }\\n\\n    function supportsPermissionedCallSelector(\\n        bytes4 selector\\n    ) public pure override returns (bool) {\\n        return selector == PermissionCallableInputBox.addInput.selector;\\n    }\\n}\\n\",\"keccak256\":\"0xd78a1604fb0f6e013a1babede35c9e7b1cfcd6aa13bdba8feb3c9b24d4378948\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x60a060405234801561001057600080fd5b5060405161101a38038061101a833981810160405281019061003291906100e3565b808073ffffffffffffffffffffffffffffffffffffffff1660808173ffffffffffffffffffffffffffffffffffffffff16815250505050610110565b600080fd5b600073ffffffffffffffffffffffffffffffffffffffff82169050919050565b600061009e82610073565b9050919050565b60006100b082610093565b9050919050565b6100c0816100a5565b81146100cb57600080fd5b50565b6000815190506100dd816100b7565b92915050565b6000602082840312156100f9576100f861006e565b5b6000610107848285016100ce565b91505092915050565b608051610eef61012b60003960006101ac0152610eef6000f3fe6080604052600436106100545760003560e01c8062aace9a146100595780631789cd63146100845780632bd1b86d146100c157806347ad697f146100f157806361a93c871461012e578063677087c91461016b575b600080fd5b34801561006557600080fd5b5061006e6101a8565b60405161007b91906107b3565b60405180910390f35b34801561009057600080fd5b506100ab60048036038101906100a6919061087b565b6101d0565b6040516100b891906108f4565b60405180910390f35b6100db60048036038101906100d6919061090f565b6102ee565b6040516100e891906109ec565b60405180910390f35b3480156100fd57600080fd5b5061011860048036038101906101139190610a66565b6103a8565b6040516101259190610aae565b60405180910390f35b34801561013a57600080fd5b5061015560048036038101906101509190610ac9565b6103f9565b6040516101629190610b0f565b60405180910390f35b34801561017757600080fd5b50610192600480360381019061018d9190610b56565b6104e9565b60405161019f91906108f4565b60405180910390f35b60007f0000000000000000000000000000000000000000000000000000000000000000905090565b6000803384846040516020016101e893929190610c1d565b60405160208183030381529060405290503073ffffffffffffffffffffffffffffffffffffffff1662aace9a6040518163ffffffff1660e01b8152600401602060405180830381865afa158015610243573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906102679190610c85565b73ffffffffffffffffffffffffffffffffffffffff16631789cd6386836040518363ffffffff1660e01b81526004016102a1929190610cc1565b6020604051808303816000875af11580156102c0573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906102e49190610d1d565b9150509392505050565b60606103058383906103009190610d62565b6103a8565b610352578282906103169190610d62565b6040517fd1ef47a20000000000000000000000000000000000000000000000000000000081526004016103499190610dd0565b60405180910390fd5b6103a03084848080601f016020809104026020016040519081016040528093929190818152602001838380828437600081840152601f19601f820116905080830192505050505050506105dc565b905092915050565b6000631789cd6360e01b7bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916827bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916149050919050565b60003073ffffffffffffffffffffffffffffffffffffffff1662aace9a6040518163ffffffff1660e01b8152600401602060405180830381865afa158015610445573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906104699190610c85565b73ffffffffffffffffffffffffffffffffffffffff166361a93c87836040518263ffffffff1660e01b81526004016104a19190610deb565b602060405180830381865afa1580156104be573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906104e29190610e1b565b9050919050565b60003073ffffffffffffffffffffffffffffffffffffffff1662aace9a6040518163ffffffff1660e01b8152600401602060405180830381865afa158015610535573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906105599190610c85565b73ffffffffffffffffffffffffffffffffffffffff1663677087c984846040518363ffffffff1660e01b8152600401610593929190610e48565b602060405180830381865afa1580156105b0573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906105d49190610d1d565b905092915050565b60606000808473ffffffffffffffffffffffffffffffffffffffff16846040516106069190610ea2565b600060405180830381855af49150503d8060008114610641576040519150601f19603f3d011682016040523d82523d6000602084013e610646565b606091505b5091509150610656858383610660565b9250505092915050565b60608261067557610670826106ef565b6106e7565b6000825114801561069d575060008473ffffffffffffffffffffffffffffffffffffffff163b145b156106df57836040517f9996b3150000000000000000000000000000000000000000000000000000000081526004016106d69190610deb565b60405180910390fd5b8190506106e8565b5b9392505050565b6000815111156107025780518082602001fd5b6040517f1425ea4200000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b600073ffffffffffffffffffffffffffffffffffffffff82169050919050565b6000819050919050565b600061077961077461076f84610734565b610754565b610734565b9050919050565b600061078b8261075e565b9050919050565b600061079d82610780565b9050919050565b6107ad81610792565b82525050565b60006020820190506107c860008301846107a4565b92915050565b600080fd5b600080fd5b60006107e382610734565b9050919050565b6107f3816107d8565b81146107fe57600080fd5b50565b600081359050610810816107ea565b92915050565b600080fd5b600080fd5b600080fd5b60008083601f84011261083b5761083a610816565b5b8235905067ffffffffffffffff8111156108585761085761081b565b5b60208301915083600182028301111561087457610873610820565b5b9250929050565b600080600060408486031215610894576108936107ce565b5b60006108a286828701610801565b935050602084013567ffffffffffffffff8111156108c3576108c26107d3565b5b6108cf86828701610825565b92509250509250925092565b6000819050919050565b6108ee816108db565b82525050565b600060208201905061090960008301846108e5565b92915050565b60008060208385031215610926576109256107ce565b5b600083013567ffffffffffffffff811115610944576109436107d3565b5b61095085828601610825565b92509250509250929050565b600081519050919050565b600082825260208201905092915050565b60005b8381101561099657808201518184015260208101905061097b565b60008484015250505050565b6000601f19601f8301169050919050565b60006109be8261095c565b6109c88185610967565b93506109d8818560208601610978565b6109e1816109a2565b840191505092915050565b60006020820190508181036000830152610a0681846109b3565b905092915050565b60007fffffffff0000000000000000000000000000000000000000000000000000000082169050919050565b610a4381610a0e565b8114610a4e57600080fd5b50565b600081359050610a6081610a3a565b92915050565b600060208284031215610a7c57610a7b6107ce565b5b6000610a8a84828501610a51565b91505092915050565b60008115159050919050565b610aa881610a93565b82525050565b6000602082019050610ac36000830184610a9f565b92915050565b600060208284031215610adf57610ade6107ce565b5b6000610aed84828501610801565b91505092915050565b6000819050919050565b610b0981610af6565b82525050565b6000602082019050610b246000830184610b00565b92915050565b610b3381610af6565b8114610b3e57600080fd5b50565b600081359050610b5081610b2a565b92915050565b60008060408385031215610b6d57610b6c6107ce565b5b6000610b7b85828601610801565b9250506020610b8c85828601610b41565b9150509250929050565b60008160601b9050919050565b6000610bae82610b96565b9050919050565b6000610bc082610ba3565b9050919050565b610bd8610bd3826107d8565b610bb5565b82525050565b600081905092915050565b82818337600083830152505050565b6000610c048385610bde565b9350610c11838584610be9565b82840190509392505050565b6000610c298286610bc7565b601482019150610c3a828486610bf8565b9150819050949350505050565b6000610c52826107d8565b9050919050565b610c6281610c47565b8114610c6d57600080fd5b50565b600081519050610c7f81610c59565b92915050565b600060208284031215610c9b57610c9a6107ce565b5b6000610ca984828501610c70565b91505092915050565b610cbb816107d8565b82525050565b6000604082019050610cd66000830185610cb2565b8181036020830152610ce881846109b3565b90509392505050565b610cfa816108db565b8114610d0557600080fd5b50565b600081519050610d1781610cf1565b92915050565b600060208284031215610d3357610d326107ce565b5b6000610d4184828501610d08565b91505092915050565b600082905092915050565b600082821b905092915050565b6000610d6e8383610d4a565b82610d798135610a0e565b92506004821015610db957610db47fffffffff0000000000000000000000000000000000000000000000000000000083600403600802610d55565b831692505b505092915050565b610dca81610a0e565b82525050565b6000602082019050610de56000830184610dc1565b92915050565b6000602082019050610e006000830184610cb2565b92915050565b600081519050610e1581610b2a565b92915050565b600060208284031215610e3157610e306107ce565b5b6000610e3f84828501610e06565b91505092915050565b6000604082019050610e5d6000830185610cb2565b610e6a6020830184610b00565b9392505050565b6000610e7c8261095c565b610e868185610bde565b9350610e96818560208601610978565b80840191505092915050565b6000610eae8284610e71565b91508190509291505056fea2646970667358221220ba316b05b39d896420fa9a348104a51a14038a40f3ad8e1630e2711718040a3e64736f6c634300081a0033",
+  "deployedBytecode": "0x6080604052600436106100545760003560e01c8062aace9a146100595780631789cd63146100845780632bd1b86d146100c157806347ad697f146100f157806361a93c871461012e578063677087c91461016b575b600080fd5b34801561006557600080fd5b5061006e6101a8565b60405161007b91906107b3565b60405180910390f35b34801561009057600080fd5b506100ab60048036038101906100a6919061087b565b6101d0565b6040516100b891906108f4565b60405180910390f35b6100db60048036038101906100d6919061090f565b6102ee565b6040516100e891906109ec565b60405180910390f35b3480156100fd57600080fd5b5061011860048036038101906101139190610a66565b6103a8565b6040516101259190610aae565b60405180910390f35b34801561013a57600080fd5b5061015560048036038101906101509190610ac9565b6103f9565b6040516101629190610b0f565b60405180910390f35b34801561017757600080fd5b50610192600480360381019061018d9190610b56565b6104e9565b60405161019f91906108f4565b60405180910390f35b60007f0000000000000000000000000000000000000000000000000000000000000000905090565b6000803384846040516020016101e893929190610c1d565b60405160208183030381529060405290503073ffffffffffffffffffffffffffffffffffffffff1662aace9a6040518163ffffffff1660e01b8152600401602060405180830381865afa158015610243573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906102679190610c85565b73ffffffffffffffffffffffffffffffffffffffff16631789cd6386836040518363ffffffff1660e01b81526004016102a1929190610cc1565b6020604051808303816000875af11580156102c0573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906102e49190610d1d565b9150509392505050565b60606103058383906103009190610d62565b6103a8565b610352578282906103169190610d62565b6040517fd1ef47a20000000000000000000000000000000000000000000000000000000081526004016103499190610dd0565b60405180910390fd5b6103a03084848080601f016020809104026020016040519081016040528093929190818152602001838380828437600081840152601f19601f820116905080830192505050505050506105dc565b905092915050565b6000631789cd6360e01b7bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916827bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916149050919050565b60003073ffffffffffffffffffffffffffffffffffffffff1662aace9a6040518163ffffffff1660e01b8152600401602060405180830381865afa158015610445573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906104699190610c85565b73ffffffffffffffffffffffffffffffffffffffff166361a93c87836040518263ffffffff1660e01b81526004016104a19190610deb565b602060405180830381865afa1580156104be573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906104e29190610e1b565b9050919050565b60003073ffffffffffffffffffffffffffffffffffffffff1662aace9a6040518163ffffffff1660e01b8152600401602060405180830381865afa158015610535573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906105599190610c85565b73ffffffffffffffffffffffffffffffffffffffff1663677087c984846040518363ffffffff1660e01b8152600401610593929190610e48565b602060405180830381865afa1580156105b0573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906105d49190610d1d565b905092915050565b60606000808473ffffffffffffffffffffffffffffffffffffffff16846040516106069190610ea2565b600060405180830381855af49150503d8060008114610641576040519150601f19603f3d011682016040523d82523d6000602084013e610646565b606091505b5091509150610656858383610660565b9250505092915050565b60608261067557610670826106ef565b6106e7565b6000825114801561069d575060008473ffffffffffffffffffffffffffffffffffffffff163b145b156106df57836040517f9996b3150000000000000000000000000000000000000000000000000000000081526004016106d69190610deb565b60405180910390fd5b8190506106e8565b5b9392505050565b6000815111156107025780518082602001fd5b6040517f1425ea4200000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b600073ffffffffffffffffffffffffffffffffffffffff82169050919050565b6000819050919050565b600061077961077461076f84610734565b610754565b610734565b9050919050565b600061078b8261075e565b9050919050565b600061079d82610780565b9050919050565b6107ad81610792565b82525050565b60006020820190506107c860008301846107a4565b92915050565b600080fd5b600080fd5b60006107e382610734565b9050919050565b6107f3816107d8565b81146107fe57600080fd5b50565b600081359050610810816107ea565b92915050565b600080fd5b600080fd5b600080fd5b60008083601f84011261083b5761083a610816565b5b8235905067ffffffffffffffff8111156108585761085761081b565b5b60208301915083600182028301111561087457610873610820565b5b9250929050565b600080600060408486031215610894576108936107ce565b5b60006108a286828701610801565b935050602084013567ffffffffffffffff8111156108c3576108c26107d3565b5b6108cf86828701610825565b92509250509250925092565b6000819050919050565b6108ee816108db565b82525050565b600060208201905061090960008301846108e5565b92915050565b60008060208385031215610926576109256107ce565b5b600083013567ffffffffffffffff811115610944576109436107d3565b5b61095085828601610825565b92509250509250929050565b600081519050919050565b600082825260208201905092915050565b60005b8381101561099657808201518184015260208101905061097b565b60008484015250505050565b6000601f19601f8301169050919050565b60006109be8261095c565b6109c88185610967565b93506109d8818560208601610978565b6109e1816109a2565b840191505092915050565b60006020820190508181036000830152610a0681846109b3565b905092915050565b60007fffffffff0000000000000000000000000000000000000000000000000000000082169050919050565b610a4381610a0e565b8114610a4e57600080fd5b50565b600081359050610a6081610a3a565b92915050565b600060208284031215610a7c57610a7b6107ce565b5b6000610a8a84828501610a51565b91505092915050565b60008115159050919050565b610aa881610a93565b82525050565b6000602082019050610ac36000830184610a9f565b92915050565b600060208284031215610adf57610ade6107ce565b5b6000610aed84828501610801565b91505092915050565b6000819050919050565b610b0981610af6565b82525050565b6000602082019050610b246000830184610b00565b92915050565b610b3381610af6565b8114610b3e57600080fd5b50565b600081359050610b5081610b2a565b92915050565b60008060408385031215610b6d57610b6c6107ce565b5b6000610b7b85828601610801565b9250506020610b8c85828601610b41565b9150509250929050565b60008160601b9050919050565b6000610bae82610b96565b9050919050565b6000610bc082610ba3565b9050919050565b610bd8610bd3826107d8565b610bb5565b82525050565b600081905092915050565b82818337600083830152505050565b6000610c048385610bde565b9350610c11838584610be9565b82840190509392505050565b6000610c298286610bc7565b601482019150610c3a828486610bf8565b9150819050949350505050565b6000610c52826107d8565b9050919050565b610c6281610c47565b8114610c6d57600080fd5b50565b600081519050610c7f81610c59565b92915050565b600060208284031215610c9b57610c9a6107ce565b5b6000610ca984828501610c70565b91505092915050565b610cbb816107d8565b82525050565b6000604082019050610cd66000830185610cb2565b8181036020830152610ce881846109b3565b90509392505050565b610cfa816108db565b8114610d0557600080fd5b50565b600081519050610d1781610cf1565b92915050565b600060208284031215610d3357610d326107ce565b5b6000610d4184828501610d08565b91505092915050565b600082905092915050565b600082821b905092915050565b6000610d6e8383610d4a565b82610d798135610a0e565b92506004821015610db957610db47fffffffff0000000000000000000000000000000000000000000000000000000083600403600802610d55565b831692505b505092915050565b610dca81610a0e565b82525050565b6000602082019050610de56000830184610dc1565b92915050565b6000602082019050610e006000830184610cb2565b92915050565b600081519050610e1581610b2a565b92915050565b600060208284031215610e3157610e306107ce565b5b6000610e3f84828501610e06565b91505092915050565b6000604082019050610e5d6000830185610cb2565b610e6a6020830184610b00565b9392505050565b6000610e7c8261095c565b610e868185610bde565b9350610e96818560208601610978565b80840191505092915050565b6000610eae8284610e71565b91508190509291505056fea2646970667358221220ba316b05b39d896420fa9a348104a51a14038a40f3ad8e1630e2711718040a3e64736f6c634300081a0033",
+  "devdoc": {
+    "errors": {
+      "AddressEmptyCode(address)": [
+        {
+          "details": "There's no code at `target` (it is not a contract)."
+        }
+      ],
+      "FailedInnerCall()": [
+        {
+          "details": "A call to an address target failed. The target may have reverted."
+        }
+      ],
+      "NotPermissionCallable(bytes4)": [
+        {
+          "params": {
+            "selector": "The function that was attempting to go through permissionedCall."
+          }
+        }
+      ]
+    },
+    "events": {
+      "InputAdded(address,uint256,address,bytes)": {
+        "details": "MUST be triggered on a successful call to `addInput`.",
+        "params": {
+          "dapp": "The address of the DApp",
+          "input": "The contents of the input",
+          "inputIndex": "The index of the input in the input box",
+          "sender": "The address that sent the input"
+        }
+      }
+    },
+    "kind": "dev",
+    "methods": {
+      "addInput(address,bytes)": {
+        "details": "MUST fire an `InputAdded` event accordingly.      Input larger than machine limit will raise `InputSizeExceedsLimit` error.",
+        "params": {
+          "_dapp": "The address of the DApp",
+          "_input": "The contents of the input"
+        },
+        "returns": {
+          "_0": "The hash of the input plus some extra metadata"
+        }
+      },
+      "getInputBox()": {
+        "returns": {
+          "_0": "The input box"
+        }
+      },
+      "getInputHash(address,uint256)": {
+        "details": "`_index` MUST be in the interval `[0,n)` where `n` is the number of      inputs in the DApp's input box. See the `getNumberOfInputs` function.",
+        "params": {
+          "_dapp": "The address of the DApp",
+          "_index": "The index of the input in the DApp's input box"
+        },
+        "returns": {
+          "_0": "The hash of the input at the provided index in the DApp's input box"
+        }
+      },
+      "getNumberOfInputs(address)": {
+        "params": {
+          "_dapp": "The address of the DApp"
+        },
+        "returns": {
+          "_0": "Number of inputs in the DApp's input box"
+        }
+      },
+      "permissionedCall(bytes)": {
+        "details": "Call data exactly matches valid selector+arguments on this contract.Call data matching required because this performs a self-delegatecall.",
+        "params": {
+          "call": "Call data exactly matching valid selector+arguments on this contract."
+        },
+        "returns": {
+          "res": "data returned from the inner self-delegatecall."
+        }
+      },
+      "supportsPermissionedCallSelector(bytes4)": {
+        "params": {
+          "selector": "the specific function to check support for."
+        },
+        "returns": {
+          "_0": "indicator if the selector is supported."
+        }
+      }
+    },
+    "version": 1
+  },
+  "userdoc": {
+    "errors": {
+      "NotPermissionCallable(bytes4)": [
+        {
+          "notice": "Call not enabled through permissionedCall and smart wallet permissions systems."
+        }
+      ]
+    },
+    "events": {
+      "InputAdded(address,uint256,address,bytes)": {
+        "notice": "Emitted when an input is added to a DApp's input box."
+      }
+    },
+    "kind": "user",
+    "methods": {
+      "addInput(address,bytes)": {
+        "notice": "Add an input to a DApp's input box."
+      },
+      "getInputBox()": {
+        "notice": "Get the input box used by this input relay."
+      },
+      "getInputHash(address,uint256)": {
+        "notice": "Get the hash of an input in a DApp's input box."
+      },
+      "getNumberOfInputs(address)": {
+        "notice": "Get the number of inputs in a DApp's input box."
+      },
+      "permissionedCall(bytes)": {
+        "notice": "Wrap a call to the contract with a new selector."
+      },
+      "supportsPermissionedCallSelector(bytes4)": {
+        "notice": "Determine if a function selector is allowed via permissionedCall on this contract."
+      }
+    },
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [],
+    "types": null
+  }
+}
