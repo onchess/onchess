@@ -533,6 +533,10 @@ export default defineConfig({
         hardhatDeploy({
             directory: "node_modules/@cartesi/rollups/export/abi",
         }),
+        hardhatDeploy({
+            directory: "node_modules/@onchess/contracts/export/abi",
+            includes: [/PermissionCallableInputBox/],
+        }),
         react(),
     ],
 });

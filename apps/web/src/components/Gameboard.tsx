@@ -17,6 +17,7 @@ import {
 import { PlayerBar } from "./PlayerBar";
 
 export type GameboardProps = {
+    context?: string;
     error?: string;
     game: Game;
     submitting: boolean;
@@ -27,7 +28,6 @@ export type GameboardProps = {
     onResign: (params: Omit<GameBasePayload, "metadata">) => void;
     player?: Player; // optional, so we can support "expectators"
     sessionExpiry?: number;
-    sessionId?: string;
     sessionSupported?: boolean;
 };
 
@@ -43,6 +43,7 @@ function getErrorMessage(error: unknown) {
 
 export const Gameboard: FC<GameboardProps> = (props) => {
     const {
+        context,
         error,
         game,
         now,
@@ -52,7 +53,6 @@ export const Gameboard: FC<GameboardProps> = (props) => {
         onResign,
         player,
         sessionExpiry,
-        sessionId,
         sessionSupported,
         submitting,
     } = props;
@@ -96,6 +96,7 @@ export const Gameboard: FC<GameboardProps> = (props) => {
         <PlayerBar
             address={game.white}
             color="w"
+            context={context}
             disabled={submitting}
             now={now}
             onResign={handleResign}
@@ -105,7 +106,6 @@ export const Gameboard: FC<GameboardProps> = (props) => {
             player={player?.address}
             result={result}
             sessionExpiry={sessionExpiry}
-            sessionId={sessionId}
             sessionSupported={sessionSupported}
             time={game.whiteTime}
             turn={turn}
@@ -117,6 +117,7 @@ export const Gameboard: FC<GameboardProps> = (props) => {
         <PlayerBar
             address={game.black}
             color="b"
+            context={context}
             disabled={submitting}
             now={now}
             onResign={handleResign}
@@ -126,7 +127,6 @@ export const Gameboard: FC<GameboardProps> = (props) => {
             player={player?.address}
             result={result}
             sessionExpiry={sessionExpiry}
-            sessionId={sessionId}
             sessionSupported={sessionSupported}
             time={game.blackTime}
             turn={turn}

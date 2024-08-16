@@ -8,6 +8,7 @@ import { PlayerText } from "./PlayerText";
 export interface PlayerBarProps extends GroupProps {
     address: Address;
     color: Color;
+    context?: string;
     disabled: boolean;
     now: number;
     onClaimVictory: () => void;
@@ -17,7 +18,6 @@ export interface PlayerBarProps extends GroupProps {
     player?: Address;
     result: 1 | 0 | 0.5 | undefined;
     sessionExpiry?: number;
-    sessionId?: string;
     sessionSupported?: boolean;
     time: number;
     turn: Color;
@@ -28,6 +28,7 @@ export const PlayerBar: React.FC<PlayerBarProps> = (props) => {
     const {
         address,
         color,
+        context,
         disabled,
         now,
         onClaimVictory,
@@ -37,7 +38,6 @@ export const PlayerBar: React.FC<PlayerBarProps> = (props) => {
         player,
         result,
         sessionExpiry,
-        sessionId,
         sessionSupported,
         time,
         turn,
@@ -68,7 +68,7 @@ export const PlayerBar: React.FC<PlayerBarProps> = (props) => {
     // show create session if the capability is there
     const showCreateSession =
         player === address && result === undefined && !!onCreateSession;
-    const hasSession = !!sessionId && sessionExpiry && now < sessionExpiry;
+    const hasSession = !!context && sessionExpiry && now < sessionExpiry;
 
     const win =
         (color === "w" && result === 1) || (color === "b" && result === 0);

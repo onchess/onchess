@@ -2,10 +2,11 @@
 
 import { FC, PropsWithChildren } from "react";
 import { base, baseSepolia, foundry } from "wagmi/chains";
+import { CoinbaseWalletProvider } from "./wallet/coinbase";
 import { WalletConnectWalletProvider } from "./wallet/walletconnect";
 import { ZeroDevWalletProvider } from "./wallet/zerodev";
 
-export type WalletProviderType = "ZeroDev" | "WalletConnect";
+export type WalletProviderType = "Coinbase" | "WalletConnect" | "ZeroDev";
 
 export const extractChain = () => {
     const chainId = process.env.NEXT_PUBLIC_CHAIN_ID;
@@ -33,6 +34,8 @@ export const getProviderType = (): WalletProviderType => {
         throw new Error("Missing NEXT_PUBLIC_WALLET_PROVIDER");
     }
     switch (type) {
+        case "Coinbase":
+            return "Coinbase";
         case "WalletConnect":
             return "WalletConnect";
         case "ZeroDev":
@@ -49,6 +52,13 @@ export const WalletProvider: FC<PropsWithChildren> = ({ children }) => {
     const provider = getProviderType();
 
     switch (provider) {
+        case "Coinbase": {
+            return (
+                <CoinbaseWalletProvider chain={chain}>
+                    {children}
+                </CoinbaseWalletProvider>
+            );
+        }
         case "WalletConnect": {
             const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID;
             if (!projectId) {

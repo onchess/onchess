@@ -36,6 +36,17 @@ export const Header: FC<HeaderProps> = (props) => {
             <Group visibleFrom="sm" gap="xs">
                 <Menu />
             </Group>
+            {provider === "Coinbase" && (
+                <ConnectButton
+                    address={address}
+                    balance={player?.balance}
+                    isConnecting={isConnecting}
+                    isConnected={isConnected}
+                    onConnect={onConnect}
+                    onDisconnect={onDisconnect}
+                    token={token}
+                />
+            )}
             {provider === "WalletConnect" && <w3m-button />}
             {provider === "ZeroDev" && (
                 <ConnectButton

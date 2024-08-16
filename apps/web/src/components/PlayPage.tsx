@@ -1,5 +1,5 @@
 "use client";
-import { Stack, StackProps, em } from "@mantine/core";
+import { Stack, StackProps, Textarea, em } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import {
     CreateGamePayload,
@@ -35,7 +35,7 @@ export interface PlayPageProps extends StackProps {
     onResign: (params: Omit<GameBasePayload, "metadata">) => void;
     player?: Player;
     sessionExpiry?: number;
-    sessionId?: string;
+    context?: string;
     sessionSupported?: boolean;
     submitting: boolean;
     token?: Token;
@@ -44,6 +44,7 @@ export interface PlayPageProps extends StackProps {
 export const PlayPage: FC<PlayPageProps> = (props) => {
     const {
         address,
+        context,
         error,
         game,
         lobby,
@@ -60,7 +61,6 @@ export const PlayPage: FC<PlayPageProps> = (props) => {
         onResign,
         player,
         sessionExpiry,
-        sessionId,
         sessionSupported,
         submitting,
         token,
@@ -92,6 +92,10 @@ export const PlayPage: FC<PlayPageProps> = (props) => {
             token={token}
         >
             <Stack {...stackProps}>
+                <Textarea
+                    readOnly
+                    value={JSON.stringify({ sessionSupported })}
+                />
                 <Stack p={20} align={isMobile ? undefined : "center"}>
                     {showGame && (
                         <Gameboard
@@ -104,7 +108,7 @@ export const PlayPage: FC<PlayPageProps> = (props) => {
                             onResign={onResign}
                             player={player}
                             sessionExpiry={sessionExpiry}
-                            sessionId={sessionId}
+                            context={context}
                             sessionSupported={sessionSupported}
                             submitting={submitting}
                         />

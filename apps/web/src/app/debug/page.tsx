@@ -10,9 +10,12 @@ import {
     TextInput,
     Title,
 } from "@mantine/core";
+import { ABI } from "@onchess/core";
 import { IconCircleCheck, IconCircleX } from "@tabler/icons-react";
 import { FC } from "react";
-import { useAccount, useConnect, useDisconnect } from "wagmi";
+import { encodeFunctionData, zeroAddress } from "viem";
+import { prepareCalls } from "viem/experimental";
+import { useAccount, useConnect, useDisconnect, useWalletClient } from "wagmi";
 import { Shell } from "../../components/navigation/Shell";
 import {
     useAtomicBatchSupport,
@@ -20,24 +23,64 @@ import {
     usePermissionsSupport,
 } from "../../hooks/capabilities";
 import { useClock } from "../../hooks/clock";
-import { useSessionId } from "../../hooks/session";
+import { useApplicationAddress } from "../../hooks/config";
+import {
+    inputBoxAbi,
+    permissionCallableInputBoxAddress,
+} from "../../hooks/contracts";
+import { useSession } from "../../hooks/session";
 import { useLatestState } from "../../hooks/state";
 
 export default () => {
     const now = useClock();
     const { inputIndex, loading, state } = useLatestState(2000);
+    const applicationAddress = useApplicationAddress();
 
     // wallet actions
-    const { address, isConnected } = useAccount();
+    const { address, chain, isConnected } = useAccount();
+    const { data: walletClient } = useWalletClient();
     const { connect, connectors, isPending: isConnecting } = useConnect();
     const { disconnect } = useDisconnect();
 
     // wallet capabilities
-    const { expiry, requestPermissionsAsync, sessionId } = useSessionId();
+    const { context, credential, expiry, requestPermissionsAsync } =
+        useSession();
     const { supported: atomicBatchSupported } = useAtomicBatchSupport();
     const { supported: permissionsSupported } = usePermissionsSupport();
     const { supported: paymasterServiceSupported } =
         usePaymasterServiceSupport();
+
+    const prepareAddInput = async () => {
+        if (applicationAddress && walletClient) {
+            const payload = encodeFunctionData({
+                abi: ABI,
+                functionName: "move",
+                args: [zeroAddress, "h6"],
+            });
+            const [
+                { context: preparedContext, preparedCalls, signatureRequest },
+            ] = await prepareCalls(walletClient, {
+                account: address,
+                chain,
+                calls: [
+                    {
+                        to: permissionCallableInputBoxAddress,
+                        data: encodeFunctionData({
+                            abi: inputBoxAbi,
+                            functionName: "addInput",
+                            args: [applicationAddress, payload],
+                        }),
+                    },
+                ],
+                capabilities: {
+                    permissions: { context },
+                },
+            });
+            console.log("context", preparedContext);
+            console.log("preparedCalls", preparedCalls);
+            console.log("signatureRequest", signatureRequest);
+        }
+    };
 
     const TrueFalseIcon: FC<{ value: boolean | undefined }> = ({ value }) =>
         value === undefined ? (
@@ -86,11 +129,18 @@ export default () => {
                 </Table.Tbody>
             </Table>
             <Group>
-                <Text>Session</Text>
-                <TextInput readOnly value={sessionId} />
+                <Text>Context</Text>
+                <TextInput readOnly value={context} width={600} />
                 <Button onClick={() => requestPermissionsAsync(now + 3600)}>
                     Request Permissions
                 </Button>
+                <Button onClick={() => prepareAddInput()}>
+                    Prepare addInput
+                </Button>
+            </Group>
+            <Group>
+                <Text>Credential</Text>
+                <Text>{credential?.publicKey}</Text>
             </Group>
             <Title>
                 <Group>

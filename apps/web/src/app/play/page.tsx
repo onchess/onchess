@@ -23,7 +23,8 @@ import {
     useDisconnect,
     useWaitForTransactionReceipt,
 } from "wagmi";
-import { useWriteContracts } from "wagmi/experimental";
+import { useSendCalls, useWriteContracts } from "wagmi/experimental";
+import { signWithCredential } from "webauthn-p256";
 import { PlayPage } from "../../components/PlayPage";
 import { usePaymasterServiceSupport } from "../../hooks/capabilities";
 import { useClock } from "../../hooks/clock";
@@ -31,14 +32,15 @@ import { useApplicationAddress } from "../../hooks/config";
 import {
     inputBoxAbi,
     inputBoxAddress,
+    permissionCallableInputBoxAddress,
     useWriteInputBoxAddInput,
 } from "../../hooks/contracts";
-import { useSessionId } from "../../hooks/session";
+import { useSession } from "../../hooks/session";
 import { useLatestState } from "../../hooks/state";
 
 const selectPlayerState = (state: State, address?: Address) => {
     const player = address
-        ? state.players[getAddress(address)] ?? createPlayer(address)
+        ? (state.players[getAddress(address)] ?? createPlayer(address))
         : undefined;
     const lobby = address
         ? state.lobby.filter((item) => item.player === getAddress(address))
@@ -84,7 +86,8 @@ const Play = () => {
     // transactions
     const { writeContractAsync: addInput, isPending: addInputPending } =
         useWriteInputBoxAddInput();
-    const { writeContractsAsync, isPending: movePending } = useWriteContracts();
+    const { writeContractsAsync, isPending: pending } = useWriteContracts();
+    const { sendCallsAsync, isPending: movePending } = useSendCalls();
 
     // transaction mining
     const [hash, setHash] = useState<Hash | undefined>();
@@ -99,11 +102,12 @@ const Play = () => {
 
     // session keys
     const {
+        context,
+        credential,
         expiry: sessionExpiry,
-        sessionId,
         requestPermissionsAsync,
         supported: sessionSupported,
-    } = useSessionId();
+    } = useSession();
 
     // navigation
     const router = useRouter();
@@ -162,30 +166,41 @@ const Play = () => {
             setError(undefined);
 
             try {
+                // game address (id)
                 const address = params.address as Address;
+
+                // chess move
                 const move = params.move;
+
+                // build the input payload
                 const payload = encodeFunctionData({
                     abi: ABI,
                     functionName: "move",
                     args: [address, move],
                 });
+
                 const capabilities: WalletCapabilities = {};
-                if (sessionId) {
-                    capabilities.permissions = { sessionId };
+                if (context) {
+                    capabilities.permissions = { context };
                 }
                 if (paymasterSupported && paymasterUrl) {
                     capabilities.paymasterService = { url: paymasterUrl };
                 }
-                const hash = await writeContractsAsync({
-                    contracts: [
+                const callsId = await sendCallsAsync({
+                    calls: [
                         {
-                            address: inputBoxAddress,
-                            abi: inputBoxAbi,
-                            functionName: "addInput",
-                            args: [dapp, payload],
+                            to: permissionCallableInputBoxAddress,
+                            data: encodeFunctionData({
+                                abi: inputBoxAbi,
+                                functionName: "addInput",
+                                args: [dapp, payload],
+                            }),
                         },
                     ],
                     capabilities,
+                    signatureOverride: credential
+                        ? signWithCredential(credential)
+                        : undefined,
                 });
             } catch (e: any) {
                 setError(e.message);
@@ -272,6 +287,7 @@ const Play = () => {
     return (
         <PlayPage
             address={address}
+            context={context}
             error={error}
             game={firstGame}
             isConnected={isConnected}
@@ -289,7 +305,6 @@ const Play = () => {
             onResign={handleResign}
             player={playerState.player}
             sessionExpiry={sessionExpiry}
-            sessionId={sessionId}
             sessionSupported={sessionSupported}
             submitting={
                 isFetching || addInputPending || movePending || isConnecting

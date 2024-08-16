@@ -1,67 +1,76 @@
-import { ParamCondition } from "@zerodev/permissions/policies";
+"use client";
+
 import { useEffect, useState } from "react";
-import { walletActionsErc7715 } from "viem/experimental";
-import { useWalletClient } from "wagmi";
-import { usePermissionsSupport } from "./capabilities";
-import { useApplicationAddress } from "./config";
-import { inputBoxAbi, inputBoxAddress } from "./contracts";
+import { parseEther, toFunctionSelector } from "viem";
+import { useAccount, useChainId, useWalletClient } from "wagmi";
+import { useGrantPermissions } from "wagmi/experimental";
+import { createCredential, P256Credential } from "webauthn-p256";
+import { permissionCallableInputBoxAddress } from "./contracts";
 
 type RequestPermissionsAsyncFunc = (expiry: number) => Promise<void>;
 
-export const useSessionId = () => {
-    const application = useApplicationAddress();
+export const useSession = () => {
+    const account = useAccount();
+    const chainId = useChainId();
     const { data: walletClient, status } = useWalletClient();
-    const { supported } = usePermissionsSupport();
+    // const { supported } = usePermissionsSupport();
+    const supported = true;
     const [requestPermissionsAsync, setRequestPermissionsAsync] =
         useState<RequestPermissionsAsyncFunc>(() => () => Promise.resolve());
-    const [sessionId, setSessionId] = useState<string | undefined>(undefined);
+    const [context, setContext] = useState<string | undefined>(undefined);
+    const [credential, setCredential] = useState<
+        undefined | P256Credential<"cryptokey">
+    >();
     const [expiry, setExpiry] = useState<number>(0);
+    const { grantPermissionsAsync } = useGrantPermissions();
 
     const requestPermissionsAsyncActive = async (
         expiry: number,
     ): Promise<void> => {
-        if (walletClient) {
-            const extendedClient = walletClient.extend(walletActionsErc7715());
-            const permissions = await extendedClient.grantPermissions({
-                expiry,
+        if (account.address && walletClient) {
+            const newCredential = await createCredential({ type: "cryptoKey" });
+            const response = await grantPermissionsAsync({
                 permissions: [
                     {
-                        type: "contract-call",
-                        data: {
-                            address: inputBoxAddress,
-                            calls: [
-                                "function addInput(address _dapp, bytes calldata _input) external returns (bytes32)",
-                            ],
-                            // @ts-ignore : The spec is WIP so ignore the type error for now. Below struct is supported.
-                            permissions: [
-                                {
-                                    target: inputBoxAddress,
-                                    valueLimit: 0n,
-                                    abi: inputBoxAbi,
-                                    functionName: "addInput",
-                                    args: [
-                                        {
-                                            condition: ParamCondition.EQUAL,
-                                            value: application,
-                                        },
-                                        {
-                                            // we don't have a way to limit the scope of the input payload
-                                            // so for now session has permission to send any input payload
-                                            condition: ParamCondition.NOT_EQUAL,
-                                            value: "0x",
-                                        },
-                                    ],
-                                },
-                            ],
+                        address: account.address,
+                        chainId,
+                        expiry,
+                        signer: {
+                            type: "key",
+                            data: {
+                                type: "secp256r1",
+                                publicKey: newCredential.publicKey,
+                            },
                         },
-                        policies: [],
+                        permissions: [
+                            {
+                                type: "native-token-recurring-allowance",
+                                data: {
+                                    allowance: parseEther("1"),
+                                    start: Math.floor(Date.now() / 1000),
+                                    period: 86400,
+                                },
+                            },
+                            {
+                                type: "allowed-contract-selector",
+                                data: {
+                                    contract: permissionCallableInputBoxAddress,
+                                    selector: toFunctionSelector(
+                                        "addInput(address,bytes)",
+                                    ),
+                                },
+                            },
+                        ],
                     },
                 ],
             });
-            if (permissions) {
-                // set session id from issued permission context
-                setSessionId(permissions.permissionsContext);
-                setExpiry(permissions.expiry);
+            if (response) {
+                // set context from issued permission context
+                const context = response[0].context;
+                const permissions = response[0].permissions;
+                setContext(context);
+                setCredential(newCredential);
+                setExpiry(permissions[0] ? permissions[0].expiry : expiry);
             }
         }
     };
@@ -72,5 +81,11 @@ export const useSessionId = () => {
         }
     }, [status, supported]);
 
-    return { expiry, requestPermissionsAsync, sessionId, supported };
+    return {
+        context,
+        credential,
+        expiry,
+        requestPermissionsAsync,
+        supported,
+    };
 };
