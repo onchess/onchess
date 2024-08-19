@@ -1,7 +1,7 @@
 import { ColorSwatch, Group } from "@mantine/core";
-import { Color } from "chess.js";
-import { FC } from "react";
-import { Address } from "viem";
+import type { Color } from "chess.js";
+import type { FC } from "react";
+import type { Address } from "viem";
 import { AddressText } from "./AddressText";
 
 export type PlayerTextProps = {

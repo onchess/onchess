@@ -1,45 +1,28 @@
 "use client";
+import { erc20PortalAddress } from "@cartesi/viem/abi";
 import { Group } from "@mantine/core";
-import { ABI, createPlayer } from "@onchess/core";
+import { createPlayer } from "@onchess/core";
 import { useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
-import {
-    Hash,
-    WalletCapabilities,
-    encodeFunctionData,
-    erc20Abi,
-    getAddress,
-} from "viem";
+import { Suspense, useState } from "react";
+import type { Address, Hash } from "viem";
+import { erc20Abi, getAddress } from "viem";
 import {
     useAccount,
+    useCallsStatus,
     useConnect,
     useDisconnect,
     useReadContracts,
     useWaitForTransactionReceipt,
 } from "wagmi";
-import { useCallsStatus, useWriteContracts } from "wagmi/experimental";
 import { Bridge } from "../../components/bridge/Bridge";
 import { Shell } from "../../components/navigation/Shell";
-import {
-    useAtomicBatchSupport,
-    usePaymasterServiceSupport,
-} from "../../hooks/capabilities";
+import { useBridgeActions } from "../../hooks/bridge";
 import { useApplicationAddress } from "../../hooks/config";
-import {
-    cartesiDAppAbi,
-    erc20PortalAbi,
-    erc20PortalAddress,
-    inputBoxAbi,
-    inputBoxAddress,
-    useWriteCartesiDAppExecuteVoucher,
-    useWriteErc20Approve,
-    useWriteErc20PortalDepositErc20Tokens,
-    useWriteInputBoxAddInput,
-} from "../../hooks/contracts";
 import { useLatestState } from "../../hooks/state";
-import { ExecutableVoucher, useVouchers } from "../../hooks/voucher";
+import { type ExecutableVoucher, useVouchers } from "../../hooks/voucher";
 import { extractChain } from "../../providers/wallet";
-import { destination, toEVM, transferTo } from "../../util/voucher";
+import { usePasskeyConnect } from "../../providers/wallet/zerodev/usePasskeyConnect";
+import { destination, transferTo } from "../../util/voucher";
 
 const BridgePage = () => {
     const searchParams = useSearchParams();
@@ -49,21 +32,25 @@ const BridgePage = () => {
     // read chain from environment variable configuration
     const chain = extractChain();
 
-    const { loading, state } = useLatestState(20000);
+    const { loading, state } = useLatestState(2000);
 
     const token = state?.config.token;
 
     // connection
     const { address, isConnected } = useAccount();
-    const { connect, connectors, isPending: isConnecting } = useConnect();
+    const { connect, connectors } = useConnect();
+    const { login, register, isPending: isConnecting } = usePasskeyConnect();
     const { disconnect } = useDisconnect();
     const handleConnect = () => connect({ connector: connectors[0] });
 
-    const dapp = useApplicationAddress();
+    // paymaster configuration
+    const paymasterUrl = process.env.NEXT_PUBLIC_PAYMASTER_URL;
+
+    const application = useApplicationAddress();
     const player = address
-        ? state && state.players
-            ? state.players[getAddress(address)] ??
-              createPlayer(getAddress(address))
+        ? state?.players
+            ? (state.players[getAddress(address)] ??
+              createPlayer(getAddress(address)))
             : createPlayer(getAddress(address))
         : undefined;
 
@@ -82,15 +69,15 @@ const BridgePage = () => {
         contracts: [
             {
                 abi: erc20Abi,
-                address: token!.address,
+                address: token?.address,
                 functionName: "allowance",
-                args: [address!, erc20PortalAddress],
+                args: [address as Address, erc20PortalAddress],
             },
             {
                 abi: erc20Abi,
-                address: token!.address,
+                address: token?.address,
                 functionName: "balanceOf",
-                args: [address!],
+                args: [address as Address],
             },
         ],
         query: {
@@ -104,74 +91,15 @@ const BridgePage = () => {
 
     const hasData = token !== undefined;
 
-    // paymaster support
-    const { supported: paymasterSupported } = usePaymasterServiceSupport();
-    const paymasterUrl = process.env.NEXT_PUBLIC_PAYMASTER_URL;
-
-    // batch transactions capability
-    const { supported } = useAtomicBatchSupport();
-    const [handleApproveAndDeposit, setHandleApproveAndDeposit] = useState<
-        ((amount: string) => Promise<void>) | undefined
-    >(undefined);
-
-    useEffect(() => {
-        setHandleApproveAndDeposit(
-            supported
-                ? () => async (amount: string) => {
-                      if (dapp && token) {
-                          setError(undefined);
-                          try {
-                              const id = await writeContractsAsync({
-                                  contracts: [
-                                      {
-                                          abi: erc20Abi,
-                                          address: token.address,
-                                          functionName: "approve",
-                                          args: [
-                                              erc20PortalAddress,
-                                              BigInt(amount),
-                                          ],
-                                      },
-                                      {
-                                          abi: erc20PortalAbi,
-                                          address: erc20PortalAddress,
-                                          functionName: "depositERC20Tokens",
-                                          args: [
-                                              token.address,
-                                              dapp,
-                                              BigInt(amount),
-                                              "0x",
-                                          ],
-                                      },
-                                  ],
-                                  capabilities: {
-                                      paymasterService: {
-                                          url: paymasterUrl,
-                                      },
-                                  },
-                              });
-                              setCallId(id);
-                          } catch (e: any) {
-                              setError(e.message);
-                          }
-                      }
-                  }
-                : undefined,
-        );
-    }, [supported]);
-
     // smart contracts actions
-    const { writeContractAsync: approve, isPending: approvePending } =
-        useWriteErc20Approve();
-    const { writeContractAsync: deposit, isPending: depositPending } =
-        useWriteErc20PortalDepositErc20Tokens();
-    const { writeContractAsync: addInput, isPending: addInputPending } =
-        useWriteInputBoxAddInput();
-    const { writeContractsAsync, isPending } = useWriteContracts();
     const {
-        writeContractAsync: executeVoucher,
-        isPending: executeVoucherPending,
-    } = useWriteCartesiDAppExecuteVoucher();
+        approveAsync,
+        approveAndDepositAsync,
+        depositAsync,
+        executeVoucherAsync,
+        isPending,
+        requestWithdrawAsync,
+    } = useBridgeActions(paymasterUrl);
 
     // transaction processing
     const [error, setError] = useState<string | undefined>(undefined);
@@ -183,88 +111,76 @@ const BridgePage = () => {
         query: { enabled: !!callId },
     });
 
-    const handleDeposit = async (amount: string) => {
-        if (dapp && token) {
-            setError(undefined);
-            try {
-                const hash = await deposit({
-                    args: [token.address, dapp, BigInt(amount), "0x"],
-                });
-                setHash(hash);
-            } catch (e: any) {
-                setError(e.message);
-            }
-        }
-    };
-
-    const handleExecuteVoucher = async (voucher: ExecutableVoucher) => {
-        if (dapp && voucher.proof) {
-            setError(undefined);
-            try {
-                const capabilities: WalletCapabilities = {};
-                if (paymasterSupported && paymasterUrl) {
-                    capabilities.paymasterService = { url: paymasterUrl };
-                }
-                const id = await writeContractsAsync({
-                    contracts: [
-                        {
-                            abi: cartesiDAppAbi,
-                            functionName: "executeVoucher",
-                            address: dapp,
-                            args: toEVM(voucher),
-                        },
-                    ],
-                    capabilities,
-                });
-                setCallId(id);
-            } catch (e: any) {
-                setError(e.message);
-            }
-        }
-    };
-
     const handleApprove = async (amount: string) => {
         if (token) {
             setError(undefined);
             try {
-                const hash = await approve({
+                const hash = await approveAsync({
                     address: token.address,
                     args: [erc20PortalAddress, BigInt(amount)],
                 });
                 setHash(hash);
-            } catch (e: any) {
-                setError(e.message);
+            } catch (e: unknown) {
+                setError(e instanceof Error ? e.message : String(e));
             }
         }
     };
 
-    const handleWithdraw = async (amount: string) => {
-        if (dapp) {
+    const handleDeposit = async (amount: string) => {
+        if (application && token) {
             setError(undefined);
             try {
-                const payload = encodeFunctionData({
-                    abi: ABI,
-                    functionName: "withdraw",
-                    args: [BigInt(amount)],
+                const hash = await depositAsync({
+                    args: [token.address, application, BigInt(amount), "0x"],
                 });
-                const capabilities: WalletCapabilities = {};
-                if (paymasterSupported && paymasterUrl) {
-                    capabilities.paymasterService = { url: paymasterUrl };
-                }
-                const id = await writeContractsAsync({
-                    contracts: [
-                        {
-                            address: inputBoxAddress,
-                            abi: inputBoxAbi,
-                            functionName: "addInput",
-                            args: [dapp, payload],
-                        },
-                    ],
-                    capabilities,
-                });
+                setHash(hash);
+            } catch (e: unknown) {
+                setError(e instanceof Error ? e.message : String(e));
+            }
+        }
+    };
+
+    const handleApproveAndDeposit = approveAndDepositAsync
+        ? async (amount: string) => {
+              if (application && token) {
+                  setError(undefined);
+                  try {
+                      const { id } = await approveAndDepositAsync(
+                          application,
+                          token.address,
+                          BigInt(amount),
+                      );
+                      setCallId(id);
+                  } catch (e: unknown) {
+                      setError(e instanceof Error ? e.message : String(e));
+                  }
+              }
+          }
+        : undefined;
+
+    const handleWithdraw = async (amount: string) => {
+        if (application) {
+            setError(undefined);
+            try {
+                const { id } = await requestWithdrawAsync(
+                    application,
+                    BigInt(amount),
+                );
                 setCallId(id);
-            } catch (e: any) {
-                setError(e.message);
+            } catch (e: unknown) {
+                setError(e instanceof Error ? e.message : String(e));
+            }
+        }
+    };
+
+    const handleExecuteVoucher = async (output: ExecutableVoucher) => {
+        if (application && output.executable) {
+            setError(undefined);
+            try {
+                const { id } = await executeVoucherAsync(application, output);
+                setCallId(id);
+            } catch (e: unknown) {
+                setError(e instanceof Error ? e.message : String(e));
             }
         }
     };
@@ -275,6 +191,8 @@ const BridgePage = () => {
             isConnecting={isConnecting}
             isConnected={isConnected}
             onConnect={handleConnect}
+            onLogin={() => login?.({ passkeyName: "OnChess" })}
+            onRegister={() => register?.({ passkeyName: "OnChess" })}
             onDisconnect={disconnect}
             player={player}
             token={token}
@@ -287,14 +205,11 @@ const BridgePage = () => {
                         chain={chain}
                         connecting={isConnecting}
                         balance={balance?.toString()}
-                        disabled={!dapp}
+                        disabled={!application}
                         error={error}
                         executing={
                             isFetching ||
                             isBatchFetching ||
-                            approvePending ||
-                            depositPending ||
-                            addInputPending ||
                             isPending ||
                             loading
                         }

@@ -4,25 +4,25 @@ import {
     Group,
     LoadingOverlay,
     Stack,
-    StackProps,
+    type StackProps,
     ThemeIcon,
 } from "@mantine/core";
-import { LobbyItem, Token } from "@onchess/core";
+import type { Challenge, Token } from "@onchess/core";
 import { IconClock, IconStar } from "@tabler/icons-react";
 import { Chess } from "chess.js";
-import { FC } from "react";
-import { BoardTheme, ChessBoard } from "react-fen-chess-board";
+import type { FC } from "react";
+import { type BoardTheme, ChessBoard } from "react-fen-chess-board";
 import { formatTimeControl } from "../util/format";
 import { AddressText } from "./AddressText";
 import { Balance } from "./connect/Balance";
 
 export interface WaitOpponentProps extends StackProps {
-    lobby: LobbyItem;
+    challenge: Challenge;
     token: Token;
 }
 
 export const WaitOpponent: FC<WaitOpponentProps> = (props) => {
-    const { lobby, token, ...stackProps } = props;
+    const { challenge, token, ...stackProps } = props;
     const chess = new Chess();
     const fen = chess.fen();
 
@@ -37,7 +37,7 @@ export const WaitOpponent: FC<WaitOpponentProps> = (props) => {
             <Group justify="space-between">
                 <Group gap={3}>
                     <Balance
-                        balance={lobby.bet}
+                        balance={challenge.bet}
                         iconPosition="left"
                         token={token}
                     />
@@ -52,7 +52,7 @@ export const WaitOpponent: FC<WaitOpponentProps> = (props) => {
                             </ThemeIcon>
                         }
                     >
-                        {lobby.minRating} - {lobby.maxRating}
+                        {challenge.minRating} - {challenge.maxRating}
                     </Badge>
                 </Group>
                 <Group gap={3}>
@@ -65,7 +65,7 @@ export const WaitOpponent: FC<WaitOpponentProps> = (props) => {
                             </ThemeIcon>
                         }
                     >
-                        {formatTimeControl(lobby.timeControl)}
+                        {formatTimeControl(challenge.timeControl)}
                     </Badge>
                 </Group>
             </Group>
@@ -80,7 +80,11 @@ export const WaitOpponent: FC<WaitOpponentProps> = (props) => {
                 <ChessBoard fen={fen} boardTheme={boardTheme} />
             </Box>
             <Group justify="space-between">
-                <AddressText address={lobby.player} fw={600} ff="monospace" />
+                <AddressText
+                    address={challenge.player}
+                    fw={600}
+                    ff="monospace"
+                />
                 <Badge color="gray" variant="dot" size="lg">
                     Waiting opponent...
                 </Badge>

@@ -1,5 +1,5 @@
-import { Address } from "viem";
-import { Player, State } from "./state.js";
+import type { Address } from "viem";
+import type { Player, State } from "./state.js";
 
 export const INITIAL_RATING = 1000;
 
@@ -13,7 +13,7 @@ export const createPlayer = (address: Address): Player => ({
     balance: "0",
     draws: 0,
     losses: 0,
-    played: 0,
+    games: 0,
     rating: INITIAL_RATING,
     wins: 0,
 });

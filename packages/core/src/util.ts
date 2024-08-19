@@ -1,4 +1,4 @@
-import { Hex, hexToNumber, slice } from "viem";
+import { type Hex, hexToNumber, slice } from "viem";
 
 /**
  * Return a number between 0 and 1 from a hex value.
@@ -30,3 +30,11 @@ export const sum = (v1: string, v2: string): string => {
 export const subtract = (v1: string, v2: string): string => {
     return (BigInt(v1) - BigInt(v2)).toString();
 };
+
+/**
+ * Format a timestamp to a PGNDate string.
+ * @param ms timestamp in milliseconds
+ * @returns PGNDate string
+ */
+export const formatToPGNDate = (ms: number) =>
+    new Date(ms).toISOString().slice(0, 10).replace(/-/g, ".");

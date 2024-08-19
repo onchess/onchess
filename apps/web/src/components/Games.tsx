@@ -1,9 +1,9 @@
 "use client";
 
-import { SimpleGrid, Stack, StackProps } from "@mantine/core";
-import { Game, Token } from "@onchess/core";
-import { FC } from "react";
-import { Address } from "viem";
+import { SimpleGrid, Stack, type StackProps } from "@mantine/core";
+import type { Game, Token } from "@onchess/core";
+import type { FC } from "react";
+import type { Address } from "viem";
 
 import { MiniGameboard, MiniGameboardPlaceholder } from "./MiniGameboard";
 
@@ -45,9 +45,9 @@ export const Games: FC<GamesProps> = (props) => {
         <Stack {...props}>
             <SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }}>
                 {sorted.length > 0 ? (
-                    sorted.map(([address, game], index) => (
+                    sorted.map(([address, game]) => (
                         <MiniGameboard
-                            key={index}
+                            key={address}
                             account={account}
                             address={address as Address}
                             now={now}

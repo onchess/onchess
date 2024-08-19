@@ -1,21 +1,21 @@
 "use client";
-import { Stack, StackProps, em } from "@mantine/core";
+import { Flex, Stack, type StackProps, em } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
-import {
+import type {
+    Challenge,
+    ChallengeBasePayload,
     CreateGamePayload,
     Game,
     GameBasePayload,
-    LobbyItem,
     MovePiecePayload,
     Player,
     Token,
 } from "@onchess/core";
-import { FC } from "react";
-import { Address } from "viem";
-import { CreateGame } from "./CreateGame";
+import type { FC } from "react";
+import type { Address } from "viem";
 import { Gameboard } from "./Gameboard";
-import { WaitOpponent } from "./WaitOpponent";
 import { Shell } from "./navigation/Shell";
+import { Lobby } from "./play/Lobby";
 
 export interface PlayPageProps extends StackProps {
     address?: Address;
@@ -23,17 +23,21 @@ export interface PlayPageProps extends StackProps {
     game?: Game;
     isConnected: boolean;
     isConnecting: boolean;
-    lobby?: LobbyItem;
+    lobby: Record<Address, Challenge>;
     now: number;
     onClaimVictory: (params: Omit<GameBasePayload, "metadata">) => void;
+    onCancel: (params: Omit<ChallengeBasePayload, "metadata">) => void;
     onConnect: () => void;
     onCreate: (params: Omit<CreateGamePayload, "metadata">) => void;
     onCreateSession?: () => void;
     onDeposit: (amount: string) => void;
     onDisconnect: () => void;
+    onJoin: (params: Omit<ChallengeBasePayload, "metadata">) => void;
     onMove: (params: Omit<MovePiecePayload, "metadata" | "sender">) => void;
     onResign: (params: Omit<GameBasePayload, "metadata">) => void;
+    pastGames: Game[];
     player?: Player;
+    players: Record<Address, Player>;
     sessionExpiry?: number;
     sessionId?: string;
     sessionSupported?: boolean;
@@ -50,15 +54,19 @@ export const PlayPage: FC<PlayPageProps> = (props) => {
         now,
         isConnected,
         isConnecting,
+        onCancel,
         onClaimVictory,
         onConnect,
         onCreate,
         onCreateSession,
         onDeposit,
         onDisconnect,
+        onJoin,
         onMove,
         onResign,
+        pastGames,
         player,
+        players,
         sessionExpiry,
         sessionId,
         sessionSupported,
@@ -67,17 +75,11 @@ export const PlayPage: FC<PlayPageProps> = (props) => {
         ...stackProps
     } = props;
 
-    // show wait if there is a lobby
-    const showWait = lobby !== undefined && token !== undefined;
-
-    // show create if game is over or if there is no game
-    const showCreate =
-        !showWait &&
-        (game === undefined || game.result !== undefined) &&
-        token !== undefined;
-
     // show game if is not waiting and there is a game
-    const showGame = !showWait && game !== undefined;
+    const showGame = game !== undefined;
+
+    // show lobby if it is showing create
+    const showLobby = token && game === undefined;
 
     const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
 
@@ -109,19 +111,39 @@ export const PlayPage: FC<PlayPageProps> = (props) => {
                             submitting={submitting}
                         />
                     )}
-                    {showCreate && (
-                        <CreateGame
-                            error={error}
+                    {showLobby && (
+                        <Lobby
                             executing={submitting}
-                            player={player}
-                            onCreate={onCreate}
+                            lobby={Object.values(lobby)}
+                            onCancel={onCancel}
                             onConnect={onConnect}
+                            onCreate={onCreate}
                             onDeposit={onDeposit}
+                            onJoin={onJoin}
+                            player={player}
+                            players={players}
                             token={token}
                         />
                     )}
-                    {showWait && (
-                        <WaitOpponent lobby={lobby} maw={600} token={token} />
+                    {pastGames.length > 0 && (
+                        <Flex>
+                            {pastGames.map((game) => (
+                                <Gameboard
+                                    key={game.address}
+                                    game={game}
+                                    now={now}
+                                    onClaimVictory={() => {}}
+                                    onCreateSession={() => {}}
+                                    onMove={() => {}}
+                                    onResign={() => {}}
+                                    player={player}
+                                    sessionExpiry={sessionExpiry}
+                                    sessionId={sessionId}
+                                    sessionSupported={sessionSupported}
+                                    submitting={false}
+                                />
+                            ))}
+                        </Flex>
                     )}
                 </Stack>
             </Stack>

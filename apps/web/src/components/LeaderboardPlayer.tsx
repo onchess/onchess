@@ -7,9 +7,9 @@ import {
     Stack,
     Text,
 } from "@mantine/core";
-import { Player } from "@onchess/core";
-import { FC } from "react";
-import { Address } from "viem";
+import type { Player } from "@onchess/core";
+import type { FC } from "react";
+import type { Address } from "viem";
 import { AddressText } from "./AddressText";
 
 export type LeaderboardPlayerProps = {
@@ -26,6 +26,7 @@ export const LeaderboardPlayer: FC<LeaderboardPlayerProps> = ({
     position,
 }) => {
     const me = address === account;
+    const { games, wins, losses, draws } = player;
 
     return (
         <Paper
@@ -47,8 +48,7 @@ export const LeaderboardPlayer: FC<LeaderboardPlayerProps> = ({
                         <Text>({player.rating})</Text>
                     </Group>
                     <Text>
-                        {player.played} games ({player.wins} W / {player.losses}{" "}
-                        L / {player.draws} D)
+                        {`${games} ${games === 1 ? "game" : "games"} (${wins} W / ${losses} L / ${draws} D)`}
                     </Text>
                 </Stack>
             </Flex>

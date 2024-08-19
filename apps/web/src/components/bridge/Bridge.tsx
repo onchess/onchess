@@ -7,15 +7,15 @@ import {
     Group,
     SegmentedControl,
     Stack,
-    StackProps,
+    type StackProps,
     Text,
     Textarea,
 } from "@mantine/core";
-import { Token } from "@onchess/core";
+import type { Token } from "@onchess/core";
 import { IconArrowRight } from "@tabler/icons-react";
-import { FC, useState } from "react";
-import { Chain } from "viem";
-import { ExecutableVoucher } from "../../hooks/voucher";
+import { type FC, useState } from "react";
+import type { Chain } from "viem";
+import type { ExecutableVoucher } from "../../hooks/voucher";
 import { Faucet } from "../Faucet";
 import { Deposit } from "./Deposit";
 import { Withdraw } from "./Withdraw";

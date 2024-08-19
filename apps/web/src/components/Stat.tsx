@@ -1,6 +1,6 @@
 import { Group, Paper, Stack, Text, Title } from "@mantine/core";
-import { Icon } from "@tabler/icons-react";
-import { FC } from "react";
+import type { Icon } from "@tabler/icons-react";
+import type { FC } from "react";
 
 export interface StatProps {
     name: string;
@@ -8,7 +8,7 @@ export interface StatProps {
     icon?: Icon;
 }
 
-export const Stat: FC<StatProps> = ({ name, value, icon }) => {
+export const Stat: FC<StatProps> = ({ name, value }) => {
     return (
         <Paper p={20} withBorder>
             <Stack gap={0}>

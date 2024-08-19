@@ -1,7 +1,7 @@
-import { SimpleGrid, Stack, StackProps } from "@mantine/core";
-import { Player } from "@onchess/core";
-import { FC } from "react";
-import { Address } from "viem";
+import { SimpleGrid, Stack, type StackProps } from "@mantine/core";
+import type { Player } from "@onchess/core";
+import type { FC } from "react";
+import type { Address } from "viem";
 import { LeaderboardPlayer } from "./LeaderboardPlayer";
 
 export interface LeaderboardProps extends StackProps {

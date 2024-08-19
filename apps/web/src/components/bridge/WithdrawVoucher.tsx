@@ -1,7 +1,7 @@
-import { Token } from "@onchess/core";
-import { FC } from "react";
+import type { Token } from "@onchess/core";
+import type { FC } from "react";
 import { getAddress } from "viem";
-import { ExecutableVoucher } from "../../hooks/voucher";
+import type { ExecutableVoucher } from "../../hooks/voucher";
 import { ERC20Voucher } from "./ERC20Voucher";
 
 export type WithdrawVoucherProps = {
@@ -13,8 +13,11 @@ export type WithdrawVoucherProps = {
 
 export const WithdrawVoucher: FC<WithdrawVoucherProps> = (props) => {
     const { executing, onExecute, token, voucher } = props;
-    const { destination } = voucher;
-    if (getAddress(destination) === getAddress(token.address)) {
+    if (
+        voucher.decodedData.type === "Voucher" &&
+        getAddress(voucher.decodedData.destination) ===
+            getAddress(token.address)
+    ) {
         return (
             <ERC20Voucher
                 executing={executing}

@@ -1,6 +1,6 @@
-import { INITIAL_RATING, Token } from "@onchess/core";
+import { INITIAL_RATING, type Token } from "@onchess/core";
 import type { Meta, StoryObj } from "@storybook/react";
-import { fn } from "@storybook/test";
+import { fn } from "storybook/test";
 import { Header } from "../components/Header";
 
 const meta = {
@@ -37,7 +37,7 @@ export const Connected: Story = {
         player: {
             address: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
             balance: (350n * 10n ** BigInt(token.decimals)).toString(),
-            played: 1,
+            games: 1,
             wins: 1,
             losses: 0,
             draws: 0,
@@ -57,7 +57,7 @@ export const NoBalance: Story = {
         player: {
             address: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
             balance: "0",
-            played: 0,
+            games: 0,
             wins: 0,
             losses: 0,
             draws: 0,

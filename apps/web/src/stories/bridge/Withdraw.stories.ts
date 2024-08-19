@@ -1,6 +1,7 @@
-import { Token } from "@onchess/core";
+import type { Token } from "@onchess/core";
 import type { Meta, StoryObj } from "@storybook/react";
-import { fn } from "@storybook/test";
+import { fn } from "storybook/test";
+import { encodeFunctionData, erc20Abi, parseUnits, zeroHash } from "viem";
 import { Withdraw } from "../../components/bridge/Withdraw";
 
 const meta = {
@@ -106,18 +107,32 @@ export const Vouchers: Story = {
         onWithdraw: fn(),
         token,
         vouchers: [
-            /*            {
-                destination: token.address,
-                index: 0,
-                proof: undefined,
-                payload:
-                    "0xa9059cbb0000000000000000000000000769e15f8d7042969aeb78e73b54192b3c4ec8bc00000000000000000000000000000000000000000000000000000000007270e0",
-            },
             {
-                destination: token.address,
-                payload:
-                    "0xa9059cbb0000000000000000000000000769e15f8d7042969aeb78e73b54192b3c4ec8bc00000000000000000000000000000000000000000000000000000000007270e0",
-            },*/
+                createdAt: new Date(),
+                decodedData: {
+                    destination: token.address,
+                    type: "Voucher",
+                    payload: encodeFunctionData({
+                        abi: erc20Abi,
+                        functionName: "transfer",
+                        args: [
+                            "0xD27A20A18496AE3200358E569B107D62a1e3f463",
+                            parseUnits("7.2", token.decimals),
+                        ],
+                    }),
+                    value: 0n,
+                },
+                epochIndex: 0n,
+                executable: false,
+                executed: false,
+                executionTransactionHash: null,
+                hash: zeroHash,
+                index: 0n,
+                inputIndex: 0n,
+                outputHashesSiblings: [],
+                rawData: "0x",
+                updatedAt: new Date(),
+            },
         ],
     },
 };

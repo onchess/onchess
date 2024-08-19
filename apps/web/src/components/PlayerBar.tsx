@@ -1,6 +1,6 @@
-import { Badge, Button, Group, GroupProps, Switch } from "@mantine/core";
-import { Color } from "chess.js";
-import { Address } from "viem";
+import { Badge, Button, Group, type GroupProps, Switch } from "@mantine/core";
+import type { Color } from "chess.js";
+import type { Address } from "viem";
 import { getTimeLeft } from "../hooks/clock";
 import { Clock } from "./Clock";
 import { PlayerText } from "./PlayerText";

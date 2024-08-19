@@ -18,9 +18,9 @@ export default function ProfilePage() {
     const handleConnect = () => connect({ connector: connectors[0] });
 
     const player = address
-        ? state && state.players
-            ? state.players[getAddress(address)] ??
-              createPlayer(getAddress(address))
+        ? state?.players
+            ? (state.players[getAddress(address)] ??
+              createPlayer(getAddress(address)))
             : createPlayer(getAddress(address))
         : undefined;
 

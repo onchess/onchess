@@ -1,29 +1,31 @@
 "use client";
 
-import { FC, PropsWithChildren } from "react";
-import { base, baseSepolia, foundry } from "wagmi/chains";
-import { WalletConnectWalletProvider } from "./wallet/walletconnect";
-import { ZeroDevWalletProvider } from "./wallet/zerodev";
+import { type FC, type PropsWithChildren, useState } from "react";
+import { base, baseSepolia, cannon } from "viem/chains";
+import { cookieToInitialState } from "wagmi";
+import { BasicWalletProvider } from "./wallet/basic";
+import { getConfig } from "./wallet/config";
+import { ReownWalletProvider } from "./wallet/reown";
 
-export type WalletProviderType = "ZeroDev" | "WalletConnect";
+export type WalletProviderType = "Coinbase" | "MetaMask" | "Reown" | "ZeroDev";
 
 export const extractChain = () => {
     const chainId = process.env.NEXT_PUBLIC_CHAIN_ID;
     if (!chainId) {
         throw new Error("Missing NEXT_PUBLIC_CHAIN_ID");
     }
-    if (isNaN(parseInt(chainId))) {
+    if (Number.isNaN(Number.parseInt(chainId))) {
         throw new Error("Invalid NEXT_PUBLIC_CHAIN_ID");
     }
-    switch (parseInt(chainId)) {
+    switch (Number.parseInt(chainId)) {
         case base.id:
             return base;
         case baseSepolia.id:
             return baseSepolia;
-        case foundry.id:
-            return foundry;
+        case cannon.id:
+            return cannon;
         default:
-            return foundry;
+            return cannon;
     }
 };
 
@@ -33,46 +35,59 @@ export const getProviderType = (): WalletProviderType => {
         throw new Error("Missing NEXT_PUBLIC_WALLET_PROVIDER");
     }
     switch (type) {
-        case "WalletConnect":
-            return "WalletConnect";
+        case "Coinbase":
+            return "Coinbase";
+        case "MetaMask":
+            return "MetaMask";
+        case "Reown":
+            return "Reown";
         case "ZeroDev":
             return "ZeroDev";
     }
-    throw new Error("Invalid NEXT_PUBLIC_WALLET_PROVIDER");
+    throw new Error(`Invalid NEXT_PUBLIC_WALLET_PROVIDER: ${type}`);
 };
 
-export const WalletProvider: FC<PropsWithChildren> = ({ children }) => {
+type WalletProviderProps = PropsWithChildren & { cookies: string | null };
+
+export const WalletProvider: FC<WalletProviderProps> = ({
+    children,
+    cookies,
+}) => {
     // read chain configuration from env
     const chain = extractChain();
 
     // read provider configuration from env
     const provider = getProviderType();
 
+    // create wagmi config
+    const [config] = useState(() => getConfig(provider, chain));
+
+    // create wagmi initial state
+    const initialState = cookieToInitialState(config, cookies);
+
     switch (provider) {
-        case "WalletConnect": {
-            const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID;
+        case "Reown": {
+            const projectId = process.env.NEXT_PUBLIC_REOWN_PROJECT_ID;
             if (!projectId) {
-                throw new Error("Missing NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID");
+                throw new Error("Missing NEXT_PUBLIC_REOWN_PROJECT_ID");
             }
             return (
-                <WalletConnectWalletProvider
-                    chain={chain}
-                    projectId={projectId}
+                <ReownWalletProvider chain={chain} projectId={projectId}>
+                    {children}
+                </ReownWalletProvider>
+            );
+        }
+        case "Coinbase":
+        case "MetaMask":
+        case "ZeroDev":
+            return (
+                <BasicWalletProvider
+                    config={config}
+                    initialState={initialState}
+                    reconnectOnMount={true}
                 >
                     {children}
-                </WalletConnectWalletProvider>
+                </BasicWalletProvider>
             );
-        }
-        case "ZeroDev": {
-            const projectId = process.env.NEXT_PUBLIC_ZERODEV_PROJECT_ID;
-            if (!projectId) {
-                throw new Error("Missing NEXT_PUBLIC_ZERODEV_PROJECT_ID");
-            }
-            return (
-                <ZeroDevWalletProvider chain={chain} projectId={projectId}>
-                    {children}
-                </ZeroDevWalletProvider>
-            );
-        }
     }
 };

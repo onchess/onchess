@@ -1,7 +1,7 @@
 import { Group, Paper } from "@mantine/core";
-import { FC } from "react";
-import { Account, AccountProps } from "./Account";
-import { Balance, BalanceProps } from "./Balance";
+import type { FC } from "react";
+import { Account, type AccountProps } from "./Account";
+import { Balance, type BalanceProps } from "./Balance";
 
 export type ConnectedButtonProps = AccountProps & BalanceProps;
 

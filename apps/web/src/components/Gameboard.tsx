@@ -1,17 +1,22 @@
 "use client";
 
 import { Alert, Box, LoadingOverlay, Stack, Textarea } from "@mantine/core";
-import { Game, GameBasePayload, MovePiecePayload, Player } from "@onchess/core";
-import { Position } from "chess-fen";
+import type {
+    Game,
+    GameBasePayload,
+    MovePiecePayload,
+    Player,
+} from "@onchess/core";
+import type { Position } from "chess-fen";
 import { Chess } from "chess.js";
-import { FC, useEffect, useState } from "react";
+import { type FC, useEffect, useState } from "react";
 import {
-    BoardTheme,
+    type BoardTheme,
     ChessBoard,
     ChessBoardDndProvider,
-    MoveHandler,
+    type MoveHandler,
     PromotionView,
-    SquareRendererFunc,
+    type SquareRendererFunc,
     defaultRenderSquare,
 } from "react-fen-chess-board";
 import { PlayerBar } from "./PlayerBar";
@@ -83,6 +88,7 @@ export const Gameboard: FC<GameboardProps> = (props) => {
 
     const [promotion, setPromotion] = useState<Promotion | null>(null);
     const [fen, setFen] = useState(chess.fen());
+    // biome-ignore lint/correctness/useExhaustiveDependencies: fen
     useEffect(() => {
         const fen = chess.fen();
         setFen(fen);
@@ -166,7 +172,7 @@ export const Gameboard: FC<GameboardProps> = (props) => {
 
     // render square function that is able to handle promotions
     const renderSquare: SquareRendererFunc = (props) => {
-        if (promotion && promotion.to.equals(props.position)) {
+        if (promotion?.to?.equals(props.position)) {
             return (
                 <PromotionView
                     key={props.position.toCoordinate()}

@@ -1,47 +1,37 @@
 "use client";
 
-import {
-    ABI,
+import type {
+    ChallengeBasePayload,
     CreateGamePayload,
     GameBasePayload,
     MovePiecePayload,
     State,
-    createPlayer,
 } from "@onchess/core";
+import { createPlayer } from "@onchess/core";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import {
-    Address,
-    Hash,
-    WalletCapabilities,
-    encodeFunctionData,
-    getAddress,
-} from "viem";
+import { type Address, getAddress } from "viem";
 import {
     useAccount,
     useConnect,
     useDisconnect,
-    useWaitForTransactionReceipt,
+    useWaitForCallsStatus,
 } from "wagmi";
-import { useWriteContracts } from "wagmi/experimental";
 import { PlayPage } from "../../components/PlayPage";
-import { usePaymasterServiceSupport } from "../../hooks/capabilities";
+import { useChessActions } from "../../hooks/chess";
 import { useClock } from "../../hooks/clock";
 import { useApplicationAddress } from "../../hooks/config";
-import {
-    inputBoxAbi,
-    inputBoxAddress,
-    useWriteInputBoxAddInput,
-} from "../../hooks/contracts";
 import { useSessionId } from "../../hooks/session";
 import { useLatestState } from "../../hooks/state";
 
 const selectPlayerState = (state: State, address?: Address) => {
     const player = address
-        ? state.players[getAddress(address)] ?? createPlayer(address)
+        ? (state.players[getAddress(address)] ?? createPlayer(address))
         : undefined;
     const lobby = address
-        ? state.lobby.filter((item) => item.player === getAddress(address))
+        ? Object.values(state.lobby).filter(
+              (challenge) => challenge.player === getAddress(address),
+          )
         : [];
     const games = address
         ? Object.values(state.games)
@@ -77,22 +67,26 @@ const Play = () => {
               finishedGames: [],
               unfinishedGames: [],
           };
-    const firstGame =
-        playerState.unfinishedGames[0] || playerState.finishedGames[0];
-    const firstLobby = playerState.lobby[0];
+    const ongoingGame = playerState.unfinishedGames.at(0);
+    const pastGames = playerState.finishedGames;
+
+    // paymaster configuration
+    const paymasterUrl = process.env.NEXT_PUBLIC_PAYMASTER_URL;
 
     // transactions
-    const { writeContractAsync: addInput, isPending: addInputPending } =
-        useWriteInputBoxAddInput();
-    const { writeContractsAsync, isPending: movePending } = useWriteContracts();
+    const {
+        claimVictoryAsync,
+        cancelGameAsync,
+        createGameAsync,
+        joinGameAsync,
+        isPending,
+        resignAsync,
+        sendMoveAsync,
+    } = useChessActions(paymasterUrl);
 
     // transaction mining
-    const [hash, setHash] = useState<Hash | undefined>();
-    const { isFetching } = useWaitForTransactionReceipt({ hash });
-
-    // paymaster support
-    const { supported: paymasterSupported } = usePaymasterServiceSupport();
-    const paymasterUrl = process.env.NEXT_PUBLIC_PAYMASTER_URL;
+    const [id, setId] = useState<string | undefined>();
+    const { isFetching } = useWaitForCallsStatus({ id });
 
     // error state
     const [error, setError] = useState<string | undefined>();
@@ -114,42 +108,41 @@ const Play = () => {
         if (playerState.player && dapp) {
             // clear error
             setError(undefined);
-
             try {
-                const { bet, timeControl, minRating, maxRating } = params;
-                const payload = encodeFunctionData({
-                    abi: ABI,
-                    functionName: "create",
-                    args: [
-                        BigInt(bet),
-                        timeControl,
-                        Math.ceil(minRating),
-                        Math.floor(maxRating),
-                    ],
-                });
-                if (paymasterSupported && paymasterUrl) {
-                    // use paymaster
-                    const hash = await writeContractsAsync({
-                        contracts: [
-                            {
-                                address: inputBoxAddress,
-                                abi: inputBoxAbi,
-                                functionName: "addInput",
-                                args: [dapp, payload],
-                            },
-                        ],
-                        capabilities: {
-                            paymasterService: {
-                                url: paymasterUrl,
-                            },
-                        },
-                    });
-                } else {
-                    const hash = await addInput({ args: [dapp, payload] });
-                    setHash(hash);
-                }
-            } catch (e: any) {
-                setError(e.message);
+                const { id } = await createGameAsync(dapp, params);
+                setId(id);
+            } catch (e: unknown) {
+                setError(e instanceof Error ? e.message : "An error occurred");
+            }
+        }
+    };
+
+    const handleCancel = async (
+        params: Omit<ChallengeBasePayload, "metadata">,
+    ) => {
+        if (playerState.player && dapp) {
+            // reset error
+            setError(undefined);
+            try {
+                const { id } = await cancelGameAsync(dapp, params);
+                setId(id);
+            } catch (e: unknown) {
+                setError(e instanceof Error ? e.message : "An error occurred");
+            }
+        }
+    };
+
+    const handleJoin = async (
+        params: Omit<ChallengeBasePayload, "metadata">,
+    ) => {
+        if (playerState.player && dapp) {
+            // reset error
+            setError(undefined);
+            try {
+                const { id } = await joinGameAsync(dapp, params);
+                setId(id);
+            } catch (e: unknown) {
+                setError(e instanceof Error ? e.message : "An error occurred");
             }
         }
     };
@@ -162,33 +155,13 @@ const Play = () => {
             setError(undefined);
 
             try {
-                const address = params.address as Address;
-                const move = params.move;
-                const payload = encodeFunctionData({
-                    abi: ABI,
-                    functionName: "move",
-                    args: [address, move],
-                });
-                const capabilities: WalletCapabilities = {};
                 if (sessionId) {
-                    capabilities.permissions = { sessionId };
+                    // capabilities.permissions = { sessionId }; // XXX
                 }
-                if (paymasterSupported && paymasterUrl) {
-                    capabilities.paymasterService = { url: paymasterUrl };
-                }
-                const hash = await writeContractsAsync({
-                    contracts: [
-                        {
-                            address: inputBoxAddress,
-                            abi: inputBoxAbi,
-                            functionName: "addInput",
-                            args: [dapp, payload],
-                        },
-                    ],
-                    capabilities,
-                });
-            } catch (e: any) {
-                setError(e.message);
+                const { id } = await sendMoveAsync(dapp, params);
+                setId(id);
+            } catch (e: unknown) {
+                setError(e instanceof Error ? e.message : "An error occurred");
             }
         }
     };
@@ -198,31 +171,10 @@ const Play = () => {
             // reset error
             setError(undefined);
             try {
-                const address = params.address as Address;
-                const payload = encodeFunctionData({
-                    abi: ABI,
-                    functionName: "resign",
-                    args: [address],
-                });
-                const capabilities: WalletCapabilities = {};
-                if (paymasterSupported && paymasterUrl) {
-                    capabilities.paymasterService = { url: paymasterUrl };
-                }
-                const hash = await writeContractsAsync({
-                    contracts: [
-                        {
-                            address: inputBoxAddress,
-                            abi: inputBoxAbi,
-                            functionName: "addInput",
-                            args: [dapp, payload],
-                        },
-                    ],
-                    capabilities,
-                });
-                console.log(hash);
-            } catch (e: any) {
-                setError(e.message);
-                console.log(e.message);
+                const { id } = await resignAsync(dapp, params);
+                setId(id);
+            } catch (e: unknown) {
+                setError(e instanceof Error ? e.message : "An error occurred");
             }
         }
     };
@@ -234,29 +186,10 @@ const Play = () => {
             // reset error
             setError(undefined);
             try {
-                const address = params.address as Address;
-                const payload = encodeFunctionData({
-                    abi: ABI,
-                    functionName: "claim",
-                    args: [address],
-                });
-                const capabilities: WalletCapabilities = {};
-                if (paymasterSupported && paymasterUrl) {
-                    capabilities.paymasterService = { url: paymasterUrl };
-                }
-                const hash = await writeContractsAsync({
-                    contracts: [
-                        {
-                            address: inputBoxAddress,
-                            abi: inputBoxAbi,
-                            functionName: "addInput",
-                            args: [dapp, payload],
-                        },
-                    ],
-                    capabilities,
-                });
-            } catch (e: any) {
-                setError(e.message);
+                const { id } = await claimVictoryAsync(dapp, params);
+                setId(id);
+            } catch (e: unknown) {
+                setError(e instanceof Error ? e.message : "An error occurred");
             }
         }
     };
@@ -273,27 +206,29 @@ const Play = () => {
         <PlayPage
             address={address}
             error={error}
-            game={firstGame}
+            game={ongoingGame}
+            pastGames={pastGames}
             isConnected={isConnected}
             isConnecting={isConnecting}
-            lobby={firstLobby}
+            lobby={state?.lobby ?? {}}
             miw={400}
             now={now}
+            onCancel={handleCancel}
             onClaimVictory={handleClaimVictory}
-            onCreate={handleCreate}
             onConnect={handleConnect}
-            onDisconnect={disconnect}
+            onCreate={handleCreate}
+            onJoin={handleJoin}
             onCreateSession={sessionSupported ? handleCreateSession : undefined}
+            onDisconnect={disconnect}
             onDeposit={handleDeposit}
             onMove={handleMove}
             onResign={handleResign}
             player={playerState.player}
+            players={state?.players ?? {}}
             sessionExpiry={sessionExpiry}
             sessionId={sessionId}
             sessionSupported={sessionSupported}
-            submitting={
-                isFetching || addInputPending || movePending || isConnecting
-            }
+            submitting={isPending || isConnecting}
             token={token}
         />
     );

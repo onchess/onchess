@@ -1,5 +1,5 @@
-import { Voucher } from "@deroll/core";
-import { Address } from "viem";
+import type { Voucher } from "@deroll/core";
+import type { Address } from "viem";
 
 /**
  * Configuration of a ERC-20 token used by the game
@@ -28,7 +28,10 @@ export interface Config {
     eloKFactor: number;
 }
 
-export interface LobbyItem {
+export interface Challenge {
+    // challenge address
+    address: Address;
+
     // address of player proposing the game
     player: Address;
 
@@ -105,7 +108,7 @@ export interface Player {
     rating: number;
 
     // total number of games played
-    played: number;
+    games: number;
 
     // total number of wins
     wins: number;
@@ -128,7 +131,7 @@ export interface State {
     rake: string;
 
     // all games in the lobby
-    lobby: LobbyItem[];
+    lobby: Record<Address, Challenge>;
 
     // all games in progress
     games: Record<Address, Game>;

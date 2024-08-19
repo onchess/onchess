@@ -1,4 +1,4 @@
-import { State } from "@onchess/core";
+import type { State } from "@onchess/core";
 import { zeroAddress } from "viem";
 
 export default {
@@ -14,7 +14,7 @@ export default {
         },
     },
     games: {},
-    lobby: [],
+    lobby: {},
     messages: {},
     players: {},
     rake: "0",

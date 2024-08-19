@@ -1,7 +1,7 @@
 "use client";
 
-import { Badge, BadgeProps } from "@mantine/core";
-import { FC } from "react";
+import { Badge, type BadgeProps } from "@mantine/core";
+import type { FC } from "react";
 
 /**
  * Format seconds to "minutes:seconds"

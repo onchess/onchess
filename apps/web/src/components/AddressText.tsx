@@ -3,13 +3,13 @@ import {
     CopyButton,
     Group,
     Text,
-    TextProps,
+    type TextProps,
     Tooltip,
     rem,
 } from "@mantine/core";
 import { IconCheck, IconCopy } from "@tabler/icons-react";
-import { FC } from "react";
-import { Address } from "viem";
+import type { FC } from "react";
+import type { Address } from "viem";
 
 export interface AddressTextProps extends TextProps {
     address: Address;

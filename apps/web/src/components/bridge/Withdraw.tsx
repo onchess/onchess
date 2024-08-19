@@ -11,15 +11,15 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
-import { Token } from "@onchess/core";
+import type { Token } from "@onchess/core";
 import {
     IconChevronDown,
     IconChevronUp,
     IconCornerLeftUp,
 } from "@tabler/icons-react";
-import { FC } from "react";
+import type { FC } from "react";
 import { formatUnits, parseUnits } from "viem";
-import { ExecutableVoucher } from "../../hooks/voucher";
+import type { ExecutableVoucher } from "../../hooks/voucher";
 import { Vouchers } from "./Vouchers";
 
 export interface WithdrawProps {

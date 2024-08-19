@@ -1,6 +1,6 @@
 import { SimpleGrid } from "@mantine/core";
-import { Player } from "@onchess/core";
-import { FC } from "react";
+import type { Player } from "@onchess/core";
+import type { FC } from "react";
 import { Stat } from "./Stat";
 
 export interface ProfileProps {

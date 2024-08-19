@@ -1,0 +1,93 @@
+import type { PayloadAction } from "@reduxjs/toolkit";
+import { Chess } from "chess.js";
+import { getAddress } from "viem";
+import { concat, keccak256, numberToHex, slice } from "viem/utils";
+import { createError } from "../message.js";
+import type { ChallengeBasePayload } from "../payloads.js";
+import { getPlayer } from "../players.js";
+import type { Game, State } from "../state.js";
+import { startTime } from "../time.js";
+import { formatToPGNDate, hexToFraction } from "../util.js";
+
+export default (state: State, action: PayloadAction<ChallengeBasePayload>) => {
+    // join game
+    const { address, metadata } = action.payload;
+    const { input_index, block_timestamp } = metadata;
+    const msg_sender = getAddress(metadata.msg_sender);
+
+    // get player
+    const player = getPlayer(state, msg_sender);
+
+    // get challenge
+    const challenge = state.lobby[address];
+
+    if (!challenge) {
+        player.message = createError({
+            text: "Challenge not found",
+            timestamp: block_timestamp,
+        });
+        return;
+    }
+
+    const opponent = challenge.player;
+    const timeControl = challenge.timeControl;
+    const bet = BigInt(challenge.bet);
+    const balance = BigInt(player.balance);
+
+    // check if player has enough balance
+    if (balance < bet) {
+        // player don't have enough funds
+        player.message = createError({
+            text: "Not enough funds",
+            timestamp: block_timestamp,
+        });
+        return;
+    }
+
+    // subtract bet from player balance
+    player.balance = (balance - bet).toString();
+
+    // calculate game address
+    const gameAddress = getAddress(
+        slice(
+            keccak256(concat([numberToHex(input_index), msg_sender, opponent])),
+            0,
+            20,
+        ),
+    );
+
+    // "random" color assignment
+    // XXX: not really random, predictable, but that's ok
+    const starter = hexToFraction(address);
+    const white = starter > 0.5 ? msg_sender : opponent;
+    const black = starter > 0.5 ? opponent : msg_sender;
+
+    // create new chess.js game
+    const chess = new Chess();
+    chess.setHeader("White", white);
+    chess.setHeader("Black", black);
+    chess.setHeader("Event", "Casual Game");
+    chess.setHeader("Site", "OnChess.xyz");
+    chess.setHeader("Date", formatToPGNDate(metadata.block_timestamp * 1000));
+
+    // calculate initial clock
+    const time = startTime(timeControl);
+
+    // create game object
+    const game: Game = {
+        address: gameAddress,
+        updatedAt: block_timestamp,
+        white,
+        black,
+        whiteTime: time,
+        blackTime: time,
+        timeControl,
+        pgn: chess.pgn(),
+        pot: (bet * 2n).toString(), // 2x bet
+        result: undefined,
+    };
+    state.games[gameAddress] = game;
+
+    // remove challenge
+    delete state.lobby[address];
+};

@@ -1,6 +1,6 @@
 import { Group, Stack, Text } from "@mantine/core";
-import { FC } from "react";
-import { Address, Hex, decodeFunctionData, parseAbi } from "viem";
+import type { FC } from "react";
+import { type Address, type Hex, decodeFunctionData, parseAbi } from "viem";
 import { AddressText } from "../AddressText";
 
 export type HumanReadableABIVoucherProps = {
@@ -36,5 +36,4 @@ export const HumanABIVoucher: FC<HumanReadableABIVoucherProps> = ({
             </Stack>
         </Group>
     );
-    return null;
 };

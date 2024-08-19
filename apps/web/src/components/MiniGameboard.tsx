@@ -9,12 +9,12 @@ import {
     Text,
     Tooltip,
 } from "@mantine/core";
-import { Game, Token } from "@onchess/core";
+import type { Game, Token } from "@onchess/core";
 import { IconChessKnight } from "@tabler/icons-react";
 import { Chess } from "chess.js";
-import { FC } from "react";
+import type { FC } from "react";
 import { ChessBoard } from "react-fen-chess-board";
-import { Address, getAddress } from "viem";
+import { type Address, getAddress } from "viem";
 import { formatAmount, formatTimeControl } from "../util/format";
 import { Clock } from "./Clock";
 import { PlayerText } from "./PlayerText";
@@ -29,7 +29,6 @@ export type MiniGameboardProps = {
 
 export const MiniGameboard: FC<MiniGameboardProps> = ({
     account,
-    address,
     game,
     now,
     token,
@@ -38,9 +37,9 @@ export const MiniGameboard: FC<MiniGameboardProps> = ({
     chess.loadPgn(game.pgn);
     const turn = chess.turn();
 
-    const header = chess.header();
-    const white = header["White"];
-    const black = header["Black"];
+    const header = chess.getHeaders();
+    const white = header.White;
+    const black = header.Black;
     const mine = white === account || black === account;
 
     return (
@@ -54,7 +53,7 @@ export const MiniGameboard: FC<MiniGameboardProps> = ({
                 <Stack gap={3}>
                     <Group justify="space-between">
                         <PlayerText
-                            address={getAddress(black!)}
+                            address={getAddress(black)}
                             color="b"
                             isTurn={turn === "b"}
                         />
@@ -75,7 +74,7 @@ export const MiniGameboard: FC<MiniGameboardProps> = ({
                     />
                     <Group justify="space-between">
                         <PlayerText
-                            address={getAddress(white!)}
+                            address={getAddress(white)}
                             color="w"
                             isTurn={turn === "w"}
                         />

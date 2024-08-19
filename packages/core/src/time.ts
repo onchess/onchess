@@ -23,11 +23,11 @@ export const isValid = (timeControl: string): boolean => {
 export const parseTimeControl = (timeControl: string): [number, number] => {
     let m = /^(\d+)\+(\d+)$/.exec(timeControl);
     if (m) {
-        return [parseInt(m[1]), parseInt(m[2])];
+        return [Number.parseInt(m[1]), Number.parseInt(m[2])];
     }
     m = /^(\d+)$/.exec(timeControl);
     if (m) {
-        return [parseInt(m[1]), 0];
+        return [Number.parseInt(m[1]), 0];
     }
     return [0, 0];
 };

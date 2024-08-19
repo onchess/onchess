@@ -1,24 +1,14 @@
-import { State } from "@onchess/core";
-import { zeroAddress } from "viem";
+import type { State } from "@onchess/core";
+import { config } from "./config";
 
 export default {
-    config: {
-        eloKFactor: 20,
-        owner: zeroAddress,
-        rakeDivider: 20,
-        token: {
-            address: "0x92C6bcA388E99d6B304f1Af3c3Cd749Ff0b591e2",
-            decimals: 18,
-            name: "Test",
-            symbol: "TEST",
-        },
-    },
+    config,
     players: {
         "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266": {
             address: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
             balance: "320000000000000000000",
             rating: 1376,
-            played: 31,
+            games: 31,
             wins: 21,
             losses: 9,
             draws: 1,
@@ -27,7 +17,7 @@ export default {
             address: "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
             balance: "200000000000000000000",
             rating: 2803,
-            played: 19,
+            games: 19,
             wins: 15,
             losses: 4,
             draws: 0,
@@ -36,7 +26,7 @@ export default {
             address: "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC",
             balance: "100000000000000000000",
             rating: 2830,
-            played: 15,
+            games: 15,
             wins: 10,
             losses: 5,
             draws: 0,
@@ -45,7 +35,7 @@ export default {
             address: "0x90F79bf6EB2c4f870365E785982E1f101E93b906",
             balance: "1000000000000000000000",
             rating: 2757,
-            played: 12,
+            games: 12,
             wins: 9,
             losses: 1,
             draws: 2,
@@ -54,7 +44,7 @@ export default {
             address: "0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65",
             balance: "540000000000000000000",
             rating: 1845,
-            played: 10,
+            games: 10,
             wins: 3,
             losses: 7,
             draws: 0,
@@ -63,7 +53,7 @@ export default {
             address: "0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc",
             balance: "1200000000000000000000",
             rating: 984,
-            played: 18,
+            games: 18,
             wins: 8,
             losses: 10,
             draws: 0,
@@ -72,7 +62,7 @@ export default {
             address: "0x976EA74026E726554dB657fA54763abd0C3a0aa9",
             balance: "8900000000000000000000",
             rating: 2045,
-            played: 3,
+            games: 3,
             wins: 1,
             losses: 2,
             draws: 0,
@@ -81,7 +71,7 @@ export default {
             address: "0x14dC79964da2C08b23698B3D3cc7Ca32193d9955",
             balance: "2200000000000000000000",
             rating: 1910,
-            played: 6,
+            games: 6,
             wins: 1,
             losses: 5,
             draws: 0,
@@ -90,7 +80,7 @@ export default {
             address: "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
             balance: "10000000000000000000",
             rating: 2176,
-            played: 43,
+            games: 43,
             wins: 18,
             losses: 24,
             draws: 1,
@@ -99,14 +89,15 @@ export default {
             address: "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720",
             balance: "80000000000000000000",
             rating: 1013,
-            played: 8,
+            games: 8,
             wins: 1,
             losses: 7,
             draws: 0,
         },
     },
-    lobby: [
-        {
+    lobby: {
+        "0x65612F0e8336CdbaA03669862B265c86A9A27Cbe": {
+            address: "0x65612F0e8336CdbaA03669862B265c86A9A27Cbe",
             player: "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
             bet: "10000000000000000000",
             timeControl: "1500",
@@ -114,7 +105,8 @@ export default {
             minRating: 0,
             maxRating: 9007199254740991,
         },
-        {
+        "0x354149AAC9D3ed2bfdacad440F6beD9C58deec77": {
+            address: "0x354149AAC9D3ed2bfdacad440F6beD9C58deec77",
             player: "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
             bet: "100000000000000000000",
             timeControl: "900+5",
@@ -122,7 +114,8 @@ export default {
             minRating: 1600,
             maxRating: 2000,
         },
-        {
+        "0xfB3C32F4B4eeE03D39089A923d1b0ba9504c342D": {
+            address: "0xfB3C32F4B4eeE03D39089A923d1b0ba9504c342D",
             player: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
             bet: "100000000000000000000",
             timeControl: "1500",
@@ -130,7 +123,7 @@ export default {
             minRating: 0,
             maxRating: 9007199254740991,
         },
-    ],
+    },
     messages: {},
     games: {
         "0x7Ca9D93D87a7cdC0afE7724cEe0193427A764B0B": {

@@ -1,6 +1,6 @@
-import { Token } from "@onchess/core";
+import type { Token } from "@onchess/core";
 import type { Meta, StoryObj } from "@storybook/react";
-import { fn } from "@storybook/test";
+import { fn } from "storybook/test";
 import { base, baseSepolia } from "viem/chains";
 import { Bridge } from "../../components/bridge/Bridge";
 
@@ -84,7 +84,7 @@ export const Testnet: Story = {
     },
 };
 
-export const Error: Story = {
+export const ErrorMessage: Story = {
     args: {
         allowance: amount(0),
         applicationBalance: amount(10),
