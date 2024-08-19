@@ -29,7 +29,7 @@ export default (state: State, action: PayloadAction<WithdrawPayload>) => {
     // deduct amount from balance
     player.balance = subtract(player.balance, action.payload.amount);
 
-    // XXX: how to create voucher
+    // how to create voucher
     state.vouchers.push(
         createERC20TransferVoucher(
             state.config.token.address,

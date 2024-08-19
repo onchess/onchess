@@ -29,6 +29,9 @@ export interface Config {
 }
 
 export interface LobbyItem {
+    // lobby item address
+    address: Address;
+
     // address of player proposing the game
     player: Address;
 
@@ -128,7 +131,7 @@ export interface State {
     rake: string;
 
     // all games in the lobby
-    lobby: LobbyItem[];
+    lobby: Record<Address, LobbyItem>;
 
     // all games in progress
     games: Record<Address, Game>;

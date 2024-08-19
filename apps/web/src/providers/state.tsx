@@ -10,7 +10,7 @@ const config = getConfig(31337);
 const initialState: State = {
     config,
     games: {},
-    lobby: [],
+    lobby: {},
     players: {},
     rake: "0",
     vouchers: [],

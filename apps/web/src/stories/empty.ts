@@ -14,7 +14,7 @@ export default {
         },
     },
     games: {},
-    lobby: [],
+    lobby: {},
     messages: {},
     players: {},
     rake: "0",

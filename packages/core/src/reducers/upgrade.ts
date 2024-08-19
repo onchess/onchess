@@ -66,7 +66,10 @@ const tvl = (state: State) => {
     );
 
     // lobby bets
-    amount += state.lobby.reduce((acc, item) => acc + BigInt(item.bet), 0n);
+    amount += Object.values(state.lobby).reduce(
+        (acc, item) => acc + BigInt(item.bet),
+        0n,
+    );
 
     // games pots
     amount += Object.values(state.games).reduce(
@@ -107,7 +110,7 @@ export default (state: State, action: PayloadAction<ExportPayload>) => {
 
     // reset state to initial state
     state.games = {};
-    state.lobby = [];
+    state.lobby = {};
     state.players = {};
     state.rake = "0";
 };

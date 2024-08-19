@@ -2,10 +2,10 @@
 
 import { FC, PropsWithChildren } from "react";
 import { base, baseSepolia, foundry } from "wagmi/chains";
-import { WalletConnectWalletProvider } from "./wallet/walletconnect";
+import { ReownWalletProvider } from "./wallet/reown";
 import { ZeroDevWalletProvider } from "./wallet/zerodev";
 
-export type WalletProviderType = "ZeroDev" | "WalletConnect";
+export type WalletProviderType = "ZeroDev" | "Reown";
 
 export const extractChain = () => {
     const chainId = process.env.NEXT_PUBLIC_CHAIN_ID;
@@ -33,12 +33,12 @@ export const getProviderType = (): WalletProviderType => {
         throw new Error("Missing NEXT_PUBLIC_WALLET_PROVIDER");
     }
     switch (type) {
-        case "WalletConnect":
-            return "WalletConnect";
+        case "Reown":
+            return "Reown";
         case "ZeroDev":
             return "ZeroDev";
     }
-    throw new Error("Invalid NEXT_PUBLIC_WALLET_PROVIDER");
+    throw new Error(`Invalid NEXT_PUBLIC_WALLET_PROVIDER: ${type}`);
 };
 
 export const WalletProvider: FC<PropsWithChildren> = ({ children }) => {
@@ -49,18 +49,15 @@ export const WalletProvider: FC<PropsWithChildren> = ({ children }) => {
     const provider = getProviderType();
 
     switch (provider) {
-        case "WalletConnect": {
-            const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID;
+        case "Reown": {
+            const projectId = process.env.NEXT_PUBLIC_REOWN_PROJECT_ID;
             if (!projectId) {
-                throw new Error("Missing NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID");
+                throw new Error("Missing NEXT_PUBLIC_REOWN_PROJECT_ID");
             }
             return (
-                <WalletConnectWalletProvider
-                    chain={chain}
-                    projectId={projectId}
-                >
+                <ReownWalletProvider chain={chain} projectId={projectId}>
                     {children}
-                </WalletConnectWalletProvider>
+                </ReownWalletProvider>
             );
         }
         case "ZeroDev": {

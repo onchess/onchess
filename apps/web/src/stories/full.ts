@@ -105,8 +105,9 @@ export default {
             draws: 0,
         },
     },
-    lobby: [
-        {
+    lobby: {
+        "0x65612F0e8336CdbaA03669862B265c86A9A27Cbe": {
+            address: "0x65612F0e8336CdbaA03669862B265c86A9A27Cbe",
             player: "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
             bet: "10000000000000000000",
             timeControl: "1500",
@@ -114,7 +115,8 @@ export default {
             minRating: 0,
             maxRating: 9007199254740991,
         },
-        {
+        "0x354149AAC9D3ed2bfdacad440F6beD9C58deec77": {
+            address: "0x354149AAC9D3ed2bfdacad440F6beD9C58deec77",
             player: "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
             bet: "100000000000000000000",
             timeControl: "900+5",
@@ -122,7 +124,8 @@ export default {
             minRating: 1600,
             maxRating: 2000,
         },
-        {
+        "0xfB3C32F4B4eeE03D39089A923d1b0ba9504c342D": {
+            address: "0xfB3C32F4B4eeE03D39089A923d1b0ba9504c342D",
             player: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
             bet: "100000000000000000000",
             timeControl: "1500",
@@ -130,7 +133,7 @@ export default {
             minRating: 0,
             maxRating: 9007199254740991,
         },
-    ],
+    },
     messages: {},
     games: {
         "0x7Ca9D93D87a7cdC0afE7724cEe0193427A764B0B": {

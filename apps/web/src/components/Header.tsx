@@ -36,7 +36,7 @@ export const Header: FC<HeaderProps> = (props) => {
             <Group visibleFrom="sm" gap="xs">
                 <Menu />
             </Group>
-            {provider === "WalletConnect" && <w3m-button />}
+            {provider === "Reown" && <w3m-button />}
             {provider === "ZeroDev" && (
                 <ConnectButton
                     address={address}

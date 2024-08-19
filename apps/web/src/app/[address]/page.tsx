@@ -8,10 +8,10 @@ import { Shell } from "../../components/navigation/Shell";
 import { useClock } from "../../hooks/clock";
 import { useLatestState } from "../../hooks/state";
 
-export default function AddressPage({
+export default async function AddressPage({
     params,
 }: {
-    params: { address: string };
+    params: Promise<{ address: string }>;
 }) {
     const now = useClock();
     const { state } = useLatestState(10000);
@@ -23,7 +23,7 @@ export default function AddressPage({
     const { disconnect } = useDisconnect();
 
     const token = state?.config.token;
-    const { address } = params;
+    const { address } = await params;
     const game = isAddress(address) ? state?.games[address] : undefined;
     const player = isAddress(address) ? state?.players[address] : undefined;
 

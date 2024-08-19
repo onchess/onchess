@@ -7,7 +7,8 @@ import chessSlice, { ChessSlice, Config, State } from "./index.js";
 // game onchain API
 export const ABI = parseAbi([
     "function create(uint256 bet, string timeControl, uint32 minRating, uint32 maxRating) returns (address)",
-    "function cancel()",
+    "function cancel(address lobbyItem)",
+    "function join(address lobbyItem)",
     "function move(address game, string move)",
     "function resign(address game)",
     "function claim(address game)",
@@ -30,6 +31,7 @@ const makeActionCreator = (config: Config, chess: ChessSlice) => {
         claim,
         create,
         deposit,
+        join,
         move,
         resign,
         setRakeDivider,
@@ -74,7 +76,8 @@ const makeActionCreator = (config: Config, chess: ChessSlice) => {
             }
 
             case "cancel": {
-                return cancel({ metadata });
+                const [address] = args;
+                return cancel({ address, metadata });
             }
 
             case "move": {
@@ -90,6 +93,11 @@ const makeActionCreator = (config: Config, chess: ChessSlice) => {
             case "claim": {
                 const [address] = args;
                 return claim({ metadata, address });
+            }
+
+            case "join": {
+                const [address] = args;
+                return join({ metadata, address });
             }
 
             case "withdraw": {

@@ -38,10 +38,12 @@ import { useLatestState } from "../../hooks/state";
 
 const selectPlayerState = (state: State, address?: Address) => {
     const player = address
-        ? state.players[getAddress(address)] ?? createPlayer(address)
+        ? (state.players[getAddress(address)] ?? createPlayer(address))
         : undefined;
     const lobby = address
-        ? state.lobby.filter((item) => item.player === getAddress(address))
+        ? Object.values(state.lobby).filter(
+              (item) => item.player === getAddress(address),
+          )
         : [];
     const games = address
         ? Object.values(state.games)
@@ -276,7 +278,7 @@ const Play = () => {
             game={firstGame}
             isConnected={isConnected}
             isConnecting={isConnecting}
-            lobby={firstLobby}
+            lobby={state?.lobby ?? {}}
             miw={400}
             now={now}
             onClaimVictory={handleClaimVictory}

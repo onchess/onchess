@@ -22,7 +22,7 @@ console.log(config);
 const initialState: State = {
     config,
     games: {},
-    lobby: [],
+    lobby: {},
     players: {},
     rake: "0",
     vouchers: [],

@@ -1,19 +1,17 @@
 "use client";
 
-import { createWeb3Modal } from "@web3modal/wagmi/react";
-import { defaultWagmiConfig } from "@web3modal/wagmi/react/config";
+import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
+import { createAppKit } from "@reown/appkit/react";
 import { FC, PropsWithChildren, useEffect } from "react";
 import { Chain } from "wagmi/chains";
 import { BasicWalletProvider } from "./basic";
 
-export type WalletConnectWalletProviderProps = PropsWithChildren<{
+export type ReownWalletProviderProps = PropsWithChildren<{
     chain: Chain;
     projectId: string;
 }>;
 
-export const WalletConnectWalletProvider: FC<
-    WalletConnectWalletProviderProps
-> = (props) => {
+export const ReownWalletProvider: FC<ReownWalletProviderProps> = (props) => {
     const { chain, projectId } = props;
 
     const metadata = {
@@ -23,24 +21,27 @@ export const WalletConnectWalletProvider: FC<
         icons: ["https://onchess.xyz/img/onchess_logo.png"],
     };
 
-    const config = defaultWagmiConfig({
-        chains: [chain],
-        metadata,
+    const wagmiAdapter = new WagmiAdapter({
+        networks: [chain],
         projectId,
         ssr: true,
     });
 
     useEffect(() => {
-        createWeb3Modal({
-            enableAnalytics: true,
-            themeMode: "light",
+        createAppKit({
+            adapters: [wagmiAdapter],
+            features: {
+                analytics: true,
+            },
+            metadata,
+            networks: [chain],
             projectId,
+            themeMode: "light",
             themeVariables: {
                 "--w3m-border-radius-master": "1px",
             },
-            wagmiConfig: config,
         });
     }, []);
 
-    return <BasicWalletProvider {...props} config={config} />;
+    return <BasicWalletProvider {...props} config={wagmiAdapter.wagmiConfig} />;
 };

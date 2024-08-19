@@ -19,13 +19,13 @@ export default (state: State, action: PayloadAction<BasePayload>) => {
     }
 
     // cancel all lobbies, returning bet to player
-    state.lobby.forEach((item) => {
+    Object.values(state.lobby).forEach((item) => {
         const player = getPlayer(state, item.player);
         player.balance = sum(player.balance, item.bet);
     });
 
     // clear lobby
-    state.lobby = [];
+    state.lobby = {};
 
     // terminate all games as draw
     Object.values(state.games).forEach((game) => {

@@ -1,20 +1,25 @@
 "use client";
 
-import { LobbyItem as LobbyItemModel, Token } from "@onchess/core";
+import { LobbyItem as LobbyItemModel, Player, Token } from "@onchess/core";
 import { FC } from "react";
 import { Address } from "viem";
 
 import { SimpleGrid, Stack, StackProps } from "@mantine/core";
 import { LobbyItem, LobbyItemPlaceholder } from "./LobbyItem";
 
+export type LobbyFilter = Pick<
+    LobbyItemModel,
+    "bet" | "maxRating" | "minRating" | "timeControl"
+>;
+
 export interface LobbyProps extends StackProps {
-    account?: Address;
-    lobby: LobbyItemModel[];
+    lobby: Record<Address, LobbyItemModel>;
+    player?: Player;
     token: Token;
 }
 
 export const Lobby: FC<LobbyProps> = (props) => {
-    const { account, lobby, token } = props;
+    const { lobby, player, token } = props;
 
     /*
     const items = lobby.sort((a, b) => {
@@ -35,15 +40,15 @@ export const Lobby: FC<LobbyProps> = (props) => {
         }
     });
     */
-    const items = lobby;
+    const items = Object.values(lobby);
 
     const cards =
         items.length > 0
             ? items.map((item, index) => (
                   <LobbyItem
                       key={index}
-                      account={account}
                       item={item}
+                      player={player}
                       token={token}
                   />
               ))

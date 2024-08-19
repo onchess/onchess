@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { Token } from "@onchess/core";
+import { createPlayer, Token } from "@onchess/core";
 import { ExplorePage } from "../components/ExplorePage";
 import empty from "./empty";
 import full from "./full";
@@ -31,7 +31,7 @@ export const Default: Story = {
 
 export const DefaultConnected: Story = {
     args: {
-        account: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+        player: createPlayer("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
         state: full,
         token,
     },
@@ -46,7 +46,7 @@ export const Empty: Story = {
 
 export const EmptyConnected: Story = {
     args: {
-        account: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+        player: createPlayer("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"),
         state: empty,
         token,
     },

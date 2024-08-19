@@ -18,19 +18,22 @@ import { useMediaQuery } from "@mantine/hooks";
 import {
     CreateGamePayload,
     INITIAL_RATING,
+    LobbyItem,
     Player,
     Token,
 } from "@onchess/core";
 import { IconClock, IconCoin, IconStar } from "@tabler/icons-react";
 import { FC, useState } from "react";
-import { parseUnits } from "viem";
+import { Address, parseUnits } from "viem";
 import { formatTimeControl } from "../util/format";
 import { Balance } from "./connect/Balance";
+import { WaitOpponent } from "./WaitOpponent";
 
 export interface CreateGameProps extends PaperProps {
     error?: string;
     player?: Player;
     executing: boolean;
+    lobby: Record<Address, LobbyItem>;
     onConnect?: () => void;
     onCreate: (params: Omit<CreateGamePayload, "metadata">) => void;
     onDeposit?: (amount: string) => void;
@@ -43,6 +46,7 @@ export const CreateGame: FC<CreateGameProps> = (props) => {
     const {
         executing,
         error,
+        lobby,
         onConnect,
         onCreate,
         onDeposit,
@@ -50,7 +54,7 @@ export const CreateGame: FC<CreateGameProps> = (props) => {
         token,
         ...otherProps
     } = props;
-    const { decimals, symbol } = token;
+    const { decimals } = token;
 
     // player balance
     const balance = player ? BigInt(player.balance) : undefined;
@@ -84,6 +88,12 @@ export const CreateGame: FC<CreateGameProps> = (props) => {
     ]);
 
     const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
+
+    // show wait if there is a lobby
+    const playerLobby = Object.values(lobby).filter(
+        (item) => item.player === player?.address,
+    );
+    const showWait = playerLobby.length > 0 && token !== undefined;
 
     return (
         <Paper {...otherProps} p={20}>
@@ -164,6 +174,10 @@ export const CreateGame: FC<CreateGameProps> = (props) => {
                         Play
                     </Button>
                 )}
+                {token &&
+                    playerLobby.map((item) => (
+                        <WaitOpponent lobby={item} maw={600} token={token} />
+                    ))}
                 {player && balance !== undefined && BigInt(bet) > balance && (
                     <Group justify="space-evenly" grow>
                         <Button disabled>Insufficient balance</Button>

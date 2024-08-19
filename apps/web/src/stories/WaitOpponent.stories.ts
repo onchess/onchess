@@ -24,6 +24,7 @@ const token: Token = {
 export const Default: Story = {
     args: {
         lobby: {
+            address: "0xc453F8A007a605DDE934D226493621D58cD9a372",
             bet: (1n * 10n ** BigInt(token.decimals)).toString(),
             createdAt: now,
             minRating: 800,

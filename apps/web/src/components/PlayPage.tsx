@@ -23,7 +23,7 @@ export interface PlayPageProps extends StackProps {
     game?: Game;
     isConnected: boolean;
     isConnecting: boolean;
-    lobby?: LobbyItem;
+    lobby: Record<Address, LobbyItem>;
     now: number;
     onClaimVictory: (params: Omit<GameBasePayload, "metadata">) => void;
     onConnect: () => void;
@@ -68,7 +68,10 @@ export const PlayPage: FC<PlayPageProps> = (props) => {
     } = props;
 
     // show wait if there is a lobby
-    const showWait = lobby !== undefined && token !== undefined;
+    const playerLobby = Object.values(lobby).filter(
+        (item) => item.player === player?.address,
+    );
+    const showWait = playerLobby.length > 0 && token !== undefined;
 
     // show create if game is over or if there is no game
     const showCreate =
@@ -113,16 +116,22 @@ export const PlayPage: FC<PlayPageProps> = (props) => {
                         <CreateGame
                             error={error}
                             executing={submitting}
-                            player={player}
+                            lobby={lobby}
                             onCreate={onCreate}
                             onConnect={onConnect}
                             onDeposit={onDeposit}
+                            player={player}
                             token={token}
                         />
                     )}
-                    {showWait && (
-                        <WaitOpponent lobby={lobby} maw={600} token={token} />
-                    )}
+                    {token &&
+                        playerLobby.map((item) => (
+                            <WaitOpponent
+                                lobby={item}
+                                maw={600}
+                                token={token}
+                            />
+                        ))}
                 </Stack>
             </Stack>
         </Shell>

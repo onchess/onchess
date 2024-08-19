@@ -1,4 +1,4 @@
-import { Token } from "@onchess/core";
+import { createPlayer, Token } from "@onchess/core";
 import type { Meta, StoryObj } from "@storybook/react";
 import { LobbyItem } from "../components/LobbyItem";
 
@@ -24,6 +24,7 @@ const alice = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266";
 export const Alice: Story = {
     args: {
         item: {
+            address: "0xc453F8A007a605DDE934D226493621D58cD9a372",
             bet: (10n * 10n ** BigInt(token.decimals)).toString(),
             createdAt: now,
             minRating: 800,
@@ -32,6 +33,6 @@ export const Alice: Story = {
             timeControl: "1500",
         },
         token,
-        account: alice,
+        player: createPlayer(alice),
     },
 };

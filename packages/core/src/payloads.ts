@@ -9,10 +9,17 @@ export interface BasePayload {
 }
 
 /**
+ * Lobby item payload
+ */
+export interface LobbyBasePayload extends BasePayload {
+    address: Address;
+}
+
+/**
  * Game payload adds the address of a game
  */
 export interface GameBasePayload extends BasePayload {
-    address: string;
+    address: Address;
 }
 
 /**
