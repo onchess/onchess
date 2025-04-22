@@ -1,6 +1,6 @@
 import { ColorSchemeScript } from "@mantine/core";
 import "@mantine/core/styles.css";
-import { GraphQLProvider } from "../providers/graphql";
+import { CartesiProvider } from "../providers/cartesi";
 import { StateProvider } from "../providers/state";
 import { StyleProvider } from "../providers/style";
 import { WalletProvider } from "../providers/wallet";
@@ -24,9 +24,9 @@ const RootLayout = ({ children }: { children: React.ReactNode[] }) => {
             <body>
                 <StyleProvider>
                     <WalletProvider>
-                        <GraphQLProvider>
+                        <CartesiProvider>
                             <StateProvider>{children}</StateProvider>
-                        </GraphQLProvider>
+                        </CartesiProvider>
                     </WalletProvider>
                 </StyleProvider>
             </body>

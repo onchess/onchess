@@ -3,6 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { fn } from "@storybook/test";
 import { encodeFunctionData, erc20Abi, parseUnits } from "viem";
 import { WithdrawVoucher } from "../../components/bridge/WithdrawVoucher";
+import { ExecutableVoucher } from "../../hooks/voucher";
 
 const meta = {
     title: "Bridge/WithdrawVoucher",
@@ -29,17 +30,24 @@ const payload = encodeFunctionData({
     args: ["0xD27A20A18496AE3200358E569B107D62a1e3f463", amount],
 });
 
-const voucher = {
-    destination: token.address,
+const voucher: ExecutableVoucher = {
+    createdAt: new Date(now),
+    decodedData: {
+        type: "Voucher",
+        destination: token.address,
+        payload,
+        value: amount,
+    },
+    epochIndex: 0n,
     executable: false,
     executed: false,
-    index: 0,
-    input: {
-        timestamp: now,
-        index: 0,
-        blockNumber: 345789,
-    },
-    payload,
+    executionTransactionHash: null,
+    hash: "0x",
+    index: 0n,
+    inputIndex: 0n,
+    outputHashesSiblings: [],
+    rawData: "0x",
+    updatedAt: new Date(now),
 };
 
 export const Pending: Story = {

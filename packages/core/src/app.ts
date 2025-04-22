@@ -48,7 +48,7 @@ const makeActionCreator = (config: Config, chess: ChessSlice) => {
         // handle ERC-20 deposit
         if (isERC20Deposit(data)) {
             const parsed = parseERC20Deposit(data.payload);
-            if (parsed.success && parsed.token === config.token.address) {
+            if (parsed.token === config.token.address) {
                 return deposit({
                     metadata,
                     amount: parsed.amount.toString(),

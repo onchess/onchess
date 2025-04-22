@@ -1,5 +1,6 @@
 "use client";
 
+import { useWriteInputBoxAddInput } from "@cartesi/wagmi";
 import {
     ABI,
     CreateGamePayload,
@@ -21,18 +22,14 @@ import {
     useAccount,
     useConnect,
     useDisconnect,
+    useSendCalls,
     useWaitForTransactionReceipt,
 } from "wagmi";
-import { useWriteContracts } from "wagmi/experimental";
+import { createAddInputCall } from "../../calls";
 import { PlayPage } from "../../components/PlayPage";
 import { usePaymasterServiceSupport } from "../../hooks/capabilities";
 import { useClock } from "../../hooks/clock";
 import { useApplicationAddress } from "../../hooks/config";
-import {
-    inputBoxAbi,
-    inputBoxAddress,
-    useWriteInputBoxAddInput,
-} from "../../hooks/contracts";
 import { useSessionId } from "../../hooks/session";
 import { useLatestState } from "../../hooks/state";
 
@@ -86,7 +83,7 @@ const Play = () => {
     // transactions
     const { writeContractAsync: addInput, isPending: addInputPending } =
         useWriteInputBoxAddInput();
-    const { writeContractsAsync, isPending: movePending } = useWriteContracts();
+    const { sendCallsAsync, isPending: movePending } = useSendCalls();
 
     // transaction mining
     const [hash, setHash] = useState<Hash | undefined>();
@@ -131,18 +128,11 @@ const Play = () => {
                 });
                 if (paymasterSupported && paymasterUrl) {
                     // use paymaster
-                    const hash = await writeContractsAsync({
-                        contracts: [
-                            {
-                                address: inputBoxAddress,
-                                abi: inputBoxAbi,
-                                functionName: "addInput",
-                                args: [dapp, payload],
-                            },
-                        ],
+                    const { id } = await sendCallsAsync({
+                        calls: [createAddInputCall([dapp, payload])],
                         capabilities: {
                             paymasterService: {
-                                url: paymasterUrl,
+                                [0]: { url: paymasterUrl },
                             },
                         },
                     });
@@ -178,15 +168,8 @@ const Play = () => {
                 if (paymasterSupported && paymasterUrl) {
                     capabilities.paymasterService = { url: paymasterUrl };
                 }
-                const hash = await writeContractsAsync({
-                    contracts: [
-                        {
-                            address: inputBoxAddress,
-                            abi: inputBoxAbi,
-                            functionName: "addInput",
-                            args: [dapp, payload],
-                        },
-                    ],
+                const { id } = await sendCallsAsync({
+                    calls: [createAddInputCall([dapp, payload])],
                     capabilities,
                 });
             } catch (e: any) {
@@ -210,18 +193,11 @@ const Play = () => {
                 if (paymasterSupported && paymasterUrl) {
                     capabilities.paymasterService = { url: paymasterUrl };
                 }
-                const hash = await writeContractsAsync({
-                    contracts: [
-                        {
-                            address: inputBoxAddress,
-                            abi: inputBoxAbi,
-                            functionName: "addInput",
-                            args: [dapp, payload],
-                        },
-                    ],
+                const { id } = await sendCallsAsync({
+                    calls: [createAddInputCall([dapp, payload])],
                     capabilities,
                 });
-                console.log(hash);
+                console.log(id);
             } catch (e: any) {
                 setError(e.message);
                 console.log(e.message);
@@ -246,15 +222,8 @@ const Play = () => {
                 if (paymasterSupported && paymasterUrl) {
                     capabilities.paymasterService = { url: paymasterUrl };
                 }
-                const hash = await writeContractsAsync({
-                    contracts: [
-                        {
-                            address: inputBoxAddress,
-                            abi: inputBoxAbi,
-                            functionName: "addInput",
-                            args: [dapp, payload],
-                        },
-                    ],
+                const { id } = await sendCallsAsync({
+                    calls: [createAddInputCall([dapp, payload])],
                     capabilities,
                 });
             } catch (e: any) {

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { useChainId } from "wagmi";
-import { useCapabilities } from "wagmi/experimental";
+import { useCapabilities, useChainId } from "wagmi";
 
 export const useAtomicBatchSupport = () => {
     const chainId = useChainId();
@@ -17,7 +16,11 @@ export const useAtomicBatchSupport = () => {
                 break;
             }
             case "success": {
-                if (capabilities.data && chainId) {
+                if (
+                    capabilities.data &&
+                    chainId &&
+                    capabilities.data[chainId]
+                ) {
                     const chainCapabilities = capabilities.data[chainId];
                     const { atomicBatch } = chainCapabilities;
                     setSupported(atomicBatch?.supported || false);
@@ -47,7 +50,11 @@ export const usePermissionsSupport = () => {
                 break;
             }
             case "success": {
-                if (capabilities.data && chainId) {
+                if (
+                    capabilities.data &&
+                    chainId &&
+                    capabilities.data[chainId]
+                ) {
                     const chainCapabilities = capabilities.data[chainId];
                     const { permissions } = chainCapabilities;
                     setSupported(permissions?.supported || false);
@@ -78,7 +85,11 @@ export const usePaymasterServiceSupport = () => {
                 break;
             }
             case "success": {
-                if (capabilities.data && chainId) {
+                if (
+                    capabilities.data &&
+                    chainId &&
+                    capabilities.data[chainId]
+                ) {
                     const chainCapabilities = capabilities.data[chainId];
                     const { paymasterService } = chainCapabilities;
                     setSupported(paymasterService?.supported || false);

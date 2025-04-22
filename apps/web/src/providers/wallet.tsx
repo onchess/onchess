@@ -1,7 +1,7 @@
 "use client";
 
 import { FC, PropsWithChildren } from "react";
-import { base, baseSepolia, foundry } from "wagmi/chains";
+import { base, baseSepolia, cannon } from "wagmi/chains";
 import { ReownWalletProvider } from "./wallet/reown";
 import { ZeroDevWalletProvider } from "./wallet/zerodev";
 
@@ -20,10 +20,10 @@ export const extractChain = () => {
             return base;
         case baseSepolia.id:
             return baseSepolia;
-        case foundry.id:
-            return foundry;
+        case cannon.id:
+            return cannon;
         default:
-            return foundry;
+            return cannon;
     }
 };
 

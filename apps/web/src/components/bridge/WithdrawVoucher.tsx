@@ -13,8 +13,11 @@ export type WithdrawVoucherProps = {
 
 export const WithdrawVoucher: FC<WithdrawVoucherProps> = (props) => {
     const { executing, onExecute, token, voucher } = props;
-    const { destination } = voucher;
-    if (getAddress(destination) === getAddress(token.address)) {
+    if (
+        voucher.decodedData.type === "Voucher" &&
+        getAddress(voucher.decodedData.destination) ===
+            getAddress(token.address)
+    ) {
         return (
             <ERC20Voucher
                 executing={executing}

@@ -1,7 +1,7 @@
 import { Badge, Button, Group, Text } from "@mantine/core";
 import { Token } from "@onchess/core";
 import { FC } from "react";
-import { Hex, decodeFunctionData, erc20Abi, formatUnits } from "viem";
+import { decodeFunctionData, erc20Abi, formatUnits } from "viem";
 import { ExecutableVoucher } from "../../hooks/voucher";
 
 export type ERC20VoucherProps = {
@@ -18,18 +18,18 @@ const dateFormatter = new Intl.DateTimeFormat(undefined, {
 
 export const ERC20Voucher: FC<ERC20VoucherProps> = (props) => {
     const { executing, onExecute, token, voucher } = props;
-    const { executable, executed, input, payload } = voucher;
-    const { timestamp } = input;
+    const { createdAt, executable, executed, decodedData } = voucher;
+    const { payload } = decodedData;
 
     const { functionName, args } = decodeFunctionData({
         abi: erc20Abi,
-        data: payload as Hex,
+        data: payload,
     });
 
     switch (functionName) {
         case "transfer": {
             const [_to, amount] = args;
-            const time = dateFormatter.format(timestamp * 1000);
+            const time = dateFormatter.format(createdAt);
             const text = `${formatUnits(amount, token.decimals)} ${token.symbol} requested at ${time}`;
             return (
                 <Group justify="space-between">

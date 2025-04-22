@@ -1,10 +1,10 @@
+import { inputBoxAbi, inputBoxAddress } from "@cartesi/viem/abi";
 import { ParamCondition } from "@zerodev/permissions/policies";
 import { useEffect, useState } from "react";
-import { walletActionsErc7715 } from "viem/experimental";
+import { erc7715Actions } from "viem/experimental";
 import { useWalletClient } from "wagmi";
 import { usePermissionsSupport } from "./capabilities";
 import { useApplicationAddress } from "./config";
-import { inputBoxAbi, inputBoxAddress } from "./contracts";
 
 type RequestPermissionsAsyncFunc = (expiry: number) => Promise<void>;
 
@@ -21,7 +21,7 @@ export const useSessionId = () => {
         expiry: number,
     ): Promise<void> => {
         if (walletClient) {
-            const extendedClient = walletClient.extend(walletActionsErc7715());
+            const extendedClient = walletClient.extend(erc7715Actions());
             const permissions = await extendedClient.grantPermissions({
                 expiry,
                 permissions: [

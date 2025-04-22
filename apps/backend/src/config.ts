@@ -1,5 +1,5 @@
 import { Config } from "@onchess/core";
-import { base, baseSepolia, foundry } from "viem/chains";
+import { base, baseSepolia, cannon } from "viem/chains";
 
 const rakeDivider = 20; // (divider) 5%
 const eloKFactor = 20;
@@ -27,12 +27,12 @@ const configs: Record<number, Config> = {
             symbol: "USDC",
         },
     },
-    [foundry.id]: {
+    [cannon.id]: {
         eloKFactor,
         rakeDivider,
-        owner: "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC", // Foundry default account 2
+        owner: "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC", // anvil default account 2
         token: {
-            address: "0x92C6bcA388E99d6B304f1Af3c3Cd749Ff0b591e2", // TestToken
+            address: "0xFBdB734EF6a23aD76863CbA6f10d0C5CBBD8342C", // TestToken
             decimals: 18,
             name: "Test",
             symbol: "TEST",

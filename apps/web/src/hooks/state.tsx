@@ -1,25 +1,14 @@
-import { QueryResult, useQuery } from "@apollo/client";
+import { useOutputs, useProcessedInputCount } from "@cartesi/wagmi";
 import { State } from "@onchess/core";
 import { useEffect, useState } from "react";
-import { Hex, hexToString } from "viem";
-import {
-    CompletionStatus,
-    Exact,
-    InputNoticeDocument,
-    InputNoticeQuery,
-    LatestInputNumberDocument,
-} from "../__generated__/graphql";
+import { hexToString } from "viem";
 import { extractChain } from "../providers/wallet";
 import { getConfig } from "../util/config";
+import { useApplicationAddress } from "./config";
 
-export type StateResponse = QueryResult<
-    InputNoticeQuery,
-    Exact<{
-        inputIndex: number;
-        noticeIndex: number;
-    }>
-> & {
-    inputIndex?: number;
+export type StateResponse = {
+    loading: boolean;
+    inputIndex?: bigint;
     state?: State;
 };
 
@@ -38,39 +27,29 @@ export const useLatestState = (pollInterval: number = 2000): StateResponse => {
         isShutdown: false,
     });
 
-    // query for latest input (number and status), with polling
-    const { data: latestInput } = useQuery(LatestInputNumberDocument, {
-        pollInterval,
+    const application = useApplicationAddress();
+
+    const { data: processedInputCount, refetch } = useProcessedInputCount({
+        application,
+        refetchInterval: pollInterval,
     });
 
-    const inputIndex = latestInput?.inputs.edges[0].node.index;
-    const inputStatus = latestInput?.inputs.edges[0].node.status;
+    const inputIndex = processedInputCount
+        ? processedInputCount - 1n
+        : undefined;
 
-    // query for notice when inputIndex changes (only for processed inputs)
-    const query = useQuery(InputNoticeDocument, {
-        variables: {
-            inputIndex: inputIndex!,
-            noticeIndex: 0,
-        },
-        skip:
-            inputIndex === undefined ||
-            inputStatus === CompletionStatus.Unprocessed,
+    const { data: outputs, isLoading } = useOutputs({
+        application,
+        inputIndex,
+        outputType: "Notice",
     });
-    const { data } = query;
 
     useEffect(() => {
-        // get first notice
-        const notice = data?.input?.notice;
-
-        if (notice) {
-            // hex string of notice
-            const hex = notice.payload as Hex;
-
-            // convert hex string string
-            const str = hexToString(hex);
-
-            if (str) {
-                // parse JSON
+        if (outputs && outputs.data.length > 0) {
+            const firstNotice = outputs.data[0];
+            if (firstNotice.decodedData.type === "Notice") {
+                const payload = firstNotice.decodedData.payload;
+                const str = hexToString(payload);
                 const obj = JSON.parse(str);
                 const state = obj.chess as State;
                 setState(state);
@@ -90,7 +69,7 @@ export const useLatestState = (pollInterval: number = 2000): StateResponse => {
                 });
             }
         }
-    }, [chain.id, data]); // trigger effect when inputIndex+status changes
+    }, [chain.id, outputs]); // trigger effect when output changes
 
-    return { ...query, inputIndex, state };
+    return { loading: isLoading, inputIndex, state };
 };

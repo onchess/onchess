@@ -10,7 +10,7 @@ export const url =
 const app = createApp({ url });
 
 // load configuration for the chain
-const chainId = parseInt(process.env.CHAIN_ID ?? "31337");
+const chainId = parseInt(process.env.CHAIN_ID ?? "13370");
 console.log(
     `starting application for chain ${chainId} with the following configuration`,
 );

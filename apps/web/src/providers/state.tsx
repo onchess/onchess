@@ -6,7 +6,7 @@ import { FC, ReactNode, useRef } from "react";
 import { Provider, useDispatch, useSelector, useStore } from "react-redux";
 import { getConfig } from "../util/config";
 
-const config = getConfig(31337);
+const config = getConfig(13370);
 const initialState: State = {
     config,
     games: {},

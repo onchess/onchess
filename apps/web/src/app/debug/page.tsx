@@ -26,6 +26,7 @@ import { useLatestState } from "../../hooks/state";
 export default () => {
     const now = useClock();
     const { inputIndex, loading, state } = useLatestState(2000);
+    const token = state?.config.token;
 
     // wallet actions
     const { address, isConnected } = useAccount();
@@ -55,6 +56,7 @@ export default () => {
             onConnect={() => connect({ connector: connectors[0] })}
             onDisconnect={disconnect}
             address={address}
+            token={token}
         >
             <Title>Wallet</Title>
             <Table>

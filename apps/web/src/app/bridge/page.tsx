@@ -1,4 +1,10 @@
 "use client";
+import { erc20PortalAddress } from "@cartesi/viem/abi";
+import {
+    useWriteErc20PortalDepositErc20Tokens,
+    useWriteIApplicationExecuteOutput,
+    useWriteInputBoxAddInput,
+} from "@cartesi/wagmi";
 import { Group } from "@mantine/core";
 import { ABI, createPlayer } from "@onchess/core";
 import { useSearchParams } from "next/navigation";
@@ -12,12 +18,18 @@ import {
 } from "viem";
 import {
     useAccount,
+    useCallsStatus,
     useConnect,
     useDisconnect,
     useReadContracts,
+    useSendCalls,
     useWaitForTransactionReceipt,
 } from "wagmi";
-import { useCallsStatus, useWriteContracts } from "wagmi/experimental";
+import {
+    createAddInputCall,
+    createDepositERC20TokensCall,
+    createExecuteOutputCall,
+} from "../../calls";
 import { Bridge } from "../../components/bridge/Bridge";
 import { Shell } from "../../components/navigation/Shell";
 import {
@@ -25,21 +37,11 @@ import {
     usePaymasterServiceSupport,
 } from "../../hooks/capabilities";
 import { useApplicationAddress } from "../../hooks/config";
-import {
-    cartesiDAppAbi,
-    erc20PortalAbi,
-    erc20PortalAddress,
-    inputBoxAbi,
-    inputBoxAddress,
-    useWriteCartesiDAppExecuteVoucher,
-    useWriteErc20Approve,
-    useWriteErc20PortalDepositErc20Tokens,
-    useWriteInputBoxAddInput,
-} from "../../hooks/contracts";
+import { useWriteErc20Approve } from "../../hooks/contracts";
 import { useLatestState } from "../../hooks/state";
 import { ExecutableVoucher, useVouchers } from "../../hooks/voucher";
 import { extractChain } from "../../providers/wallet";
-import { destination, toEVM, transferTo } from "../../util/voucher";
+import { destination, transferTo } from "../../util/voucher";
 
 const BridgePage = () => {
     const searchParams = useSearchParams();
@@ -59,11 +61,11 @@ const BridgePage = () => {
     const { disconnect } = useDisconnect();
     const handleConnect = () => connect({ connector: connectors[0] });
 
-    const dapp = useApplicationAddress();
+    const application = useApplicationAddress();
     const player = address
         ? state && state.players
-            ? state.players[getAddress(address)] ??
-              createPlayer(getAddress(address))
+            ? (state.players[getAddress(address)] ??
+              createPlayer(getAddress(address)))
             : createPlayer(getAddress(address))
         : undefined;
 
@@ -118,11 +120,11 @@ const BridgePage = () => {
         setHandleApproveAndDeposit(
             supported
                 ? () => async (amount: string) => {
-                      if (dapp && token) {
+                      if (application && token) {
                           setError(undefined);
                           try {
-                              const id = await writeContractsAsync({
-                                  contracts: [
+                              const { id } = await sendCallsAsync({
+                                  calls: [
                                       {
                                           abi: erc20Abi,
                                           address: token.address,
@@ -132,22 +134,21 @@ const BridgePage = () => {
                                               BigInt(amount),
                                           ],
                                       },
-                                      {
-                                          abi: erc20PortalAbi,
-                                          address: erc20PortalAddress,
-                                          functionName: "depositERC20Tokens",
-                                          args: [
-                                              token.address,
-                                              dapp,
-                                              BigInt(amount),
-                                              "0x",
-                                          ],
-                                      },
+                                      createDepositERC20TokensCall([
+                                          token.address,
+                                          application,
+                                          BigInt(amount),
+                                          "0x",
+                                      ]),
                                   ],
                                   capabilities: {
-                                      paymasterService: {
-                                          url: paymasterUrl,
-                                      },
+                                      paymasterService: paymasterUrl
+                                          ? {
+                                                [chain.id]: {
+                                                    url: paymasterUrl,
+                                                },
+                                            }
+                                          : undefined,
                                   },
                               });
                               setCallId(id);
@@ -167,11 +168,11 @@ const BridgePage = () => {
         useWriteErc20PortalDepositErc20Tokens();
     const { writeContractAsync: addInput, isPending: addInputPending } =
         useWriteInputBoxAddInput();
-    const { writeContractsAsync, isPending } = useWriteContracts();
+    const { sendCallsAsync, isPending } = useSendCalls();
     const {
         writeContractAsync: executeVoucher,
         isPending: executeVoucherPending,
-    } = useWriteCartesiDAppExecuteVoucher();
+    } = useWriteIApplicationExecuteOutput();
 
     // transaction processing
     const [error, setError] = useState<string | undefined>(undefined);
@@ -184,11 +185,11 @@ const BridgePage = () => {
     });
 
     const handleDeposit = async (amount: string) => {
-        if (dapp && token) {
+        if (application && token) {
             setError(undefined);
             try {
                 const hash = await deposit({
-                    args: [token.address, dapp, BigInt(amount), "0x"],
+                    args: [token.address, application, BigInt(amount), "0x"],
                 });
                 setHash(hash);
             } catch (e: any) {
@@ -197,23 +198,16 @@ const BridgePage = () => {
         }
     };
 
-    const handleExecuteVoucher = async (voucher: ExecutableVoucher) => {
-        if (dapp && voucher.proof) {
+    const handleExecuteVoucher = async (output: ExecutableVoucher) => {
+        if (application && output.executable) {
             setError(undefined);
             try {
                 const capabilities: WalletCapabilities = {};
                 if (paymasterSupported && paymasterUrl) {
                     capabilities.paymasterService = { url: paymasterUrl };
                 }
-                const id = await writeContractsAsync({
-                    contracts: [
-                        {
-                            abi: cartesiDAppAbi,
-                            functionName: "executeVoucher",
-                            address: dapp,
-                            args: toEVM(voucher),
-                        },
-                    ],
+                const { id } = await sendCallsAsync({
+                    calls: [createExecuteOutputCall({ application, output })],
                     capabilities,
                 });
                 setCallId(id);
@@ -239,7 +233,7 @@ const BridgePage = () => {
     };
 
     const handleWithdraw = async (amount: string) => {
-        if (dapp) {
+        if (application) {
             setError(undefined);
             try {
                 const payload = encodeFunctionData({
@@ -251,15 +245,8 @@ const BridgePage = () => {
                 if (paymasterSupported && paymasterUrl) {
                     capabilities.paymasterService = { url: paymasterUrl };
                 }
-                const id = await writeContractsAsync({
-                    contracts: [
-                        {
-                            address: inputBoxAddress,
-                            abi: inputBoxAbi,
-                            functionName: "addInput",
-                            args: [dapp, payload],
-                        },
-                    ],
+                const { id } = await sendCallsAsync({
+                    calls: [createAddInputCall([application, payload])],
                     capabilities,
                 });
                 setCallId(id);
@@ -287,7 +274,7 @@ const BridgePage = () => {
                         chain={chain}
                         connecting={isConnecting}
                         balance={balance?.toString()}
-                        disabled={!dapp}
+                        disabled={!application}
                         error={error}
                         executing={
                             isFetching ||
