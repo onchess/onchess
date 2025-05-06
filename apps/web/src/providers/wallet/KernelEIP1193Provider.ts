@@ -1,6 +1,7 @@
 import type { KernelAccountClient } from "@zerodev/sdk";
 import { EventEmitter } from "events";
 import type {
+    Address,
     EIP1193Parameters,
     EIP1193RequestFn,
     Hash,
@@ -8,6 +9,15 @@ import type {
     SendTransactionParameters,
 } from "viem";
 import { hexToBigInt } from "viem";
+import {
+    EstimateUserOperationGasParameters,
+    EstimateUserOperationGasReturnType,
+    GetUserOperationParameters,
+    GetUserOperationReceiptParameters,
+    SendUserOperationParameters,
+    UserOperation,
+    UserOperationReceipt,
+} from "viem/account-abstraction";
 
 export class KernelEIP1193Provider extends EventEmitter {
     private kernelClient: KernelAccountClient;
@@ -36,6 +46,24 @@ export class KernelEIP1193Provider extends EventEmitter {
             case "eth_signTypedData_v4":
                 return this.handleEthSignTypedDataV4(
                     params as [string, string],
+                );
+            case "eth_getUserOperationReceipt":
+                return this.handleEthGetUserOperationReceipt(
+                    params as GetUserOperationReceiptParameters,
+                );
+            case "eth_supportedEntryPoints":
+                return this.handleEthSupportedEntryPoints();
+            case "eth_getUserOperationByHash":
+                return this.handleEthGetUserOperationByHash(
+                    params as GetUserOperationParameters,
+                );
+            case "eth_sendUserOperation":
+                return this.handleEthSendUserOperation(
+                    params as SendUserOperationParameters,
+                );
+            case "eth_estimateUserOperationGas":
+                return this.handleEthEstimateUserOperationGas(
+                    params as EstimateUserOperationGasParameters,
                 );
             default:
                 return this.kernelClient.transport.request({ method, params });
@@ -132,5 +160,34 @@ export class KernelEIP1193Provider extends EventEmitter {
             message: typedData.message,
             primaryType: typedData.primaryType,
         });
+    }
+
+    private async handleEthGetUserOperationReceipt(
+        params: GetUserOperationReceiptParameters,
+    ): Promise<UserOperationReceipt> {
+        return this.kernelClient.getUserOperationReceipt(params);
+    }
+
+    private async handleEthSupportedEntryPoints(): Promise<readonly Address[]> {
+        return this.kernelClient.getSupportedEntryPoints();
+    }
+
+    private async handleEthGetUserOperationByHash(
+        params: GetUserOperationParameters,
+    ): Promise<UserOperation> {
+        const userOp = await this.kernelClient.getUserOperation(params);
+        return userOp.userOperation;
+    }
+
+    private async handleEthSendUserOperation(
+        params: SendUserOperationParameters,
+    ): Promise<Hash> {
+        return this.kernelClient.sendUserOperation(params);
+    }
+
+    private async handleEthEstimateUserOperationGas(
+        params: EstimateUserOperationGasParameters,
+    ): Promise<EstimateUserOperationGasReturnType> {
+        return this.kernelClient.estimateUserOperationGas(params);
     }
 }
