@@ -22,7 +22,7 @@ export const useAtomicBatchSupport = () => {
                     capabilities.data[chainId]
                 ) {
                     const chainCapabilities = capabilities.data[chainId];
-                    const { atomicBatch } = chainCapabilities;
+                    const { atomicBatch } = chainCapabilities; // TODO: changed to atomic
                     setSupported(atomicBatch?.supported || false);
                 } else {
                     setSupported(false);
