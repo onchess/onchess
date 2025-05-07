@@ -1,15 +1,15 @@
-import { PayloadAction } from "@reduxjs/toolkit";
+import type { PayloadAction } from "@reduxjs/toolkit";
 import { Chess } from "chess.js";
 import { getAddress } from "viem";
 import { terminateGame } from "../game.js";
 import { createError } from "../message.js";
-import { GameBasePayload } from "../payloads.js";
+import type { GameBasePayload } from "../payloads.js";
 import { getPlayer } from "../players.js";
-import { State } from "../state.js";
+import type { State } from "../state.js";
 
 export default (state: State, action: PayloadAction<GameBasePayload>) => {
     const { metadata } = action.payload;
-    const { timestamp } = metadata;
+    const { block_timestamp } = metadata;
     const msg_sender = getAddress(metadata.msg_sender);
     const { address } = action.payload;
 
@@ -22,7 +22,7 @@ export default (state: State, action: PayloadAction<GameBasePayload>) => {
         // game not found
         player.message = createError({
             text: "Game not found",
-            timestamp,
+            timestamp: block_timestamp,
         });
         return;
     }
@@ -31,7 +31,7 @@ export default (state: State, action: PayloadAction<GameBasePayload>) => {
     if (player.address !== game.white && player.address !== game.black) {
         player.message = createError({
             text: "Unauthorized game",
-            timestamp,
+            timestamp: block_timestamp,
         });
         return;
     }

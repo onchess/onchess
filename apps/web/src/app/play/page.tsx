@@ -1,33 +1,23 @@
 "use client";
 
 import { useWriteInputBoxAddInput } from "@cartesi/wagmi";
-import {
-    ABI,
+import type {
     CreateGamePayload,
     GameBasePayload,
     MovePiecePayload,
     State,
-    createPlayer,
 } from "@onchess/core";
+import { createPlayer } from "@onchess/core";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import {
-    Address,
-    Hash,
-    WalletCapabilities,
-    encodeFunctionData,
-    getAddress,
-} from "viem";
+import { type Address, type Hash, getAddress } from "viem";
 import {
     useAccount,
     useConnect,
     useDisconnect,
-    useSendCalls,
     useWaitForTransactionReceipt,
 } from "wagmi";
-import { createAddInputCall } from "../../calls";
 import { PlayPage } from "../../components/PlayPage";
-import { usePaymasterServiceSupport } from "../../hooks/capabilities";
 import { useChessActions } from "../../hooks/chess";
 import { useClock } from "../../hooks/clock";
 import { useApplicationAddress } from "../../hooks/config";
@@ -79,17 +69,20 @@ const Play = () => {
           };
     const firstGame =
         playerState.unfinishedGames[0] || playerState.finishedGames[0];
-    const firstLobby = playerState.lobby[0];
 
-    // paymaster support
-    const { supported: paymasterSupported } = usePaymasterServiceSupport();
+    // paymaster configuration
     const paymasterUrl = process.env.NEXT_PUBLIC_PAYMASTER_URL;
 
     // transactions
-    const { createGameAsync, isPending } = useChessActions(paymasterUrl);
+    const {
+        claimVictoryAsync,
+        createGameAsync,
+        isPending,
+        resignAsync,
+        sendMoveAsync,
+    } = useChessActions(paymasterUrl);
     const { writeContractAsync: addInputAsync, isPending: addInputPending } =
         useWriteInputBoxAddInput();
-    const { sendCallsAsync, isPending: movePending } = useSendCalls();
 
     // transaction mining
     const [hash, setHash] = useState<Hash | undefined>();
@@ -117,8 +110,8 @@ const Play = () => {
             setError(undefined);
             try {
                 const { id } = await createGameAsync(dapp, params);
-            } catch (e: any) {
-                setError(e.message);
+            } catch (e: unknown) {
+                setError(e instanceof Error ? e.message : "An error occurred");
             }
         }
     };
@@ -131,26 +124,12 @@ const Play = () => {
             setError(undefined);
 
             try {
-                const address = params.address as Address;
-                const move = params.move;
-                const payload = encodeFunctionData({
-                    abi: ABI,
-                    functionName: "move",
-                    args: [address, move],
-                });
-                const capabilities: WalletCapabilities = {};
                 if (sessionId) {
-                    capabilities.permissions = { sessionId };
+                    // capabilities.permissions = { sessionId }; // XXX
                 }
-                if (paymasterSupported && paymasterUrl) {
-                    capabilities.paymasterService = { url: paymasterUrl };
-                }
-                const { id } = await sendCallsAsync({
-                    calls: [createAddInputCall([dapp, payload])],
-                    capabilities,
-                });
-            } catch (e: any) {
-                setError(e.message);
+                const { id } = await sendMoveAsync(dapp, params);
+            } catch (e: unknown) {
+                setError(e instanceof Error ? e.message : "An error occurred");
             }
         }
     };
@@ -160,24 +139,9 @@ const Play = () => {
             // reset error
             setError(undefined);
             try {
-                const address = params.address as Address;
-                const payload = encodeFunctionData({
-                    abi: ABI,
-                    functionName: "resign",
-                    args: [address],
-                });
-                const capabilities: WalletCapabilities = {};
-                if (paymasterSupported && paymasterUrl) {
-                    capabilities.paymasterService = { url: paymasterUrl };
-                }
-                const { id } = await sendCallsAsync({
-                    calls: [createAddInputCall([dapp, payload])],
-                    capabilities,
-                });
-                console.log(id);
-            } catch (e: any) {
-                setError(e.message);
-                console.log(e.message);
+                const { id } = await resignAsync(dapp, params);
+            } catch (e: unknown) {
+                setError(e instanceof Error ? e.message : "An error occurred");
             }
         }
     };
@@ -189,22 +153,9 @@ const Play = () => {
             // reset error
             setError(undefined);
             try {
-                const address = params.address as Address;
-                const payload = encodeFunctionData({
-                    abi: ABI,
-                    functionName: "claim",
-                    args: [address],
-                });
-                const capabilities: WalletCapabilities = {};
-                if (paymasterSupported && paymasterUrl) {
-                    capabilities.paymasterService = { url: paymasterUrl };
-                }
-                const { id } = await sendCallsAsync({
-                    calls: [createAddInputCall([dapp, payload])],
-                    capabilities,
-                });
-            } catch (e: any) {
-                setError(e.message);
+                const { id } = await claimVictoryAsync(dapp, params);
+            } catch (e: unknown) {
+                setError(e instanceof Error ? e.message : "An error occurred");
             }
         }
     };
@@ -240,7 +191,7 @@ const Play = () => {
             sessionId={sessionId}
             sessionSupported={sessionSupported}
             submitting={
-                isFetching || addInputPending || movePending || isConnecting
+                isFetching || addInputPending || isPending || isConnecting
             }
             token={token}
         />

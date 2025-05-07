@@ -4,7 +4,8 @@ import { Group } from "@mantine/core";
 import { createPlayer } from "@onchess/core";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
-import { Hash, erc20Abi, getAddress } from "viem";
+import type { Address, Hash } from "viem";
+import { erc20Abi, getAddress } from "viem";
 import {
     useAccount,
     useCallsStatus,
@@ -18,8 +19,9 @@ import { Shell } from "../../components/navigation/Shell";
 import { useBridgeActions } from "../../hooks/bridge";
 import { useApplicationAddress } from "../../hooks/config";
 import { useLatestState } from "../../hooks/state";
-import { ExecutableVoucher, useVouchers } from "../../hooks/voucher";
+import { type ExecutableVoucher, useVouchers } from "../../hooks/voucher";
 import { extractChain } from "../../providers/wallet";
+import { usePasskeyConnect } from "../../providers/wallet/zerodev/usePasskeyConnect";
 import { destination, transferTo } from "../../util/voucher";
 
 const BridgePage = () => {
@@ -36,7 +38,8 @@ const BridgePage = () => {
 
     // connection
     const { address, isConnected } = useAccount();
-    const { connect, connectors, isPending: isConnecting } = useConnect();
+    const { connect, connectors } = useConnect();
+    const { login, register, isPending: isConnecting } = usePasskeyConnect();
     const { disconnect } = useDisconnect();
     const handleConnect = () => connect({ connector: connectors[0] });
 
@@ -45,7 +48,7 @@ const BridgePage = () => {
 
     const application = useApplicationAddress();
     const player = address
-        ? state && state.players
+        ? state?.players
             ? (state.players[getAddress(address)] ??
               createPlayer(getAddress(address)))
             : createPlayer(getAddress(address))
@@ -66,15 +69,15 @@ const BridgePage = () => {
         contracts: [
             {
                 abi: erc20Abi,
-                address: token!.address,
+                address: token?.address,
                 functionName: "allowance",
-                args: [address!, erc20PortalAddress],
+                args: [address as Address, erc20PortalAddress],
             },
             {
                 abi: erc20Abi,
-                address: token!.address,
+                address: token?.address,
                 functionName: "balanceOf",
-                args: [address!],
+                args: [address as Address],
             },
         ],
         query: {
@@ -117,8 +120,8 @@ const BridgePage = () => {
                     args: [erc20PortalAddress, BigInt(amount)],
                 });
                 setHash(hash);
-            } catch (e: any) {
-                setError(e.message);
+            } catch (e: unknown) {
+                setError(e instanceof Error ? e.message : String(e));
             }
         }
     };
@@ -131,8 +134,8 @@ const BridgePage = () => {
                     args: [token.address, application, BigInt(amount), "0x"],
                 });
                 setHash(hash);
-            } catch (e: any) {
-                setError(e.message);
+            } catch (e: unknown) {
+                setError(e instanceof Error ? e.message : String(e));
             }
         }
     };
@@ -148,8 +151,8 @@ const BridgePage = () => {
                           BigInt(amount),
                       );
                       setCallId(id);
-                  } catch (e: any) {
-                      setError(e.message);
+                  } catch (e: unknown) {
+                      setError(e instanceof Error ? e.message : String(e));
                   }
               }
           }
@@ -164,8 +167,8 @@ const BridgePage = () => {
                     BigInt(amount),
                 );
                 setCallId(id);
-            } catch (e: any) {
-                setError(e.message);
+            } catch (e: unknown) {
+                setError(e instanceof Error ? e.message : String(e));
             }
         }
     };
@@ -176,8 +179,8 @@ const BridgePage = () => {
             try {
                 const { id } = await executeVoucherAsync(application, output);
                 setCallId(id);
-            } catch (e: any) {
-                setError(e.message);
+            } catch (e: unknown) {
+                setError(e instanceof Error ? e.message : String(e));
             }
         }
     };
@@ -188,6 +191,8 @@ const BridgePage = () => {
             isConnecting={isConnecting}
             isConnected={isConnected}
             onConnect={handleConnect}
+            onLogin={() => login?.({ passkeyName: "OnChess" })}
+            onRegister={() => register?.({ passkeyName: "OnChess" })}
             onDisconnect={disconnect}
             player={player}
             token={token}

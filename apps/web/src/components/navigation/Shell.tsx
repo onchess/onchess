@@ -1,8 +1,8 @@
 "use client";
 import { Anchor, AppShell, Avatar, Burger, Group, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { FC, PropsWithChildren } from "react";
-import { Header, HeaderProps } from "../Header";
+import type { FC, PropsWithChildren } from "react";
+import { Header, type HeaderProps } from "../Header";
 import { Navbar } from "./Navbar";
 
 export type ShellProps = HeaderProps & PropsWithChildren;

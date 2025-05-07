@@ -1,5 +1,5 @@
-import { Voucher } from "@deroll/core";
-import { Address } from "viem";
+import type { Voucher } from "@deroll/core";
+import type { Address } from "viem";
 
 /**
  * Configuration of a ERC-20 token used by the game

@@ -1,65 +1,127 @@
-"use client";
-
 import {
     ChainNotConfiguredError,
-    Connector,
+    type Connector,
+    ProviderNotFoundError,
     createConnector,
 } from "@wagmi/core";
 import {
     PasskeyValidatorContractVersion,
+    WebAuthnMode,
+    deserializePasskeyValidator,
     toPasskeyValidator,
     toWebAuthnKey,
-    WebAuthnMode,
 } from "@zerodev/passkey-validator";
+import { createKernelAccount, createKernelAccountClient } from "@zerodev/sdk";
+import { KERNEL_V3_2, getEntryPoint } from "@zerodev/sdk/constants";
+import type { KernelValidator } from "@zerodev/sdk/types";
+import { createPimlicoClient } from "permissionless/clients/pimlico";
 import {
-    createKernelAccount,
-    createKernelAccountClient,
-    KernelEIP1193Provider,
-} from "@zerodev/sdk";
-import { getEntryPoint, KERNEL_V3_1 } from "@zerodev/sdk/constants";
-import { FC, PropsWithChildren } from "react";
-import {
-    AddEthereumChainParameter,
+    type AddEthereumChainParameter,
+    type Chain,
+    type ProviderRpcError,
+    SwitchChainError,
+    UserRejectedRequestError,
     createPublicClient,
     getAddress,
     numberToHex,
-    ProviderRpcError,
-    SwitchChainError,
-    UserRejectedRequestError,
-    type Chain,
 } from "viem";
-import { createPaymasterClient } from "viem/account-abstraction";
-import { createConfig, http } from "wagmi";
-import { BasicWalletProvider } from "./basic";
+import {
+    type EntryPointVersion,
+    createPaymasterClient,
+} from "viem/account-abstraction";
+import { http } from "wagmi";
+import { KernelEIP1193Provider } from "./KernelEIP1193Provider";
 
 type PasskeyConnectorParameters = {
-    projectId: string;
     chain: Chain;
-    mode: WebAuthnMode;
     name: string;
+    rpcUrl: string;
     bundlerUrl: string;
     paymasterUrl?: string;
     passkeyServerUrl: string;
 };
 
-const ZERODEV_PASSKEY_URL = "https://passkeys.zerodev.app/api/v3";
+// connector types
+type Provider = KernelEIP1193Provider<"0.7"> | undefined;
+type Properties = {
+    login: (params?: { passkeyName?: string }) => Promise<void>;
+    register: (params?: { passkeyName?: string }) => Promise<void>;
+};
+type StorageItem = {
+    passkeyValidator: string;
+};
 
-const ZERODEV_BUNDLER_URL = "https://rpc.zerodev.app/api/v2/bundler";
+export const passkeyConnectorId = "zerodevPasskeySDK";
 
-const passkeyConnector = (parameters: PasskeyConnectorParameters) => {
-    const { bundlerUrl, chain, mode, name, passkeyServerUrl, paymasterUrl } =
-        parameters;
-    let walletProvider: KernelEIP1193Provider | undefined;
+passkeyConnector.type = "passkeyConnector" as const;
+export function passkeyConnector<entryPointVersion extends EntryPointVersion>(
+    params: PasskeyConnectorParameters,
+) {
+    const { bundlerUrl, chain, name, passkeyServerUrl, paymasterUrl, rpcUrl } =
+        params;
+    let walletProvider: KernelEIP1193Provider<"0.7"> | undefined;
     let accountsChanged: Connector["onAccountsChanged"] | undefined;
     let chainChanged: Connector["onChainChanged"] | undefined;
     let disconnect: Connector["onDisconnect"] | undefined;
+    let connectType: WebAuthnMode = WebAuthnMode.Register;
+    let passkeyName: string = name;
 
-    return createConnector<KernelEIP1193Provider | undefined>((config) => {
+    const publicClient = createPublicClient({
+        chain,
+        transport: http(rpcUrl),
+    });
+    const entryPoint = getEntryPoint("0.7");
+    const kernelVersion = KERNEL_V3_2;
+
+    const createProvider = async (sudo: KernelValidator) => {
+        const kernelAccount = await createKernelAccount(publicClient, {
+            entryPoint,
+            kernelVersion,
+            plugins: { sudo },
+        });
+
+        // gas price given by pimlico bundler API (including local alto)
+        const estimateFeesPerGas = async () => {
+            const pimlicoClient = createPimlicoClient({
+                transport: http(bundlerUrl),
+            });
+            const gas = await pimlicoClient.getUserOperationGasPrice();
+            return gas.standard;
+        };
+
+        const kernelClient = createKernelAccountClient({
+            account: kernelAccount,
+            chain,
+            bundlerTransport: http(bundlerUrl),
+            userOperation: { estimateFeesPerGas },
+            paymaster: paymasterUrl
+                ? createPaymasterClient({
+                      transport: http(paymasterUrl),
+                  })
+                : undefined,
+        });
+        return new KernelEIP1193Provider(kernelClient);
+    };
+
+    return createConnector<Provider, Properties, StorageItem>((config) => {
         return {
-            id: "zerodevPasskeySDK",
+            id: passkeyConnectorId,
             name: "Passkey",
-            type: "passkeyConnector",
-            async connect({ chainId } = {}) {
+            type: passkeyConnector.type,
+
+            async register(params) {
+                passkeyName = params?.passkeyName ?? name;
+                connectType = WebAuthnMode.Register;
+            },
+
+            async login(params) {
+                passkeyName = params?.passkeyName ?? name;
+                connectType = WebAuthnMode.Login;
+            },
+
+            async connect(params) {
+                const { chainId } = params ?? {};
+
                 try {
                     if (chainId && chain.id !== chainId) {
                         throw new Error(
@@ -67,7 +129,9 @@ const passkeyConnector = (parameters: PasskeyConnectorParameters) => {
                         );
                     }
 
-                    const provider = await this.getProvider({ chainId });
+                    const provider = await this.getProvider({
+                        chainId,
+                    });
                     if (provider) {
                         const accounts = (
                             (await provider.request({
@@ -90,17 +154,10 @@ const passkeyConnector = (parameters: PasskeyConnectorParameters) => {
                     }
 
                     const webAuthnKey = await toWebAuthnKey({
-                        passkeyName: name,
+                        passkeyName: passkeyName ?? name,
                         passkeyServerUrl,
-                        mode,
+                        mode: connectType,
                         passkeyServerHeaders: {},
-                    });
-
-                    const kernelVersion = KERNEL_V3_1;
-                    const entryPoint = getEntryPoint("0.7");
-                    const publicClient = createPublicClient({
-                        chain,
-                        transport: http(bundlerUrl), // XXX: pass URL (bundler or rpc?)
                     });
 
                     const passkeyValidator = await toPasskeyValidator(
@@ -114,32 +171,20 @@ const passkeyConnector = (parameters: PasskeyConnectorParameters) => {
                         },
                     );
 
-                    const kernelAccount = await createKernelAccount(
-                        publicClient,
-                        {
-                            entryPoint,
-                            kernelVersion,
-                            plugins: {
-                                sudo: passkeyValidator,
-                            },
-                        },
-                    );
+                    // store passkeyValidator, for future use on page reload
+                    const serializedData = passkeyValidator.getSerializedData();
+                    config.storage?.setItem("passkeyValidator", serializedData);
 
-                    const kernelClient = createKernelAccountClient({
-                        account: kernelAccount,
-                        chain,
-                        bundlerTransport: http(bundlerUrl),
-                        paymaster: paymasterUrl
-                            ? createPaymasterClient({
-                                  transport: http(paymasterUrl),
-                              })
-                            : undefined,
-                    });
+                    walletProvider = await createProvider(passkeyValidator);
 
-                    walletProvider = new KernelEIP1193Provider(kernelClient);
+                    const accounts = (
+                        (await walletProvider.request({
+                            method: "eth_requestAccounts",
+                        })) as string[]
+                    ).map((x) => getAddress(x));
 
                     return {
-                        accounts: [kernelAccount.address],
+                        accounts,
                         chainId: chain.id,
                     };
                 } catch (error) {
@@ -171,23 +216,19 @@ const passkeyConnector = (parameters: PasskeyConnectorParameters) => {
                     disconnect = undefined;
                 }
                 walletProvider = undefined;
-                /* TODO: serialization, to it can be resumed after page reload */
-                /*
-                const serializedData = getZerodevSigner();
-                if (serializedData) {
-                    setZerodevSigner(serializedData.signer, false);
-                }
-                */
+
+                // remove passkeyValidator from storage
+                config.storage?.removeItem("passkeyValidator");
             },
 
             async getAccounts() {
                 const provider = await this.getProvider();
-                if (!provider) return [];
+                if (!provider) throw new ProviderNotFoundError();
 
                 const accounts = (await provider.request({
                     method: "eth_accounts",
                 })) as string[];
-                return accounts.map((a) => getAddress(a));
+                return accounts.map(getAddress);
             },
 
             async getChainId() {
@@ -201,6 +242,36 @@ const passkeyConnector = (parameters: PasskeyConnectorParameters) => {
             },
 
             async getProvider() {
+                if (!walletProvider) {
+                    // load from storage if available
+                    const serializedData =
+                        await config.storage?.getItem("passkeyValidator");
+                    if (serializedData) {
+                        // create passkeyValidator from stored serialized data
+                        const passkeyValidator =
+                            await deserializePasskeyValidator(publicClient, {
+                                entryPoint,
+                                kernelVersion,
+                                serializedData,
+                            });
+
+                        const provider = await createProvider(passkeyValidator);
+
+                        if (!accountsChanged) {
+                            accountsChanged = this.onAccountsChanged.bind(this);
+                            provider.on("accountsChanged", accountsChanged);
+                        }
+                        if (!chainChanged) {
+                            chainChanged = this.onChainChanged.bind(this);
+                            provider.on("chainChanged", chainChanged);
+                        }
+                        if (!disconnect) {
+                            disconnect = this.onDisconnect.bind(this);
+                            provider.on("disconnect", disconnect);
+                        }
+                        walletProvider = provider;
+                    }
+                }
                 return walletProvider;
             },
 
@@ -312,57 +383,13 @@ const passkeyConnector = (parameters: PasskeyConnectorParameters) => {
                     disconnect = undefined;
                 }
                 walletProvider = undefined;
-                /* TODO: serialization, to it can be resumed after page reload */
-                /*
-                const serializedData = getZerodevSigner();
-                if (serializedData) {
-                    setZerodevSigner(serializedData.signer, false);
-                }
-                */
+
+                // remove passkeyValidator from storage
+                config.storage?.removeItem("passkeyValidator");
             },
         };
     });
-};
+}
 
-export type ZeroDevWalletProviderProps = PropsWithChildren<{
-    chain: Chain;
-    projectId: string;
-}>;
-
-export const ZeroDevWalletProvider: FC<ZeroDevWalletProviderProps> = (
-    props,
-) => {
-    const rpcUrl = process.env.NEXT_PUBLIC_RPC_URL!;
-    const { chain, projectId } = props;
-    const bundlerUrl = `${ZERODEV_BUNDLER_URL}/${projectId}`;
-    const paymasterUrl = "";
-    const passkeyServerUrl = `${ZERODEV_PASSKEY_URL}/${projectId}`;
-    const config = createConfig({
-        chains: [chain],
-        connectors: [
-            passkeyConnector({
-                bundlerUrl,
-                chain,
-                mode: WebAuthnMode.Login,
-                name: "OnChess",
-                passkeyServerUrl,
-                paymasterUrl,
-                projectId,
-            }),
-            passkeyConnector({
-                bundlerUrl,
-                chain,
-                mode: WebAuthnMode.Register,
-                name: "OnChess",
-                passkeyServerUrl,
-                paymasterUrl,
-                projectId,
-            }),
-        ],
-        ssr: true,
-        transports: {
-            [chain.id]: http(rpcUrl),
-        },
-    });
-    return <BasicWalletProvider {...props} config={config} />;
-};
+type PasskeyCreateConnectorFn = ReturnType<typeof passkeyConnector>;
+export type PasskeyConnector = Connector<PasskeyCreateConnectorFn>;

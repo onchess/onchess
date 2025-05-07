@@ -1,18 +1,18 @@
-import { PayloadAction } from "@reduxjs/toolkit";
+import type { PayloadAction } from "@reduxjs/toolkit";
 import { Chess } from "chess.js";
 import { getAddress } from "viem";
 import { concat, keccak256, numberToHex, slice } from "viem/utils";
 import { createError } from "../message.js";
-import { LobbyBasePayload } from "../payloads.js";
+import type { LobbyBasePayload } from "../payloads.js";
 import { getPlayer } from "../players.js";
-import { Game, State } from "../state.js";
+import type { Game, State } from "../state.js";
 import { startTime } from "../time.js";
 import { hexToFraction } from "../util.js";
 
 export default (state: State, action: PayloadAction<LobbyBasePayload>) => {
     // join game
     const { address, metadata } = action.payload;
-    const { input_index, timestamp } = metadata;
+    const { input_index, block_timestamp } = metadata;
     const msg_sender = getAddress(metadata.msg_sender);
 
     // get player
@@ -24,7 +24,7 @@ export default (state: State, action: PayloadAction<LobbyBasePayload>) => {
     if (!item) {
         player.message = createError({
             text: "Lobby item not found",
-            timestamp,
+            timestamp: block_timestamp,
         });
         return;
     }
@@ -61,7 +61,7 @@ export default (state: State, action: PayloadAction<LobbyBasePayload>) => {
     // create game object
     const game: Game = {
         address: gameAddress,
-        updatedAt: timestamp,
+        updatedAt: block_timestamp,
         white,
         black,
         whiteTime: time,

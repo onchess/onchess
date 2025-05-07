@@ -1,15 +1,15 @@
 import { createERC20TransferVoucher } from "@deroll/wallet";
-import { PayloadAction } from "@reduxjs/toolkit";
+import type { PayloadAction } from "@reduxjs/toolkit";
 import { getAddress } from "viem";
 import { createError } from "../message.js";
-import { WithdrawPayload } from "../payloads.js";
+import type { WithdrawPayload } from "../payloads.js";
 import { getPlayer } from "../players.js";
-import { State } from "../state.js";
+import type { State } from "../state.js";
 import { subtract } from "../util.js";
 
 export default (state: State, action: PayloadAction<WithdrawPayload>) => {
     const { metadata } = action.payload;
-    const { timestamp } = metadata;
+    const { block_timestamp } = metadata;
     const msg_sender = getAddress(metadata.msg_sender);
     const amount = BigInt(action.payload.amount);
 
@@ -20,7 +20,7 @@ export default (state: State, action: PayloadAction<WithdrawPayload>) => {
     // check balance
     if (balance < amount) {
         player.message = createError({
-            timestamp,
+            timestamp: block_timestamp,
             text: "Insufficient funds",
         });
         return;

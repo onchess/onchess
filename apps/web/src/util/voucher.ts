@@ -1,7 +1,10 @@
-import { Output } from "@cartesi/viem";
-import { iApplicationAbi } from "@cartesi/wagmi";
-import { AbiParametersToPrimitiveTypes, ExtractAbiFunction } from "abitype";
-import { Address, decodeFunctionData, erc20Abi, getAddress } from "viem";
+import type { Output } from "@cartesi/viem";
+import type { iApplicationAbi } from "@cartesi/wagmi";
+import type {
+    AbiParametersToPrimitiveTypes,
+    ExtractAbiFunction,
+} from "abitype";
+import { type Address, decodeFunctionData, erc20Abi, getAddress } from "viem";
 
 export const destination = (token: Address) => (output: Output) =>
     output.decodedData.type === "Voucher" &&
@@ -19,11 +22,12 @@ export const transferTo = (recipient: Address) => (output: Output) => {
         if (functionName === "transfer") {
             const [to] = args;
             return getAddress(to) === getAddress(recipient);
-        } else if (functionName === "transferFrom") {
+        }
+        if (functionName === "transferFrom") {
             const [_, to] = args;
             return getAddress(to) === getAddress(recipient);
         }
-    } catch (e: any) {
+    } catch (e: unknown) {
         return false;
     }
     return false;

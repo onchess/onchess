@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { Address, getAddress } from "viem";
+import { type Address, getAddress } from "viem";
 import { createPlayer } from "./players.js";
 import {
     cancelReducer,
@@ -16,7 +16,7 @@ import {
     withdrawRakeReducer,
     withdrawReducer,
 } from "./reducers/index.js";
-import { Game, LobbyItem, State } from "./state.js";
+import type { Game, LobbyItem, State } from "./state.js";
 
 export * from "./app.js";
 export * from "./payloads.js";

@@ -1,21 +1,23 @@
 "use client";
 
-import { FC, PropsWithChildren } from "react";
-import { base, baseSepolia, cannon } from "wagmi/chains";
+import { type FC, type PropsWithChildren, useState } from "react";
+import { base, baseSepolia, cannon } from "viem/chains";
+import { cookieToInitialState } from "wagmi";
+import { BasicWalletProvider } from "./wallet/basic";
+import { getConfig } from "./wallet/config";
 import { ReownWalletProvider } from "./wallet/reown";
-import { ZeroDevWalletProvider } from "./wallet/zerodev";
 
-export type WalletProviderType = "ZeroDev" | "Reown";
+export type WalletProviderType = "Coinbase" | "MetaMask" | "Reown" | "ZeroDev";
 
 export const extractChain = () => {
     const chainId = process.env.NEXT_PUBLIC_CHAIN_ID;
     if (!chainId) {
         throw new Error("Missing NEXT_PUBLIC_CHAIN_ID");
     }
-    if (isNaN(parseInt(chainId))) {
+    if (Number.isNaN(Number.parseInt(chainId))) {
         throw new Error("Invalid NEXT_PUBLIC_CHAIN_ID");
     }
-    switch (parseInt(chainId)) {
+    switch (Number.parseInt(chainId)) {
         case base.id:
             return base;
         case baseSepolia.id:
@@ -33,6 +35,10 @@ export const getProviderType = (): WalletProviderType => {
         throw new Error("Missing NEXT_PUBLIC_WALLET_PROVIDER");
     }
     switch (type) {
+        case "Coinbase":
+            return "Coinbase";
+        case "MetaMask":
+            return "MetaMask";
         case "Reown":
             return "Reown";
         case "ZeroDev":
@@ -41,12 +47,23 @@ export const getProviderType = (): WalletProviderType => {
     throw new Error(`Invalid NEXT_PUBLIC_WALLET_PROVIDER: ${type}`);
 };
 
-export const WalletProvider: FC<PropsWithChildren> = ({ children }) => {
+type WalletProviderProps = PropsWithChildren & { cookies: string | null };
+
+export const WalletProvider: FC<WalletProviderProps> = ({
+    children,
+    cookies,
+}) => {
     // read chain configuration from env
     const chain = extractChain();
 
     // read provider configuration from env
     const provider = getProviderType();
+
+    // create wagmi config
+    const [config] = useState(() => getConfig(provider, chain));
+
+    // create wagmi initial state
+    const initialState = cookieToInitialState(config, cookies);
 
     switch (provider) {
         case "Reown": {
@@ -60,16 +77,17 @@ export const WalletProvider: FC<PropsWithChildren> = ({ children }) => {
                 </ReownWalletProvider>
             );
         }
-        case "ZeroDev": {
-            const projectId = process.env.NEXT_PUBLIC_ZERODEV_PROJECT_ID;
-            if (!projectId) {
-                throw new Error("Missing NEXT_PUBLIC_ZERODEV_PROJECT_ID");
-            }
+        case "Coinbase":
+        case "MetaMask":
+        case "ZeroDev":
             return (
-                <ZeroDevWalletProvider chain={chain} projectId={projectId}>
+                <BasicWalletProvider
+                    config={config}
+                    initialState={initialState}
+                    reconnectOnMount={true}
+                >
                     {children}
-                </ZeroDevWalletProvider>
+                </BasicWalletProvider>
             );
-        }
     }
 };

@@ -1,5 +1,6 @@
 import { ColorSchemeScript } from "@mantine/core";
 import "@mantine/core/styles.css";
+import { headers } from "next/headers";
 import { CartesiProvider } from "../providers/cartesi";
 import { StateProvider } from "../providers/state";
 import { StyleProvider } from "../providers/style";
@@ -10,7 +11,8 @@ export const metadata = {
     description: "OnChain Chess Game",
 };
 
-const RootLayout = ({ children }: { children: React.ReactNode[] }) => {
+const RootLayout = async ({ children }: { children: React.ReactNode[] }) => {
+    const cookies = (await headers()).get("cookie");
     return (
         <html lang="en" suppressHydrationWarning={true}>
             <head>
@@ -23,7 +25,7 @@ const RootLayout = ({ children }: { children: React.ReactNode[] }) => {
             </head>
             <body>
                 <StyleProvider>
-                    <WalletProvider>
+                    <WalletProvider cookies={cookies}>
                         <CartesiProvider>
                             <StateProvider>{children}</StateProvider>
                         </CartesiProvider>

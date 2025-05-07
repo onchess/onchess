@@ -1,14 +1,14 @@
-import { PayloadAction } from "@reduxjs/toolkit";
+import type { PayloadAction } from "@reduxjs/toolkit";
 import { concat, getAddress, keccak256, numberToHex, slice } from "viem";
 import { createError } from "../message.js";
-import { CreateGamePayload } from "../payloads.js";
+import type { CreateGamePayload } from "../payloads.js";
 import { getPlayer } from "../players.js";
-import { LobbyItem, State } from "../state.js";
+import type { LobbyItem, State } from "../state.js";
 import { supportedTimeControls } from "../time.js";
 
 export default (state: State, action: PayloadAction<CreateGamePayload>) => {
     const { metadata } = action.payload;
-    const { input_index, timestamp } = metadata;
+    const { input_index, block_timestamp } = metadata;
     const msg_sender = getAddress(metadata.msg_sender);
 
     // get player (add player if not exists)
@@ -18,7 +18,7 @@ export default (state: State, action: PayloadAction<CreateGamePayload>) => {
     if (state.isShutdown) {
         player.message = createError({
             text: "Application is shutdown",
-            timestamp,
+            timestamp: block_timestamp,
         });
         return;
     }
@@ -32,7 +32,7 @@ export default (state: State, action: PayloadAction<CreateGamePayload>) => {
     if (supportedTimeControls.indexOf(timeControl) < 0) {
         player.message = createError({
             text: `Unsupported time control: ${timeControl}`,
-            timestamp,
+            timestamp: block_timestamp,
         });
         return;
     }
@@ -44,7 +44,7 @@ export default (state: State, action: PayloadAction<CreateGamePayload>) => {
         // player don't have enough funds
         player.message = createError({
             text: "Not enough funds",
-            timestamp,
+            timestamp: block_timestamp,
         });
         return;
     }
@@ -61,7 +61,7 @@ export default (state: State, action: PayloadAction<CreateGamePayload>) => {
     const lobbyItem: LobbyItem = {
         address,
         bet: bet.toString(),
-        createdAt: timestamp,
+        createdAt: block_timestamp,
         player: msg_sender,
         timeControl,
         minRating,

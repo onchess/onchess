@@ -1,4 +1,4 @@
-import { Address } from "viem";
+import type { Address } from "viem";
 
 export const useApplicationAddress = (): Address | undefined => {
     const address = process.env.NEXT_PUBLIC_APPLICATION_ADDRESS;

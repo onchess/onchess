@@ -1,6 +1,13 @@
-import { Avatar, Badge, BadgeProps, Group, Loader, Text } from "@mantine/core";
-import { Token } from "@onchess/core";
-import { FC } from "react";
+import {
+    Avatar,
+    Badge,
+    type BadgeProps,
+    Group,
+    Loader,
+    Text,
+} from "@mantine/core";
+import type { Token } from "@onchess/core";
+import type { FC } from "react";
 import { formatUnits } from "viem";
 import classes from "./Balance.module.css";
 

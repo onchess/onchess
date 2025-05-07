@@ -1,8 +1,8 @@
 "use client";
 
 import { Stack } from "@mantine/core";
-import { Player, State, Token } from "@onchess/core";
-import { FC } from "react";
+import type { Player, State, Token } from "@onchess/core";
+import type { FC } from "react";
 
 import { Games } from "./Games";
 import { Leaderboard } from "./Leaderboard";

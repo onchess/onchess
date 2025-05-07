@@ -1,8 +1,9 @@
-import { AdvanceRequestData, App } from "@deroll/core";
+import type { AdvanceRequestData, App } from "@deroll/core";
 import { isERC20Deposit, parseERC20Deposit } from "@deroll/wallet";
-import { Action, combineSlices, configureStore } from "@reduxjs/toolkit";
+import { type Action, combineSlices, configureStore } from "@reduxjs/toolkit";
 import { decodeFunctionData, parseAbi, stringToHex } from "viem";
-import chessSlice, { ChessSlice, Config, State } from "./index.js";
+import type { ChessSlice, Config, State } from "./index.js";
+import chessSlice from "./index.js";
 
 // game onchain API
 export const ABI = parseAbi([
@@ -171,9 +172,9 @@ export const createChess = (app: App, initialState: State) => {
             }
 
             return "accept";
-        } else {
-            // if no action was created, reject the request
-            return "reject";
         }
+
+        // if no action was created, reject the request
+        return "reject";
     });
 };

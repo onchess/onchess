@@ -10,9 +10,9 @@ import {
     TextInput,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { Token } from "@onchess/core";
+import type { Token } from "@onchess/core";
 import { IconCircleCheckFilled, IconCornerLeftUp } from "@tabler/icons-react";
-import { FC } from "react";
+import type { FC } from "react";
 import { formatUnits, parseUnits } from "viem";
 
 export interface DepositProps {

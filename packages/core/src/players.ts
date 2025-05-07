@@ -1,5 +1,5 @@
-import { Address } from "viem";
-import { Player, State } from "./state.js";
+import type { Address } from "viem";
+import type { Player, State } from "./state.js";
 
 export const INITIAL_RATING = 1000;
 

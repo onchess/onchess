@@ -1,7 +1,7 @@
 import { Stack } from "@mantine/core";
-import { Token } from "@onchess/core";
-import { FC, PropsWithChildren } from "react";
-import { ExecutableVoucher } from "../../hooks/voucher";
+import type { Token } from "@onchess/core";
+import type { FC, PropsWithChildren } from "react";
+import type { ExecutableVoucher } from "../../hooks/voucher";
 import { WithdrawVoucher } from "./WithdrawVoucher";
 
 export type VouchersProps = PropsWithChildren & {
@@ -14,9 +14,9 @@ export const Vouchers: FC<VouchersProps> = (props) => {
     const { onExecute, token, vouchers } = props;
     return (
         <Stack>
-            {vouchers.map((voucher, i) => (
+            {vouchers.map((voucher) => (
                 <WithdrawVoucher
-                    key={i}
+                    key={voucher.index.toString()}
                     executing={false} // XXX: implementing executing
                     onExecute={() => onExecute(voucher)}
                     voucher={voucher}

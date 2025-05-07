@@ -1,5 +1,5 @@
 import { createApp } from "@deroll/app";
-import { State, createChess } from "@onchess/core";
+import { type State, createChess } from "@onchess/core";
 import { getConfig } from "./config";
 
 // rollups URL
@@ -10,7 +10,7 @@ export const url =
 const app = createApp({ url });
 
 // load configuration for the chain
-const chainId = parseInt(process.env.CHAIN_ID ?? "13370");
+const chainId = Number.parseInt(process.env.CHAIN_ID ?? "13370");
 console.log(
     `starting application for chain ${chainId} with the following configuration`,
 );

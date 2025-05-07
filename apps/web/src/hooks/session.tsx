@@ -1,15 +1,13 @@
 import { inputBoxAbi, inputBoxAddress } from "@cartesi/viem/abi";
-import { ParamCondition } from "@zerodev/permissions/policies";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { erc7715Actions } from "viem/experimental";
+import { formatAbiItem, getAbiItem } from "viem/utils";
 import { useWalletClient } from "wagmi";
 import { usePermissionsSupport } from "./capabilities";
-import { useApplicationAddress } from "./config";
 
 type RequestPermissionsAsyncFunc = (expiry: number) => Promise<void>;
 
 export const useSessionId = () => {
-    const application = useApplicationAddress();
     const { data: walletClient, status } = useWalletClient();
     const { supported } = usePermissionsSupport();
     const [requestPermissionsAsync, setRequestPermissionsAsync] =
@@ -17,60 +15,47 @@ export const useSessionId = () => {
     const [sessionId, setSessionId] = useState<string | undefined>(undefined);
     const [expiry, setExpiry] = useState<number>(0);
 
-    const requestPermissionsAsyncActive = async (
-        expiry: number,
-    ): Promise<void> => {
-        if (walletClient) {
-            const extendedClient = walletClient.extend(erc7715Actions());
-            const permissions = await extendedClient.grantPermissions({
-                expiry,
-                permissions: [
-                    {
-                        type: "contract-call",
-                        data: {
-                            address: inputBoxAddress,
-                            calls: [
-                                "function addInput(address _dapp, bytes calldata _input) external returns (bytes32)",
-                            ],
-                            // @ts-ignore : The spec is WIP so ignore the type error for now. Below struct is supported.
-                            permissions: [
-                                {
-                                    target: inputBoxAddress,
-                                    valueLimit: 0n,
-                                    abi: inputBoxAbi,
-                                    functionName: "addInput",
-                                    args: [
-                                        {
-                                            condition: ParamCondition.EQUAL,
-                                            value: application,
-                                        },
-                                        {
-                                            // we don't have a way to limit the scope of the input payload
-                                            // so for now session has permission to send any input payload
-                                            condition: ParamCondition.NOT_EQUAL,
-                                            value: "0x",
-                                        },
+    const requestPermissionsAsyncActive = useMemo(
+        () =>
+            async (expiry: number): Promise<void> => {
+                if (walletClient) {
+                    const extendedClient =
+                        walletClient.extend(erc7715Actions());
+                    const permissions = await extendedClient.grantPermissions({
+                        expiry,
+                        permissions: [
+                            {
+                                type: "contract-call",
+                                data: {
+                                    address: inputBoxAddress,
+                                    calls: [
+                                        formatAbiItem(
+                                            getAbiItem({
+                                                abi: inputBoxAbi,
+                                                name: "addInput",
+                                            }),
+                                        ),
                                     ],
                                 },
-                            ],
-                        },
-                        policies: [],
-                    },
-                ],
-            });
-            if (permissions) {
-                // set session id from issued permission context
-                setSessionId(permissions.permissionsContext);
-                setExpiry(permissions.expiry);
-            }
-        }
-    };
+                                policies: [],
+                            },
+                        ],
+                    });
+                    if (permissions) {
+                        // set session id from issued permission context
+                        setSessionId(permissions.permissionsContext);
+                        setExpiry(permissions.expiry);
+                    }
+                }
+            },
+        [walletClient],
+    );
 
     useEffect(() => {
-        if (status == "success" && supported) {
+        if (status === "success" && supported) {
             setRequestPermissionsAsync(() => requestPermissionsAsyncActive);
         }
-    }, [status, supported]);
+    }, [status, supported, requestPermissionsAsyncActive]);
 
     return { expiry, requestPermissionsAsync, sessionId, supported };
 };

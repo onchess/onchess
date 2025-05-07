@@ -1,4 +1,4 @@
-import { Config } from "@onchess/core";
+import type { Config } from "@onchess/core";
 import { base, baseSepolia, cannon } from "viem/chains";
 
 const rakeDivider = 20; // (divider) 5%

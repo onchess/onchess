@@ -1,4 +1,4 @@
-import { Output } from "@cartesi/viem";
+import type { Output } from "@cartesi/viem";
 import {
     erc20PortalAbi,
     erc20PortalAddress,
@@ -6,21 +6,24 @@ import {
     inputBoxAbi,
     inputBoxAddress,
 } from "@cartesi/viem/abi";
-import {
+import type {
     AbiParametersToPrimitiveTypes,
     Address,
     ExtractAbiFunction,
 } from "abitype";
+import { encodeFunctionData } from "viem";
 import { toEVM } from "../util/voucher";
 
 type AddInputCallParameters = AbiParametersToPrimitiveTypes<
     ExtractAbiFunction<typeof inputBoxAbi, "addInput">["inputs"]
 >;
 export const createAddInputCall = (args: AddInputCallParameters) => ({
-    address: inputBoxAddress,
-    abi: inputBoxAbi,
-    functionName: "addInput",
-    args,
+    to: inputBoxAddress,
+    data: encodeFunctionData({
+        abi: inputBoxAbi,
+        functionName: "addInput",
+        args,
+    }),
 });
 
 type DepositERC20TokensCallParameters = AbiParametersToPrimitiveTypes<
@@ -29,10 +32,12 @@ type DepositERC20TokensCallParameters = AbiParametersToPrimitiveTypes<
 export const createDepositERC20TokensCall = (
     args: DepositERC20TokensCallParameters,
 ) => ({
-    address: erc20PortalAddress,
-    abi: erc20PortalAbi,
-    functionName: "depositERC20Tokens",
-    args,
+    to: erc20PortalAddress,
+    data: encodeFunctionData({
+        abi: erc20PortalAbi,
+        functionName: "depositERC20Tokens",
+        args,
+    }),
 });
 
 type ExecuteOutputCallParameters = {
@@ -41,8 +46,10 @@ type ExecuteOutputCallParameters = {
 };
 
 export const createExecuteOutputCall = (args: ExecuteOutputCallParameters) => ({
-    address: args.application,
-    abi: iApplicationAbi,
-    functionName: "executeOutput",
-    args: toEVM(args.output),
+    to: args.application,
+    data: encodeFunctionData({
+        abi: iApplicationAbi,
+        functionName: "executeOutput",
+        args: toEVM(args.output),
+    }),
 });

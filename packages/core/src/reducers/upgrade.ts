@@ -1,16 +1,19 @@
 import { erc20PortalAbi, erc20PortalAddress } from "@cartesi/viem/abi";
-import { Voucher } from "@deroll/core";
-import { PayloadAction } from "@reduxjs/toolkit";
-import { AbiParametersToPrimitiveTypes, ExtractAbiFunction } from "abitype";
+import type { Voucher } from "@deroll/core";
+import type { PayloadAction } from "@reduxjs/toolkit";
+import type {
+    AbiParametersToPrimitiveTypes,
+    ExtractAbiFunction,
+} from "abitype";
 import {
-    Address,
+    type Address,
     encodeFunctionData,
     erc20Abi,
     getAddress,
     stringToHex,
 } from "viem";
-import { ExportPayload } from "../payloads.js";
-import { State } from "../state.js";
+import type { ExportPayload } from "../payloads.js";
+import type { State } from "../state.js";
 
 type DepositERC20VoucherParameters = AbiParametersToPrimitiveTypes<
     ExtractAbiFunction<typeof erc20PortalAbi, "depositERC20Tokens">["inputs"]

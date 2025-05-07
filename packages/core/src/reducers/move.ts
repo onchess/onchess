@@ -1,17 +1,17 @@
-import { PayloadAction } from "@reduxjs/toolkit";
+import type { PayloadAction } from "@reduxjs/toolkit";
 import { Chess } from "chess.js";
 import { getAddress } from "viem";
 import { terminateGame } from "../game.js";
 import { createError } from "../message.js";
-import { MovePiecePayload } from "../payloads.js";
+import type { MovePiecePayload } from "../payloads.js";
 import { getPlayer } from "../players.js";
-import { State } from "../state.js";
+import type { State } from "../state.js";
 import { parseTimeControl } from "../time.js";
 
 export default (state: State, action: PayloadAction<MovePiecePayload>) => {
     // move a piece
     const { metadata } = action.payload;
-    const { timestamp } = metadata;
+    const { block_timestamp } = metadata;
     const msg_sender = getAddress(metadata.msg_sender);
     const { address, move } = action.payload;
 
@@ -24,7 +24,7 @@ export default (state: State, action: PayloadAction<MovePiecePayload>) => {
         // game not found
         player.message = createError({
             text: `Game not found: ${address}`,
-            timestamp,
+            timestamp: block_timestamp,
         });
         return;
     }
@@ -33,7 +33,7 @@ export default (state: State, action: PayloadAction<MovePiecePayload>) => {
     if (msg_sender !== game.white && msg_sender !== game.black) {
         player.message = createError({
             text: `Unauthorized game: ${address}`,
-            timestamp,
+            timestamp: block_timestamp,
         });
         return;
     }
@@ -46,7 +46,7 @@ export default (state: State, action: PayloadAction<MovePiecePayload>) => {
     if (chess.isGameOver()) {
         player.message = createError({
             text: "Game is already over",
-            timestamp,
+            timestamp: block_timestamp,
         });
         return;
     }
@@ -57,15 +57,21 @@ export default (state: State, action: PayloadAction<MovePiecePayload>) => {
         (turn === "w" && msg_sender !== game.white) ||
         (turn === "b" && msg_sender !== game.black)
     ) {
-        player.message = createError({ text: "Not your turn", timestamp });
+        player.message = createError({
+            text: "Not your turn",
+            timestamp: block_timestamp,
+        });
         return;
     }
 
     // check time control
-    const elapsedTime = timestamp - game.updatedAt;
+    const elapsedTime = block_timestamp - game.updatedAt;
     const timeLeft = turn === "w" ? game.whiteTime : game.blackTime;
     if (elapsedTime > timeLeft) {
-        player.message = createError({ text: "Out of time", timestamp });
+        player.message = createError({
+            text: "Out of time",
+            timestamp: block_timestamp,
+        });
 
         // give victory to opponent
         const whitePlayer = getPlayer(state, game.white);
@@ -81,13 +87,13 @@ export default (state: State, action: PayloadAction<MovePiecePayload>) => {
     } catch (e: unknown) {
         player.message = createError({
             text: `Invalid move: ${move}`,
-            timestamp,
+            timestamp: block_timestamp,
         });
         return;
     }
 
     // update game timestamp
-    game.updatedAt = timestamp;
+    game.updatedAt = block_timestamp;
 
     // update player clock
     const [_, extraMoveTime] = parseTimeControl(game.timeControl);

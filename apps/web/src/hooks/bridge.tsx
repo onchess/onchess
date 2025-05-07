@@ -1,14 +1,14 @@
-import { Output } from "@cartesi/viem";
+import type { Output } from "@cartesi/viem";
 import {
     erc20PortalAddress,
     useWriteErc20PortalDepositErc20Tokens,
 } from "@cartesi/wagmi";
 import { ABI } from "@onchess/core";
 import {
-    Address,
+    type Address,
+    type WalletCapabilities,
     encodeFunctionData,
     erc20Abi,
-    WalletCapabilities,
 } from "viem";
 import { useChainId, useSendCalls } from "wagmi";
 import {
@@ -16,17 +16,14 @@ import {
     createDepositERC20TokensCall,
     createExecuteOutputCall,
 } from "../calls";
-import {
-    useAtomicBatchSupport,
-    usePaymasterServiceSupport,
-} from "./capabilities";
+import { useAtomicSupport, usePaymasterServiceSupport } from "./capabilities";
 import { useWriteErc20Approve } from "./contracts";
 
 export const useBridgeActions = (paymasterUrl?: string) => {
     const { sendCallsAsync, isPending } = useSendCalls();
     const chainId = useChainId();
     const { supported: paymasterSupported } = usePaymasterServiceSupport();
-    const { supported: atomicSupported } = useAtomicBatchSupport();
+    const { supported: atomicSupported } = useAtomicSupport();
 
     const { writeContractAsync: approveAsync, isPending: approvePending } =
         useWriteErc20Approve();
@@ -69,10 +66,12 @@ export const useBridgeActions = (paymasterUrl?: string) => {
               return sendCallsAsync({
                   calls: [
                       {
-                          abi: erc20Abi,
-                          address: token,
-                          functionName: "approve",
-                          args: [erc20PortalAddress, amount],
+                          to: token,
+                          data: encodeFunctionData({
+                              abi: erc20Abi,
+                              functionName: "approve",
+                              args: [erc20PortalAddress, amount],
+                          }),
                       },
                       createDepositERC20TokensCall([
                           token,

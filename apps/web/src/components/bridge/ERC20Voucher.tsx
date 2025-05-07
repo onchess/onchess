@@ -1,8 +1,8 @@
 import { Badge, Button, Group, Text } from "@mantine/core";
-import { Token } from "@onchess/core";
-import { FC } from "react";
+import type { Token } from "@onchess/core";
+import type { FC } from "react";
 import { decodeFunctionData, erc20Abi, formatUnits } from "viem";
-import { ExecutableVoucher } from "../../hooks/voucher";
+import type { ExecutableVoucher } from "../../hooks/voucher";
 
 export type ERC20VoucherProps = {
     executing: boolean;

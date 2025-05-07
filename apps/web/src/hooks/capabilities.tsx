@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useCapabilities, useChainId } from "wagmi";
 
-export const useAtomicBatchSupport = () => {
+export const useAtomicSupport = () => {
     const chainId = useChainId();
     const capabilities = useCapabilities();
     const [supported, setSupported] = useState<boolean | undefined>(undefined);
@@ -22,15 +22,15 @@ export const useAtomicBatchSupport = () => {
                     capabilities.data[chainId]
                 ) {
                     const chainCapabilities = capabilities.data[chainId];
-                    const { atomicBatch } = chainCapabilities; // TODO: changed to atomic
-                    setSupported(atomicBatch?.supported || false);
+                    const { atomic } = chainCapabilities;
+                    setSupported(atomic?.status === "supported" || false); // TODO: support ready (7702)?
                 } else {
                     setSupported(false);
                 }
                 break;
             }
         }
-    }, [capabilities.status, chainId]);
+    }, [chainId, capabilities.data, capabilities.status]);
     return { ...capabilities, supported };
 };
 
@@ -50,11 +50,7 @@ export const usePermissionsSupport = () => {
                 break;
             }
             case "success": {
-                if (
-                    capabilities.data &&
-                    chainId &&
-                    capabilities.data[chainId]
-                ) {
+                if (capabilities.data) {
                     const chainCapabilities = capabilities.data[chainId];
                     const { permissions } = chainCapabilities;
                     setSupported(permissions?.supported || false);
@@ -66,7 +62,7 @@ export const usePermissionsSupport = () => {
                 break;
             }
         }
-    }, [capabilities.status, chainId]);
+    }, [chainId, capabilities.data, capabilities.status]);
     return { ...capabilities, supported, permissionTypes };
 };
 
@@ -85,11 +81,7 @@ export const usePaymasterServiceSupport = () => {
                 break;
             }
             case "success": {
-                if (
-                    capabilities.data &&
-                    chainId &&
-                    capabilities.data[chainId]
-                ) {
+                if (capabilities.data) {
                     const chainCapabilities = capabilities.data[chainId];
                     const { paymasterService } = chainCapabilities;
                     setSupported(paymasterService?.supported || false);
@@ -99,6 +91,6 @@ export const usePaymasterServiceSupport = () => {
                 break;
             }
         }
-    }, [capabilities.status, chainId]);
+    }, [chainId, capabilities.data, capabilities.status]);
     return { ...capabilities, supported };
 };

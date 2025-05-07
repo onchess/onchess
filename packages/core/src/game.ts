@@ -1,6 +1,6 @@
-import { Chess } from "chess.js";
+import type { Chess } from "chess.js";
 import { getRatingDelta } from "./elo.js";
-import { Game, Player, State } from "./state.js";
+import type { Game, Player, State } from "./state.js";
 
 export const terminateGame = (
     state: State,

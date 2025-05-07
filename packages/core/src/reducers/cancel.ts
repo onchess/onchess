@@ -1,15 +1,15 @@
-import { PayloadAction } from "@reduxjs/toolkit";
+import type { PayloadAction } from "@reduxjs/toolkit";
 import { getAddress } from "viem";
 import { createError } from "../message.js";
-import { LobbyBasePayload } from "../payloads.js";
+import type { LobbyBasePayload } from "../payloads.js";
 import { getPlayer } from "../players.js";
-import { State } from "../state.js";
+import type { State } from "../state.js";
 import { sum } from "../util.js";
 
 export default (state: State, action: PayloadAction<LobbyBasePayload>) => {
     // leave lobby
     const { address, metadata } = action.payload;
-    const { timestamp } = metadata;
+    const { block_timestamp } = metadata;
     const msg_sender = getAddress(metadata.msg_sender);
 
     // get player
@@ -21,7 +21,7 @@ export default (state: State, action: PayloadAction<LobbyBasePayload>) => {
     if (!item) {
         player.message = createError({
             text: "Lobby item not found",
-            timestamp,
+            timestamp: block_timestamp,
         });
         return;
     }
@@ -30,7 +30,7 @@ export default (state: State, action: PayloadAction<LobbyBasePayload>) => {
     if (item.player !== player.address) {
         player.message = createError({
             text: "Not authorized",
-            timestamp,
+            timestamp: block_timestamp,
         });
         return;
     }

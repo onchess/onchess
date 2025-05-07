@@ -1,4 +1,4 @@
-import { Hex, hexToNumber, slice } from "viem";
+import { type Hex, hexToNumber, slice } from "viem";
 
 /**
  * Return a number between 0 and 1 from a hex value.

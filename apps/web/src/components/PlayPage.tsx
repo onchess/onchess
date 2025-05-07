@@ -1,7 +1,7 @@
 "use client";
-import { Stack, StackProps, em } from "@mantine/core";
+import { Stack, type StackProps, em } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
-import {
+import type {
     CreateGamePayload,
     Game,
     GameBasePayload,
@@ -10,8 +10,8 @@ import {
     Player,
     Token,
 } from "@onchess/core";
-import { FC } from "react";
-import { Address } from "viem";
+import type { FC } from "react";
+import type { Address } from "viem";
 import { CreateGame } from "./CreateGame";
 import { Gameboard } from "./Gameboard";
 import { WaitOpponent } from "./WaitOpponent";
@@ -127,6 +127,7 @@ export const PlayPage: FC<PlayPageProps> = (props) => {
                     {token &&
                         playerLobby.map((item) => (
                             <WaitOpponent
+                                key={item.address}
                                 lobby={item}
                                 maw={600}
                                 token={token}

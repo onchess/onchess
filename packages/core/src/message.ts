@@ -1,4 +1,4 @@
-import { Message } from "./state.js";
+import type { Message } from "./state.js";
 
 type Optional<T, K extends keyof T> = Partial<Pick<T, K>> & Omit<T, K>;
 
