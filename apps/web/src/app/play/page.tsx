@@ -28,6 +28,7 @@ import {
 import { createAddInputCall } from "../../calls";
 import { PlayPage } from "../../components/PlayPage";
 import { usePaymasterServiceSupport } from "../../hooks/capabilities";
+import { useChessActions } from "../../hooks/chess";
 import { useClock } from "../../hooks/clock";
 import { useApplicationAddress } from "../../hooks/config";
 import { useSessionId } from "../../hooks/session";
@@ -80,18 +81,19 @@ const Play = () => {
         playerState.unfinishedGames[0] || playerState.finishedGames[0];
     const firstLobby = playerState.lobby[0];
 
+    // paymaster support
+    const { supported: paymasterSupported } = usePaymasterServiceSupport();
+    const paymasterUrl = process.env.NEXT_PUBLIC_PAYMASTER_URL;
+
     // transactions
-    const { writeContractAsync: addInput, isPending: addInputPending } =
+    const { createGameAsync, isPending } = useChessActions(paymasterUrl);
+    const { writeContractAsync: addInputAsync, isPending: addInputPending } =
         useWriteInputBoxAddInput();
     const { sendCallsAsync, isPending: movePending } = useSendCalls();
 
     // transaction mining
     const [hash, setHash] = useState<Hash | undefined>();
     const { isFetching } = useWaitForTransactionReceipt({ hash });
-
-    // paymaster support
-    const { supported: paymasterSupported } = usePaymasterServiceSupport();
-    const paymasterUrl = process.env.NEXT_PUBLIC_PAYMASTER_URL;
 
     // error state
     const [error, setError] = useState<string | undefined>();
@@ -113,33 +115,8 @@ const Play = () => {
         if (playerState.player && dapp) {
             // clear error
             setError(undefined);
-
             try {
-                const { bet, timeControl, minRating, maxRating } = params;
-                const payload = encodeFunctionData({
-                    abi: ABI,
-                    functionName: "create",
-                    args: [
-                        BigInt(bet),
-                        timeControl,
-                        Math.ceil(minRating),
-                        Math.floor(maxRating),
-                    ],
-                });
-                if (paymasterSupported && paymasterUrl) {
-                    // use paymaster
-                    const { id } = await sendCallsAsync({
-                        calls: [createAddInputCall([dapp, payload])],
-                        capabilities: {
-                            paymasterService: {
-                                [0]: { url: paymasterUrl },
-                            },
-                        },
-                    });
-                } else {
-                    const hash = await addInput({ args: [dapp, payload] });
-                    setHash(hash);
-                }
+                const { id } = await createGameAsync(dapp, params);
             } catch (e: any) {
                 setError(e.message);
             }
