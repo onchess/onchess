@@ -1,5 +1,5 @@
 import { useOutputs, useProcessedInputCount } from "@cartesi/wagmi";
-import { State } from "@onchess/core";
+import type { State } from "@onchess/core";
 import { useEffect, useState } from "react";
 import { hexToString } from "viem";
 import { extractChain } from "../providers/wallet";
@@ -12,7 +12,7 @@ export type StateResponse = {
     state?: State;
 };
 
-export const useLatestState = (pollInterval: number = 2000): StateResponse => {
+export const useLatestState = (pollInterval = 2000): StateResponse => {
     // default initial state depends on chainId
     const chain = extractChain();
 
@@ -69,7 +69,7 @@ export const useLatestState = (pollInterval: number = 2000): StateResponse => {
                 });
             }
         }
-    }, [chain.id, outputs]); // trigger effect when output changes
+    }, [chain.id, initialized, outputs]); // trigger effect when output changes
 
     return { loading: isLoading, inputIndex, state };
 };

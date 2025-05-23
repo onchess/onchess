@@ -1,4 +1,4 @@
-import { Output } from "@cartesi/viem";
+import type { Output } from "@cartesi/viem";
 import { useOutputs } from "@cartesi/wagmi";
 import { useEffect, useState } from "react";
 import { useApplicationAddress } from "./config";
@@ -30,7 +30,9 @@ export const useVouchers = (): UseVouchersResponse => {
             const vouchers: ExecutableVoucher[] = outputs.data.map(
                 (output) => ({
                     ...output,
-                    executable: output.outputHashesSiblings.length > 0,
+                    executable:
+                        output.outputHashesSiblings != null &&
+                        output.outputHashesSiblings.length > 0,
                     executed: !!output.executionTransactionHash,
                 }),
             );
