@@ -3,7 +3,6 @@
 import {
     ActionIcon,
     Anchor,
-    Button,
     Center,
     Group,
     Image,
@@ -12,7 +11,6 @@ import {
 } from "@mantine/core";
 import { useViewportSize } from "@mantine/hooks";
 import { IconBrandGithub, IconBrandX } from "@tabler/icons-react";
-import Link from "next/link";
 import { FC } from "react";
 
 export const ComingSoon: FC = () => {
@@ -26,50 +24,59 @@ export const ComingSoon: FC = () => {
                     OnChess
                 </Text>
             </Group>
-            <Stack gap={20}>
-                <Group gap={5} justify="center">
-                    <Text>coming on</Text>
-                    <Anchor href="https://base.org">
-                        <Image src="/img/base_icon.svg" h="20px" w="20px" />
-                    </Anchor>
-                    <Text>powered by</Text>
-                    <Anchor href="https://cartesi.io">
-                        <Image src="/img/cartesi_icon.svg" h="20px" w="20px" />
-                    </Anchor>
-                </Group>
-                <Group justify="center">
-                    <Link href="https://preview.onchess.xyz/play">
-                        <Button variant="gradient">Playtest</Button>
-                    </Link>
-                </Group>
-                <Group justify="center">
-                    <Anchor href="https://x.com/OnChessProject" target="_blank">
-                        <ActionIcon
-                            size="lg"
-                            color="gray"
-                            variant="subtle"
-                            radius="lg"
-                        >
-                            <IconBrandX
-                                style={{ width: "70%", height: "70%" }}
-                                stroke={1.5}
+            <Stack>
+                <Center>
+                    <Group gap={5}>
+                        <Text>coming on</Text>
+                        <Anchor href="https://base.org">
+                            <Image src="/img/base_icon.svg" h="20px" w="20px" />
+                        </Anchor>
+                        <Text>powered by</Text>
+                        <Anchor href="https://cartesi.io">
+                            <Image
+                                src="/img/cartesi_icon.svg"
+                                h="20px"
+                                w="20px"
                             />
-                        </ActionIcon>
-                    </Anchor>
-                    <Anchor href="https://github.com/onchess" target="_blank">
-                        <ActionIcon
-                            size="lg"
-                            color="gray"
-                            variant="subtle"
-                            radius="lg"
+                        </Anchor>
+                    </Group>
+                </Center>
+                <Center>
+                    <Group>
+                        <Anchor
+                            href="https://x.com/OnChessProject"
+                            target="_blank"
                         >
-                            <IconBrandGithub
-                                style={{ width: "70%", height: "70%" }}
-                                stroke={1.5}
-                            />
-                        </ActionIcon>
-                    </Anchor>
-                </Group>
+                            <ActionIcon
+                                size="lg"
+                                color="gray"
+                                variant="subtle"
+                                radius="lg"
+                            >
+                                <IconBrandX
+                                    style={{ width: "70%", height: "70%" }}
+                                    stroke={1.5}
+                                />
+                            </ActionIcon>
+                        </Anchor>
+                        <Anchor
+                            href="https://github.com/onchess"
+                            target="_blank"
+                        >
+                            <ActionIcon
+                                size="lg"
+                                color="gray"
+                                variant="subtle"
+                                radius="lg"
+                            >
+                                <IconBrandGithub
+                                    style={{ width: "70%", height: "70%" }}
+                                    stroke={1.5}
+                                />
+                            </ActionIcon>
+                        </Anchor>
+                    </Group>
+                </Center>
             </Stack>
         </Stack>
     ) : (
