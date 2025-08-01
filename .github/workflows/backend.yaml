@@ -1,0 +1,55 @@
+name: Backend
+on: [push]
+env:
+    CARTESI_CLI_VERSION: 2.0.0-alpha.16
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                chain: [base, base-sepolia]
+        steps:
+            - name: Set up QEMU
+              uses: docker/setup-qemu-action@v3
+
+            - name: Set up Buildx
+              uses: docker/setup-buildx-action@v3
+
+            - name: Install Cartesi CLI
+              run: npm install -g @cartesi/cli@${{ env.CARTESI_CLI_VERSION }}
+
+            - uses: actions/checkout@v4
+
+            - name: Build
+              run: cartesi build --config cartesi.${{ matrix.chain }}.toml
+
+            - name: Create artifacts
+              working-directory: .cartesi/image
+              run: |
+                  tar -czf ../onchess-snapshot-${{ matrix.chain }}.tar.gz *
+                  sha256sum ../onchess-snapshot-${{ matrix.chain }}.tar.gz > ../onchess-snapshot-${{ matrix.chain }}.tar.gz.sha256
+
+            - name: Upload artifacts
+              uses: actions/upload-artifact@v4
+              with:
+                  name: onchess-snapshot-${{ matrix.chain }}
+                  path: |
+                      .cartesi/onchess-snapshot-${{ matrix.chain }}.tar.gz
+                      .cartesi/onchess-snapshot-${{ matrix.chain }}.tar.gz.sha256
+
+    release:
+        if: startsWith(github.ref, 'refs/tags/v')
+        needs: build
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+        steps:
+            - name: Download artifacs
+              uses: actions/download-artifact@v4
+
+            - name: Release
+              uses: softprops/action-gh-release@v2
+              with:
+                  files: |
+                      *.tar.gz
+                      *.tar.gz.sha256
