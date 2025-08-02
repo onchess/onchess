@@ -13,7 +13,10 @@ import { useSendCalls } from "wagmi";
 import { createAddInputCall } from "../calls";
 import { usePaymasterServiceSupport } from "./capabilities";
 
-export const useChessActions = (paymasterUrl?: string) => {
+export const useChessActions = (
+    application?: Address,
+    paymasterUrl?: string,
+) => {
     const { sendCallsAsync, isPending } = useSendCalls();
     const { supported: paymasterSupported } = usePaymasterServiceSupport();
     const capabilities: WalletCapabilities = {};
@@ -21,8 +24,19 @@ export const useChessActions = (paymasterUrl?: string) => {
         capabilities.paymasterService = { url: paymasterUrl };
     }
 
+    if (!application) {
+        return {
+            cancelGameAsync: undefined,
+            claimVictoryAsync: undefined,
+            createGameAsync: undefined,
+            joinGameAsync: undefined,
+            isPending: false,
+            resignAsync: undefined,
+            sendMoveAsync: undefined,
+        };
+    }
+
     const createGameAsync = async (
-        application: Address,
         params: Omit<CreateGamePayload, "metadata">,
     ) => {
         const { bet, timeControl, minRating, maxRating } = params;
@@ -43,7 +57,6 @@ export const useChessActions = (paymasterUrl?: string) => {
     };
 
     const cancelGameAsync = async (
-        application: Address,
         params: Omit<GameBasePayload, "metadata">,
     ) => {
         const { address } = params;
@@ -58,10 +71,7 @@ export const useChessActions = (paymasterUrl?: string) => {
         });
     };
 
-    const joinGameAsync = async (
-        application: Address,
-        params: Omit<GameBasePayload, "metadata">,
-    ) => {
+    const joinGameAsync = async (params: Omit<GameBasePayload, "metadata">) => {
         const { address } = params;
         const payload = encodeFunctionData({
             abi: ABI,
@@ -75,8 +85,8 @@ export const useChessActions = (paymasterUrl?: string) => {
     };
 
     const sendMoveAsync = async (
-        application: Address,
         params: Omit<MovePiecePayload, "sender" | "metadata">,
+        sessionId?: string,
     ) => {
         const { address, move } = params;
         const payload = encodeFunctionData({
@@ -86,14 +96,14 @@ export const useChessActions = (paymasterUrl?: string) => {
         });
         return sendCallsAsync({
             calls: [createAddInputCall([application, payload])],
-            capabilities,
+            capabilities: {
+                ...capabilities,
+                permissions: { sessionId },
+            },
         });
     };
 
-    const resignAsync = async (
-        application: Address,
-        params: Omit<GameBasePayload, "metadata">,
-    ) => {
+    const resignAsync = async (params: Omit<GameBasePayload, "metadata">) => {
         const { address } = params;
         const payload = encodeFunctionData({
             abi: ABI,
@@ -107,7 +117,6 @@ export const useChessActions = (paymasterUrl?: string) => {
     };
 
     const claimVictoryAsync = async (
-        application: Address,
         params: Omit<GameBasePayload, "metadata">,
     ) => {
         const { address } = params;

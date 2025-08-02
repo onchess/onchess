@@ -23,6 +23,7 @@ import { useClock } from "../../hooks/clock";
 import { useApplicationAddress } from "../../hooks/config";
 import { useSessionId } from "../../hooks/session";
 import { useLatestState } from "../../hooks/state";
+import { usePasskeyConnect } from "../../providers/wallet/zerodev/usePasskeyConnect";
 
 const selectPlayerState = (state: State, address?: Address) => {
     const player = address
@@ -55,7 +56,8 @@ const Play = () => {
 
     // connection
     const { address, isConnected } = useAccount();
-    const { connect, connectors, isPending: isConnecting } = useConnect();
+    const { connect, connectors } = useConnect();
+    const { login, register, isPending: isConnecting } = usePasskeyConnect();
     const handleConnect = () => connect({ connector: connectors[0] });
     const { disconnect } = useDisconnect();
 
@@ -82,7 +84,7 @@ const Play = () => {
         isPending,
         resignAsync,
         sendMoveAsync,
-    } = useChessActions(paymasterUrl);
+    } = useChessActions(dapp, paymasterUrl);
 
     // transaction mining
     const [id, setId] = useState<string | undefined>();
@@ -105,11 +107,11 @@ const Play = () => {
     const handleCreate = async (
         params: Omit<CreateGamePayload, "metadata">,
     ) => {
-        if (playerState.player && dapp) {
+        if (playerState.player && createGameAsync) {
             // clear error
             setError(undefined);
             try {
-                const { id } = await createGameAsync(dapp, params);
+                const { id } = await createGameAsync(params);
                 setId(id);
             } catch (e: unknown) {
                 setError(e instanceof Error ? e.message : "An error occurred");
@@ -120,11 +122,11 @@ const Play = () => {
     const handleCancel = async (
         params: Omit<ChallengeBasePayload, "metadata">,
     ) => {
-        if (playerState.player && dapp) {
+        if (playerState.player && cancelGameAsync) {
             // reset error
             setError(undefined);
             try {
-                const { id } = await cancelGameAsync(dapp, params);
+                const { id } = await cancelGameAsync(params);
                 setId(id);
             } catch (e: unknown) {
                 setError(e instanceof Error ? e.message : "An error occurred");
@@ -135,11 +137,11 @@ const Play = () => {
     const handleJoin = async (
         params: Omit<ChallengeBasePayload, "metadata">,
     ) => {
-        if (playerState.player && dapp) {
+        if (playerState.player && joinGameAsync) {
             // reset error
             setError(undefined);
             try {
-                const { id } = await joinGameAsync(dapp, params);
+                const { id } = await joinGameAsync(params);
                 setId(id);
             } catch (e: unknown) {
                 setError(e instanceof Error ? e.message : "An error occurred");
@@ -150,15 +152,12 @@ const Play = () => {
     const handleMove = async (
         params: Omit<MovePiecePayload, "sender" | "metadata">,
     ) => {
-        if (playerState.player && dapp) {
+        if (playerState.player && sendMoveAsync) {
             // reset error
             setError(undefined);
 
             try {
-                if (sessionId) {
-                    // capabilities.permissions = { sessionId }; // XXX
-                }
-                const { id } = await sendMoveAsync(dapp, params);
+                const { id } = await sendMoveAsync(params, sessionId);
                 setId(id);
             } catch (e: unknown) {
                 setError(e instanceof Error ? e.message : "An error occurred");
@@ -167,11 +166,11 @@ const Play = () => {
     };
 
     const handleResign = async (params: Omit<GameBasePayload, "metadata">) => {
-        if (playerState.player && dapp) {
+        if (playerState.player && resignAsync) {
             // reset error
             setError(undefined);
             try {
-                const { id } = await resignAsync(dapp, params);
+                const { id } = await resignAsync(params);
                 setId(id);
             } catch (e: unknown) {
                 setError(e instanceof Error ? e.message : "An error occurred");
@@ -182,11 +181,11 @@ const Play = () => {
     const handleClaimVictory = async (
         params: Omit<GameBasePayload, "metadata">,
     ) => {
-        if (playerState.player && dapp) {
+        if (playerState.player && claimVictoryAsync) {
             // reset error
             setError(undefined);
             try {
-                const { id } = await claimVictoryAsync(dapp, params);
+                const { id } = await claimVictoryAsync(params);
                 setId(id);
             } catch (e: unknown) {
                 setError(e instanceof Error ? e.message : "An error occurred");
@@ -221,7 +220,9 @@ const Play = () => {
             onCreateSession={sessionSupported ? handleCreateSession : undefined}
             onDisconnect={disconnect}
             onDeposit={handleDeposit}
+            onLogin={() => login?.({ passkeyName: "OnChess" })}
             onMove={handleMove}
+            onRegister={() => register?.({ passkeyName: "OnChess" })}
             onResign={handleResign}
             player={playerState.player}
             players={state?.players ?? {}}

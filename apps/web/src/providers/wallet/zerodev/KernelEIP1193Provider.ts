@@ -8,22 +8,17 @@ import type {
     KernelSmartAccountImplementation,
 } from "@zerodev/sdk";
 import { createKernelAccount, createKernelAccountClient } from "@zerodev/sdk";
-
-// biome-ignore lint/style/useNodejsImportProtocol: needed for event emitter functionality
 import { EventEmitter } from "events";
+import { createPimlicoClient } from "permissionless/clients/pimlico";
 import type {
     Chain,
-    Client,
     EIP1193Parameters,
     EIP1193RequestFn,
-    GetCallsStatusParameters,
-    GetCallsStatusReturnType,
     Hash,
-    PublicActions,
-    PublicRpcSchema,
     SendCallsReturnType,
     SendTransactionParameters,
     Transport,
+    WalletGetCallsStatusReturnType,
     WalletSendCallsParameters,
 } from "viem";
 import { hexToNumber, http, isHex, numberToHex, toHex } from "viem";
@@ -40,19 +35,25 @@ import {
     validatePermissions,
 } from "./permissions";
 import { serializePermissionAccount } from "./serializePermissionAccount";
-import { KernelLocalStorage } from "./storage";
 
-const WALLET_CAPABILITIES_STORAGE_KEY = "WALLET_CAPABILITIES";
-const WALLET_PERMISSION_STORAGE_KEY = "WALLET_PERMISSION";
+const PERMISSION_KEY = "zerodev.permissions";
 
-export type PaymasterServiceCapability = {
-    url: string;
+const getStorageKey = <T>(key: string): T | undefined => {
+    if (window.localStorage) {
+        const value = window.localStorage.getItem(key);
+        return value ? (JSON.parse(value) as T) : undefined;
+    }
+};
+
+const setStorageKey = <T>(key: string, value: T) => {
+    if (window.localStorage) {
+        window.localStorage.setItem(key, JSON.stringify(value));
+    }
 };
 
 export class KernelEIP1193Provider<
-    entryPointVersion extends EntryPointVersion,
+    entryPointVersion extends EntryPointVersion
 > extends EventEmitter {
-    private readonly storage = new KernelLocalStorage("ZDWALLET");
     private kernelClient: KernelAccountClient<
         Transport,
         Chain,
@@ -64,46 +65,10 @@ export class KernelEIP1193Provider<
             Transport,
             Chain,
             SmartAccount<KernelSmartAccountImplementation<entryPointVersion>>
-        >,
+        >
     ) {
         super();
-        if (
-            typeof kernelClient.account !== "object" ||
-            typeof kernelClient.chain !== "object"
-        ) {
-            throw new Error("invalid kernel client");
-        }
         this.kernelClient = kernelClient;
-        const permissions =
-            kernelClient.account.entryPoint.version === "0.7"
-                ? {
-                      supported: true,
-                      permissionTypes: [
-                          "sudo",
-                          "contract-call",
-                          "rate-limit",
-                          "gas-limit",
-                          "signature",
-                      ],
-                  }
-                : {
-                      supported: false,
-                  };
-
-        const capabilities = {
-            [kernelClient.account.address]: {
-                [toHex(kernelClient.chain.id)]: {
-                    atomic: {
-                        status: "supported",
-                    },
-                    paymasterService: {
-                        supported: true,
-                    },
-                    permissions,
-                },
-            },
-        };
-        this.storeItemToStorage(WALLET_CAPABILITIES_STORAGE_KEY, capabilities);
     }
 
     getChainId() {
@@ -130,21 +95,21 @@ export class KernelEIP1193Provider<
             case "eth_signTypedData":
             case "eth_signTypedData_v4":
                 return this.handleEthSignTypedDataV4(
-                    params as [string, string],
+                    params as [string, string]
                 );
             case "wallet_getCapabilities":
-                return this.handleWalletCapabilities();
+                return this.handleWalletCapabilities(
+                    params as [string, string[]]
+                );
             case "wallet_sendCalls":
                 return this.handleWalletSendCalls(
-                    params as WalletSendCallsParameters,
+                    params as WalletSendCallsParameters
                 );
             case "wallet_getCallsStatus":
-                return this.handleWalletGetCallStatus(
-                    params as [GetCallsStatusParameters],
-                );
+                return this.handleWalletGetCallStatus(params as [string]);
             case "wallet_grantPermissions":
                 return this.handleWalletGrantPermissions(
-                    params as [GrantPermissionsParameters],
+                    params as [GrantPermissionsParameters]
                 );
             case "wallet_switchEthereumChain":
                 return this.handleSwitchEthereumChain();
@@ -186,7 +151,7 @@ export class KernelEIP1193Provider<
             this.kernelClient.account.address.toLowerCase()
         ) {
             throw new Error(
-                "cannot sign for address that is not the current account",
+                "cannot sign for address that is not the current account"
             );
         }
 
@@ -197,7 +162,7 @@ export class KernelEIP1193Provider<
     }
 
     private async handlePersonalSign(
-        params: [string, string],
+        params: [string, string]
     ): Promise<string> {
         if (!this.kernelClient?.account) {
             throw new Error("account not connected!");
@@ -208,7 +173,7 @@ export class KernelEIP1193Provider<
             this.kernelClient.account.address.toLowerCase()
         ) {
             throw new Error(
-                "cannot sign for address that is not the current account",
+                "cannot sign for address that is not the current account"
             );
         }
 
@@ -219,7 +184,7 @@ export class KernelEIP1193Provider<
     }
 
     private async handleEthSignTypedDataV4(
-        params: [string, string],
+        params: [string, string]
     ): Promise<string> {
         if (!this.kernelClient?.account) {
             throw new Error("account not connected!");
@@ -231,7 +196,7 @@ export class KernelEIP1193Provider<
             this.kernelClient.account.address.toLowerCase()
         ) {
             throw new Error(
-                "cannot sign for address that is not the current account",
+                "cannot sign for address that is not the current account"
             );
         }
 
@@ -249,7 +214,7 @@ export class KernelEIP1193Provider<
     }
 
     private async handleWalletSendCalls(
-        params: WalletSendCallsParameters,
+        params: WalletSendCallsParameters
     ): Promise<SendCallsReturnType> {
         const accountAddress = this.kernelClient.account.address;
         const accountChainId = this.kernelClient.chain.id;
@@ -274,46 +239,52 @@ export class KernelEIP1193Provider<
             Chain,
             SmartAccount<KernelSmartAccountImplementation<entryPointVersion>>
         >;
-        const permission = this.getItemFromStorage(
-            WALLET_PERMISSION_STORAGE_KEY,
-        ) as SessionType;
 
         // paymaster service
         const paymaster =
             capabilities?.paymasterService?.[
                 numberToHex(this.kernelClient.chain.id)
-            ];
+            ] || capabilities?.paymasterService;
         const paymasterService = paymaster
             ? createPaymasterClient({ transport: http(paymaster.url) })
             : undefined;
 
+        // get stored permissions
+        const permission = getStorageKey<SessionType>(PERMISSION_KEY) || {};
+
+        // is a session id provided?
         const sessionId = capabilities?.permissions?.sessionId;
-        const session = permission?.[accountAddress]?.[
+
+        // search for the session in the stored permissions
+        const session = permission[accountAddress]?.[
             toHex(accountChainId)
         ]?.find((session) => session.sessionId === sessionId);
+
         if (session && this.kernelClient?.account?.client) {
             const sessionSigner = await toECDSASigner({
                 signer: privateKeyToAccount(session.signerPrivateKey),
             });
-            const sessionKeyAccount = (await deserializePermissionAccount(
-                this.kernelClient.account.client as Client<
-                    Transport,
-                    Chain,
-                    undefined,
-                    PublicRpcSchema,
-                    PublicActions
-                >,
+            const sessionKeyAccount = await deserializePermissionAccount(
+                this.kernelClient.account.client,
                 this.kernelClient.account.entryPoint,
                 this.kernelClient.account.kernelVersion,
                 session.approval,
-                sessionSigner,
-            )) as unknown as SmartAccount<
-                KernelSmartAccountImplementation<entryPointVersion>
-            >;
+                sessionSigner
+            );
 
             const kernelClient = createKernelAccountClient({
                 account: sessionKeyAccount,
                 chain: this.kernelClient.chain,
+                userOperation: {
+                    estimateFeesPerGas: async () => {
+                        const pimlicoClient = createPimlicoClient({
+                            transport: http(this.kernelClient.transport.url),
+                        });
+                        const gas =
+                            await pimlicoClient.getUserOperationGasPrice();
+                        return gas.standard;
+                    },
+                },
                 bundlerTransport: http(this.kernelClient.transport.url),
                 paymaster: paymasterService,
             });
@@ -332,20 +303,12 @@ export class KernelEIP1193Provider<
             kernelAccountClient = this.kernelClient;
         }
 
-        const callData = await kernelAccountClient.account.encodeCalls(
-            calls.map((call) => ({
-                // TODO: what about capabilities?
+        const id = await kernelAccountClient.sendUserOperation({
+            calls: calls.map((call) => ({
                 to: call.to ?? kernelAccountClient.account.address,
                 value: call.value ? BigInt(call.value) : 0n,
                 data: call.data ?? "0x",
             })),
-        );
-
-        const account: SmartAccount = this.kernelClient.account;
-        const id = await kernelAccountClient.sendUserOperation({
-            account,
-            callData,
-            sender: this.kernelClient.account.address,
         });
 
         return {
@@ -354,65 +317,101 @@ export class KernelEIP1193Provider<
         };
     }
 
-    private handleWalletCapabilities() {
-        const capabilities = this.getItemFromStorage(
-            WALLET_CAPABILITIES_STORAGE_KEY,
-            // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-        ) as Record<string, any> | undefined;
-
-        return capabilities
-            ? capabilities[this.kernelClient.account.address]
-            : {};
+    private async handleWalletCapabilities(params: [string, string[]]) {
+        const chainIds = params[1] || ["0x0"];
+        const capabilities = {
+            atomic: {
+                status: "supported",
+            },
+            paymasterService: {
+                supported: true,
+            },
+            permissions: {
+                supported: true,
+                permissionTypes: [
+                    "sudo",
+                    "contract-call",
+                    "rate-limit",
+                    "gas-limit",
+                    "signature",
+                ],
+            },
+        };
+        type Capabilities = typeof capabilities;
+        return chainIds.reduce<Record<string, Capabilities>>((obj, chainId) => {
+            obj[chainId] = capabilities;
+            return obj;
+        }, {});
     }
 
     private async handleWalletGetCallStatus(
-        params: [GetCallsStatusParameters],
-    ): Promise<GetCallsStatusReturnType> {
-        const userOpHash = params[0].id;
+        params: [string]
+    ): Promise<WalletGetCallsStatusReturnType> {
+        const hash = params[0];
 
-        if (!isHex(userOpHash)) {
+        if (!isHex(hash)) {
             throw new Error(
-                "Invalid params for wallet_getCallStatus: not a hex string",
+                "Invalid params for wallet_getCallStatus: not a hex string"
             );
         }
         const result = await this.kernelClient.getUserOperationReceipt({
-            hash: userOpHash,
+            hash,
         });
-        if (!result?.success) {
+        if (!result.success) {
             return {
-                id: userOpHash,
-                atomic: false, // TODO: what is this?
-                chainId: this.kernelClient.chain.id,
-                status: "pending", // TODO: handle the error case
-                statusCode: 200,
-                version: this.kernelClient.account.entryPoint.version,
+                version: "2.0.0",
+                id: hash,
+                atomic: true,
+                chainId: toHex(this.kernelClient.chain.id),
+                status: 100, // TODO: handle the error case
                 // capabilities: // TODO: what is this?
-                receipts: [result.receipt],
+                receipts: [
+                    {
+                        blockHash: result.receipt.blockHash,
+                        blockNumber: toHex(result.receipt.blockNumber),
+                        gasUsed: toHex(result.receipt.gasUsed),
+                        status: "0x0",
+                        transactionHash: result.receipt.transactionHash,
+                        logs: result.receipt.logs,
+                    },
+                ],
             };
         }
         return {
-            atomic: false, // TODO: what is this?
-            chainId: this.kernelClient.chain.id,
-            id: userOpHash,
-            statusCode: 200,
-            version: this.kernelClient.account.entryPoint.version,
+            version: "2.0.0",
+            id: hash,
+            atomic: true,
+            chainId: toHex(this.kernelClient.chain.id),
             // capabilities: // TODO: what is this?
-            status: "success",
-            receipts: [result.receipt],
+            status: 200,
+            receipts: [
+                {
+                    blockHash: result.receipt.blockHash,
+                    blockNumber: toHex(result.receipt.blockNumber),
+                    gasUsed: toHex(result.receipt.gasUsed),
+                    status: "0x1",
+                    transactionHash: result.receipt.transactionHash,
+                    logs: result.receipt.logs,
+                },
+            ],
         };
     }
 
     private async handleWalletGrantPermissions(
-        params: [GrantPermissionsParameters],
+        params: [GrantPermissionsParameters]
     ) {
         if (this.kernelClient.account.entryPoint.version !== "0.7") {
             throw new Error("Permissions not supported with kernel v2");
         }
-        const capabilities =
-            this.handleWalletCapabilities()[toHex(this.kernelClient.chain.id)]
-                .permissions.permissionTypes;
+        const requestedPermissions = [
+            "sudo",
+            "contract-call",
+            "rate-limit",
+            "gas-limit",
+            "signature",
+        ];
 
-        validatePermissions(params[0], capabilities);
+        validatePermissions(params[0], requestedPermissions);
         const policies = getPolicies(params[0]);
         const permissions = params[0].permissions;
 
@@ -422,13 +421,7 @@ export class KernelEIP1193Provider<
             signer: privateKeyToAccount(sessionPrivateKey),
         });
 
-        const client = this.kernelClient.account.client as Client<
-            Transport,
-            Chain | undefined,
-            undefined,
-            PublicRpcSchema,
-            PublicActions
-        >;
+        const client = this.kernelClient.account.client;
 
         const permissionValidator = await toPermissionValidator(client, {
             entryPoint: this.kernelClient.account.entryPoint,
@@ -449,7 +442,7 @@ export class KernelEIP1193Provider<
         });
         const enabledSignature =
             await sessionKeyAccount.kernelPluginManager.getPluginEnableSignature(
-                sessionKeyAccount.address,
+                sessionKeyAccount.address
             );
         const sessionKeyAccountWithSig = await createKernelAccount(client, {
             entryPoint: this.kernelClient.account.entryPoint,
@@ -462,9 +455,9 @@ export class KernelEIP1193Provider<
         });
 
         const createdPermissions =
-            this.getItemFromStorage(WALLET_PERMISSION_STORAGE_KEY) || {};
+            getStorageKey<SessionType>(PERMISSION_KEY) || {};
         const serializedSessionKey = await serializePermissionAccount(
-            sessionKeyAccountWithSig,
+            sessionKeyAccountWithSig
         );
         const newPermission = {
             sessionId: permissionValidator.getIdentifier(),
@@ -487,10 +480,7 @@ export class KernelEIP1193Provider<
         }
 
         mergedPermissions[address][chainId].push(newPermission);
-        this.storeItemToStorage(
-            WALLET_PERMISSION_STORAGE_KEY,
-            mergedPermissions,
-        );
+        setStorageKey(PERMISSION_KEY, mergedPermissions);
         return {
             grantedPermissions: permissions.map((permission) => ({
                 type: permission.type,
@@ -500,14 +490,5 @@ export class KernelEIP1193Provider<
             expiry: params[0].expiry,
             permissionsContext: permissionValidator.getIdentifier(),
         };
-    }
-
-    private getItemFromStorage<T>(key: string): T | undefined {
-        const item = this.storage.getItem(key);
-        return item ? JSON.parse(item) : undefined;
-    }
-
-    private storeItemToStorage<T>(key: string, item: T) {
-        this.storage.setItem(key, JSON.stringify(item));
     }
 }

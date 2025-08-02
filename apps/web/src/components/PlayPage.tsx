@@ -33,7 +33,9 @@ export interface PlayPageProps extends StackProps {
     onDeposit: (amount: string) => void;
     onDisconnect: () => void;
     onJoin: (params: Omit<ChallengeBasePayload, "metadata">) => void;
+    onLogin?: () => void;
     onMove: (params: Omit<MovePiecePayload, "metadata" | "sender">) => void;
+    onRegister?: () => void;
     onResign: (params: Omit<GameBasePayload, "metadata">) => void;
     pastGames: Game[];
     player?: Player;
@@ -62,7 +64,9 @@ export const PlayPage: FC<PlayPageProps> = (props) => {
         onDeposit,
         onDisconnect,
         onJoin,
+        onLogin,
         onMove,
+        onRegister,
         onResign,
         pastGames,
         player,
@@ -89,6 +93,8 @@ export const PlayPage: FC<PlayPageProps> = (props) => {
             isConnected={isConnected}
             isConnecting={isConnecting}
             onConnect={onConnect}
+            onLogin={onLogin}
+            onRegister={onRegister}
             onDisconnect={onDisconnect}
             player={player}
             token={token}

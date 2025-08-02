@@ -19,9 +19,10 @@ export const useAtomicSupport = () => {
                 if (
                     capabilities.data &&
                     chainId &&
-                    capabilities.data[chainId]
+                    (capabilities.data[chainId] || capabilities.data[0])
                 ) {
-                    const chainCapabilities = capabilities.data[chainId];
+                    const chainCapabilities =
+                        capabilities.data[chainId] || capabilities.data[0];
                     const { atomic } = chainCapabilities || {};
                     setSupported(atomic?.status === "supported" || false); // TODO: support ready (7702)?
                 } else {
@@ -51,7 +52,8 @@ export const usePermissionsSupport = () => {
             }
             case "success": {
                 if (capabilities.data) {
-                    const chainCapabilities = capabilities.data[chainId];
+                    const chainCapabilities =
+                        capabilities.data[chainId] || capabilities.data[0];
                     const { permissions } = chainCapabilities || {};
                     setSupported(permissions?.supported || false);
                     setPermissionTypes(permissions?.permissionTypes || []);
@@ -82,8 +84,8 @@ export const usePaymasterServiceSupport = () => {
             }
             case "success": {
                 if (capabilities.data) {
-                    console.log("capabilities", capabilities.data);
-                    const chainCapabilities = capabilities.data[chainId];
+                    const chainCapabilities =
+                        capabilities.data[chainId] || capabilities.data[0];
                     const { paymasterService } = chainCapabilities || {};
                     setSupported(paymasterService?.supported || false);
                 } else {

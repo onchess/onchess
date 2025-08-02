@@ -25,14 +25,11 @@ import {
     getAddress,
     numberToHex,
 } from "viem";
-import {
-    type EntryPointVersion,
-    createPaymasterClient,
-} from "viem/account-abstraction";
+import { createPaymasterClient } from "viem/account-abstraction";
 import { http } from "wagmi";
 import { KernelEIP1193Provider } from "./KernelEIP1193Provider";
 
-type PasskeyConnectorParameters = {
+type ConnectorParameters = {
     chain: Chain;
     name: string;
     rpcUrl: string;
@@ -54,9 +51,7 @@ type StorageItem = {
 export const passkeyConnectorId = "zerodevPasskeySDK";
 
 passkeyConnector.type = "passkeyConnector" as const;
-export function passkeyConnector<entryPointVersion extends EntryPointVersion>(
-    params: PasskeyConnectorParameters,
-) {
+export function passkeyConnector(params: ConnectorParameters) {
     const { bundlerUrl, chain, name, passkeyServerUrl, paymasterUrl, rpcUrl } =
         params;
     let walletProvider: KernelEIP1193Provider<"0.7"> | undefined;
@@ -106,7 +101,7 @@ export function passkeyConnector<entryPointVersion extends EntryPointVersion>(
     return createConnector<Provider, Properties, StorageItem>((config) => {
         return {
             id: passkeyConnectorId,
-            name: "Passkey",
+            name: "ZeroDev Passkey",
             type: passkeyConnector.type,
 
             async register(params) {
@@ -125,7 +120,7 @@ export function passkeyConnector<entryPointVersion extends EntryPointVersion>(
                 try {
                     if (chainId && chain.id !== chainId) {
                         throw new Error(
-                            `Incorrect chain Id: ${chainId} should be ${chain.id}`,
+                            `Incorrect chain Id: ${chainId} should be ${chain.id}`
                         );
                     }
 
@@ -160,22 +155,19 @@ export function passkeyConnector<entryPointVersion extends EntryPointVersion>(
                         passkeyServerHeaders: {},
                     });
 
-                    const passkeyValidator = await toPasskeyValidator(
-                        publicClient,
-                        {
-                            entryPoint,
-                            kernelVersion,
-                            validatorContractVersion:
-                                PasskeyValidatorContractVersion.V0_0_2,
-                            webAuthnKey,
-                        },
-                    );
+                    const validator = await toPasskeyValidator(publicClient, {
+                        entryPoint,
+                        kernelVersion,
+                        validatorContractVersion:
+                            PasskeyValidatorContractVersion.V0_0_2,
+                        webAuthnKey,
+                    });
 
                     // store passkeyValidator, for future use on page reload
-                    const serializedData = passkeyValidator.getSerializedData();
+                    const serializedData = validator.getSerializedData();
                     config.storage?.setItem("passkeyValidator", serializedData);
 
-                    walletProvider = await createProvider(passkeyValidator);
+                    walletProvider = await createProvider(validator);
 
                     const accounts = (
                         (await walletProvider.request({
@@ -190,7 +182,7 @@ export function passkeyConnector<entryPointVersion extends EntryPointVersion>(
                 } catch (error) {
                     if (
                         /(user closed modal|accounts received is empty|user denied account)/i.test(
-                            (error as Error).message,
+                            (error as Error).message
                         )
                     )
                         throw new UserRejectedRequestError(error as Error);
@@ -203,7 +195,7 @@ export function passkeyConnector<entryPointVersion extends EntryPointVersion>(
                 if (accountsChanged) {
                     provider?.removeListener(
                         "accountsChanged",
-                        accountsChanged,
+                        accountsChanged
                     );
                     accountsChanged = undefined;
                 }
@@ -244,18 +236,21 @@ export function passkeyConnector<entryPointVersion extends EntryPointVersion>(
             async getProvider() {
                 if (!walletProvider) {
                     // load from storage if available
-                    const serializedData =
-                        await config.storage?.getItem("passkeyValidator");
+                    const serializedData = await config.storage?.getItem(
+                        "passkeyValidator"
+                    );
                     if (serializedData) {
                         // create passkeyValidator from stored serialized data
-                        const passkeyValidator =
-                            await deserializePasskeyValidator(publicClient, {
+                        const validator = await deserializePasskeyValidator(
+                            publicClient,
+                            {
                                 entryPoint,
                                 kernelVersion,
                                 serializedData,
-                            });
+                            }
+                        );
 
-                        const provider = await createProvider(passkeyValidator);
+                        const provider = await createProvider(validator);
 
                         if (!accountsChanged) {
                             accountsChanged = this.onAccountsChanged.bind(this);
@@ -286,7 +281,7 @@ export function passkeyConnector<entryPointVersion extends EntryPointVersion>(
 
             async switchChain({ addEthereumChainParameter, chainId }) {
                 const chain = config.chains.find(
-                    (chain) => chain.id === chainId,
+                    (chain) => chain.id === chainId
                 );
                 if (!chain)
                     throw new SwitchChainError(new ChainNotConfiguredError());
