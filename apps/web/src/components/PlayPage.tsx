@@ -125,8 +125,8 @@ export const PlayPage: FC<PlayPageProps> = (props) => {
                             token={token}
                         />
                     )}
-                    {pastGames.length > 0 && (
-                        <Flex>
+                    {!game && (
+                        <Flex gap={20} wrap="wrap" mt={50}>
                             {pastGames.map((game) => (
                                 <Gameboard
                                     key={game.address}
