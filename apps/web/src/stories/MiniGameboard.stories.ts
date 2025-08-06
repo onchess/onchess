@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { parseUnits } from "viem";
 import { MiniGameboard } from "../components/MiniGameboard";
+import { token } from "./config";
 
 const meta = {
     title: "Gameplay/MiniGameboard",
@@ -17,7 +19,7 @@ export const Default: Story = {
         address: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
         game: {
             address: "0x90F79bf6EB2c4f870365E785982E1f101E93b906",
-            pot: 20000000000000000000n.toString(),
+            pot: parseUnits("2", token.decimals).toString(),
             white: "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
             black: "0x90F79bf6EB2c4f870365E785982E1f101E93b906",
             pgn: `[Event "Casual Game"]
@@ -51,11 +53,6 @@ Kf2 1/2-1/2`,
             result: undefined,
         },
         now,
-        token: {
-            address: "0x92C6bcA388E99d6B304f1Af3c3Cd749Ff0b591e2",
-            decimals: 18,
-            name: "Test",
-            symbol: "TEST",
-        },
+        token,
     },
 };

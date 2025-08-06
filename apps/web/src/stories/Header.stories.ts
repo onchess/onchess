@@ -1,7 +1,8 @@
-import { INITIAL_RATING, type Token } from "@onchess/core";
+import { INITIAL_RATING } from "@onchess/core";
 import type { Meta, StoryObj } from "@storybook/react";
 import { fn } from "storybook/test";
 import { Header } from "../components/Header";
+import { token } from "./config";
 
 const meta = {
     title: "Header",
@@ -11,13 +12,6 @@ const meta = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
-
-const token: Token = {
-    address: "0x92C6bcA388E99d6B304f1Af3c3Cd749Ff0b591e2",
-    decimals: 18,
-    name: "Test",
-    symbol: "TEST",
-};
 
 export const Disconnected: Story = {
     args: {

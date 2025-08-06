@@ -2,7 +2,9 @@ import { createPlayer } from "@onchess/core";
 import type { Meta, StoryObj } from "@storybook/react";
 import { Chess } from "chess.js";
 import { fn } from "storybook/test";
+import { parseUnits } from "viem";
 import { Gameboard } from "../../components/Gameboard";
+import { token } from "../config";
 
 const meta = {
     title: "Gameplay/Gameboard",
@@ -25,7 +27,7 @@ export const Opening: Story = {
             black: bob,
             blackTime: 25 * 60,
             pgn: new Chess().pgn(),
-            pot: (10n * 10n ** 18n).toString(),
+            pot: parseUnits("10", token.decimals).toString(),
             timeControl: "1500",
             updatedAt: now,
             white: alice,
@@ -48,7 +50,7 @@ export const SessionSupport: Story = {
             black: bob,
             blackTime: 25 * 60,
             pgn: new Chess().pgn(),
-            pot: (10n * 10n ** 18n).toString(),
+            pot: parseUnits("10", token.decimals).toString(),
             timeControl: "1500",
             updatedAt: now,
             white: alice,
@@ -72,7 +74,7 @@ export const Submitting: Story = {
             black: bob,
             blackTime: 25 * 60,
             pgn: new Chess().pgn(),
-            pot: (10n * 10n ** 18n).toString(),
+            pot: parseUnits("10", token.decimals).toString(),
             timeControl: "1500",
             updatedAt: now,
             white: alice,
@@ -98,7 +100,7 @@ export const BlackMove: Story = {
             black: bob,
             blackTime: 25 * 60,
             pgn: openedGame.pgn(),
-            pot: (10n * 10n ** 18n).toString(),
+            pot: parseUnits("10", token.decimals).toString(),
             timeControl: "1500",
             updatedAt: now,
             white: alice,
@@ -121,7 +123,7 @@ export const TimeOver: Story = {
             black: bob,
             blackTime: 0,
             pgn: openedGame.pgn(),
-            pot: (10n * 10n ** 18n).toString(),
+            pot: parseUnits("10", token.decimals).toString(),
             timeControl: "900", // 15 minutes
             updatedAt: now,
             white: alice,
@@ -144,7 +146,7 @@ export const Expectator: Story = {
             white: alice,
             black: bob,
             pgn: '[Event "Casual Game"]\n[Site "OnChess"]\n[Date "2023.05.06"]\n[Round "-"]\n[White "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"]\n[Black "0x90F79bf6EB2c4f870365E785982E1f101E93b906"]\n[Result "1/2-1/2"]\n[WhiteTitle "GM"]\n[BlackTitle "GM"]\n[WhiteElo "2788"]\n[BlackElo "2741"]\n[ECO "D27"]\n[Opening "QGA"]\n[Variation "classical, 6...a6"]\n[WhiteFideId "8603677"]\n[BlackFideId "623539"]\n[EventDate "2023.05.06"]\n\n1. d4 d5 2. c4 dxc4 3. Nf3 Nf6 4. e3 e6 5. Bxc4 c5 6. O-O a6 7. b3 cxd4 8. Nxd4\nBe7 9. Bb2 O-O 10. Be2 b5 11. a4 bxa4 12. Rxa4 Bb7 13. Nd2 Nbd7 14. Qa1 Nc5 15.\nRa5 h6 16. Rc1 Rc8 17. b4 Ncd7 18. Rxc8 Qxc8 19. Bxa6 Bxa6 20. Rxa6 Bxb4 21. Nc6\nQb7 22. Bxf6 Nxf6 23. Nxb4 Qxb4 24. Nf1 Rb8 25. Ra8 Rxa8 26. Qxa8+ Qf8 27. Qxf8+\nKxf8 28. f3 Nd7 29. Kf2 Ke7 30. e4 Nc5 31. Ke3 Nd7 32. Kf2 Nc5 33. Ke3 Nd7 34.\nKf2 1/2-1/2',
-            pot: (10n * 10n ** 18n).toString(),
+            pot: parseUnits("10", token.decimals).toString(),
             timeControl: "1500", // 25 minutes
             whiteTime: 5 * 60, // 5 minutes
             blackTime: 4 * 60, // 4 minutes
@@ -167,7 +169,7 @@ export const ErrorMessage: Story = {
             black: bob,
             blackTime: 25 * 60,
             pgn: new Chess().pgn(),
-            pot: (10n * 10n ** 18n).toString(),
+            pot: parseUnits("10", token.decimals).toString(),
             timeControl: "1500",
             updatedAt: now,
             white: alice,
