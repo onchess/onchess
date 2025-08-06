@@ -1,6 +1,7 @@
 "use client";
 
-import { Flex, type FlexProps } from "@mantine/core";
+import { em, Flex, type FlexProps } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import type {
     Challenge,
     ChallengeBasePayload,
@@ -66,8 +67,15 @@ export const Lobby: FC<LobbyProps> = (props) => {
 
     const selfInLobby = challenges.find((c) => c.player === player?.address);
 
+    const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
+
     return (
-        <Flex gap="md" {...flexProps} wrap="wrap">
+        <Flex
+            gap="md"
+            {...flexProps}
+            wrap="wrap"
+            direction={isMobile ? "column" : "row"}
+        >
             {challenges.map((challenge) => (
                 <ChallengeComponent
                     key={challenge.address}
