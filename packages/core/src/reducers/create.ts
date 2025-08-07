@@ -4,7 +4,7 @@ import { createError } from "../message.js";
 import type { CreateGamePayload } from "../payloads.js";
 import { getPlayer } from "../players.js";
 import type { Challenge, State } from "../state.js";
-import { supportedTimeControls } from "../time.js";
+import { isValid } from "../time.js";
 
 export default (state: State, action: PayloadAction<CreateGamePayload>) => {
     const { metadata } = action.payload;
@@ -29,9 +29,9 @@ export default (state: State, action: PayloadAction<CreateGamePayload>) => {
     const balance = BigInt(player.balance);
 
     // validate timeControl
-    if (supportedTimeControls.indexOf(timeControl) < 0) {
+    if (!isValid(timeControl)) {
         player.message = createError({
-            text: `Unsupported time control: ${timeControl}`,
+            text: `Invalid time control: ${timeControl}`,
             timestamp: block_timestamp,
         });
         return;
@@ -54,7 +54,7 @@ export default (state: State, action: PayloadAction<CreateGamePayload>) => {
 
     // calculate lobby address
     const address = getAddress(
-        slice(keccak256(concat([numberToHex(input_index), msg_sender])), 0, 20),
+        slice(keccak256(concat([numberToHex(input_index), msg_sender])), 0, 20)
     );
 
     // create challenge
