@@ -10,7 +10,7 @@ import {
     encodeFunctionData,
     erc20Abi,
 } from "viem";
-import { useChainId, useSendCalls } from "wagmi";
+import { useSendCalls } from "wagmi";
 import {
     createAddInputCall,
     createDepositERC20TokensCall,
@@ -19,9 +19,11 @@ import {
 import { useAtomicSupport, usePaymasterServiceSupport } from "./capabilities";
 import { useWriteErc20Approve } from "./contracts";
 
-export const useBridgeActions = (paymasterUrl?: string) => {
+export const useBridgeActions = (
+    application?: Address,
+    paymasterUrl?: string,
+) => {
     const { sendCallsAsync, isPending } = useSendCalls();
-    const chainId = useChainId();
     const { supported: paymasterSupported } = usePaymasterServiceSupport();
     const { supported: atomicSupported } = useAtomicSupport();
 
@@ -35,10 +37,18 @@ export const useBridgeActions = (paymasterUrl?: string) => {
         capabilities.paymasterService = { url: paymasterUrl };
     }
 
-    const executeVoucherAsync = async (
-        application: Address,
-        output: Output,
-    ) => {
+    if (!application) {
+        return {
+            approveAsync,
+            approveAndDepositAsync: undefined,
+            depositAsync,
+            executeVoucherAsync: undefined,
+            isPending: isPending || approvePending || depositPending,
+            requestWithdrawAsync: undefined,
+        };
+    }
+
+    const executeVoucherAsync = async (output: Output) => {
         const result = await sendCallsAsync({
             calls: [createExecuteOutputCall({ application, output })],
             capabilities,
@@ -46,10 +56,7 @@ export const useBridgeActions = (paymasterUrl?: string) => {
         return result;
     };
 
-    const requestWithdrawAsync = async (
-        application: Address,
-        amount: bigint,
-    ) => {
+    const requestWithdrawAsync = async (amount: bigint) => {
         const payload = encodeFunctionData({
             abi: ABI,
             functionName: "withdraw",
@@ -62,7 +69,7 @@ export const useBridgeActions = (paymasterUrl?: string) => {
     };
 
     const approveAndDepositAsync = atomicSupported
-        ? async (application: Address, token: Address, amount: bigint) => {
+        ? async (token: Address, amount: bigint) => {
               return sendCallsAsync({
                   calls: [
                       {

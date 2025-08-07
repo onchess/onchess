@@ -99,7 +99,7 @@ const BridgePage = () => {
         executeVoucherAsync,
         isPending,
         requestWithdrawAsync,
-    } = useBridgeActions(paymasterUrl);
+    } = useBridgeActions(application, paymasterUrl);
 
     // transaction processing
     const [error, setError] = useState<string | undefined>(undefined);
@@ -146,7 +146,6 @@ const BridgePage = () => {
                   setError(undefined);
                   try {
                       const { id } = await approveAndDepositAsync(
-                          application,
                           token.address,
                           BigInt(amount),
                       );
@@ -159,13 +158,10 @@ const BridgePage = () => {
         : undefined;
 
     const handleWithdraw = async (amount: string) => {
-        if (application) {
+        if (requestWithdrawAsync) {
             setError(undefined);
             try {
-                const { id } = await requestWithdrawAsync(
-                    application,
-                    BigInt(amount),
-                );
+                const { id } = await requestWithdrawAsync(BigInt(amount));
                 setCallId(id);
             } catch (e: unknown) {
                 setError(e instanceof Error ? e.message : String(e));
@@ -174,10 +170,10 @@ const BridgePage = () => {
     };
 
     const handleExecuteVoucher = async (output: ExecutableVoucher) => {
-        if (application && output.executable) {
+        if (executeVoucherAsync && output.executable) {
             setError(undefined);
             try {
-                const { id } = await executeVoucherAsync(application, output);
+                const { id } = await executeVoucherAsync(output);
                 setCallId(id);
             } catch (e: unknown) {
                 setError(e instanceof Error ? e.message : String(e));

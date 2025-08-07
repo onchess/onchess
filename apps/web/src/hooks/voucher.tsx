@@ -9,16 +9,15 @@ export type ExecutableVoucher = Output & {
 };
 
 export type UseVouchersResponse = {
-    loading: boolean;
+    isLoading: boolean;
     data: ExecutableVoucher[];
 };
 
 export const useVouchers = (): UseVouchersResponse => {
     const application = useApplicationAddress();
     const [data, setData] = useState<ExecutableVoucher[]>([]);
-    const [loading, setLoading] = useState(true);
 
-    const { data: outputs } = useOutputs({
+    const { data: outputs, isLoading } = useOutputs({
         application,
         outputType: "Voucher",
     });
@@ -42,6 +41,6 @@ export const useVouchers = (): UseVouchersResponse => {
 
     return {
         data,
-        loading,
+        isLoading,
     };
 };

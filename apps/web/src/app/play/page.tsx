@@ -1,5 +1,7 @@
 "use client";
 
+import { em, Flex, Stack } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import type {
     ChallengeBasePayload,
     CreateGamePayload,
@@ -11,13 +13,10 @@ import { createPlayer } from "@onchess/core";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { type Address, getAddress } from "viem";
-import {
-    useAccount,
-    useConnect,
-    useDisconnect,
-    useWaitForCallsStatus,
-} from "wagmi";
-import { PlayPage } from "../../components/PlayPage";
+import { useAccount, useConnect, useDisconnect } from "wagmi";
+import { Gameboard } from "../../components/Gameboard";
+import { Shell } from "../../components/navigation/Shell";
+import { Lobby } from "../../components/play/Lobby";
 import { useChessActions } from "../../hooks/chess";
 import { useClock } from "../../hooks/clock";
 import { useApplicationAddress } from "../../hooks/config";
@@ -87,8 +86,8 @@ const Play = () => {
     } = useChessActions(dapp, paymasterUrl);
 
     // transaction mining
-    const [id, setId] = useState<string | undefined>();
-    const { isFetching } = useWaitForCallsStatus({ id });
+    // const [message, setMessage] = useState<string | undefined>();
+    // const { calls, callsStatus, inputs } = useSendCartesiCalls();
 
     // error state
     const [error, setError] = useState<string | undefined>();
@@ -108,11 +107,10 @@ const Play = () => {
         params: Omit<CreateGamePayload, "metadata">,
     ) => {
         if (playerState.player && createGameAsync) {
-            // clear error
+            // reset error
             setError(undefined);
             try {
-                const { id } = await createGameAsync(params);
-                setId(id);
+                await createGameAsync(params);
             } catch (e: unknown) {
                 setError(e instanceof Error ? e.message : "An error occurred");
             }
@@ -126,8 +124,7 @@ const Play = () => {
             // reset error
             setError(undefined);
             try {
-                const { id } = await cancelGameAsync(params);
-                setId(id);
+                await cancelGameAsync(params);
             } catch (e: unknown) {
                 setError(e instanceof Error ? e.message : "An error occurred");
             }
@@ -141,8 +138,7 @@ const Play = () => {
             // reset error
             setError(undefined);
             try {
-                const { id } = await joinGameAsync(params);
-                setId(id);
+                await joinGameAsync(params);
             } catch (e: unknown) {
                 setError(e instanceof Error ? e.message : "An error occurred");
             }
@@ -157,8 +153,7 @@ const Play = () => {
             setError(undefined);
 
             try {
-                const { id } = await sendMoveAsync(params, sessionId);
-                setId(id);
+                await sendMoveAsync(params, sessionId);
             } catch (e: unknown) {
                 setError(e instanceof Error ? e.message : "An error occurred");
             }
@@ -170,8 +165,7 @@ const Play = () => {
             // reset error
             setError(undefined);
             try {
-                const { id } = await resignAsync(params);
-                setId(id);
+                await resignAsync(params);
             } catch (e: unknown) {
                 setError(e instanceof Error ? e.message : "An error occurred");
             }
@@ -185,8 +179,7 @@ const Play = () => {
             // reset error
             setError(undefined);
             try {
-                const { id } = await claimVictoryAsync(params);
-                setId(id);
+                await claimVictoryAsync(params);
             } catch (e: unknown) {
                 setError(e instanceof Error ? e.message : "An error occurred");
             }
@@ -201,37 +194,78 @@ const Play = () => {
         router.push(`/bridge?deposit=${amount}`);
     };
 
+    // show lobby if it is showing create
+    const showLobby = token && ongoingGame === undefined;
+
+    const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
+
     return (
-        <PlayPage
+        <Shell
             address={address}
-            error={error}
-            game={ongoingGame}
-            pastGames={pastGames}
             isConnected={isConnected}
             isConnecting={isConnecting}
-            lobby={state?.lobby ?? {}}
-            miw={400}
-            now={now}
-            onCancel={handleCancel}
-            onClaimVictory={handleClaimVictory}
             onConnect={handleConnect}
-            onCreate={handleCreate}
-            onJoin={handleJoin}
-            onCreateSession={sessionSupported ? handleCreateSession : undefined}
-            onDisconnect={disconnect}
-            onDeposit={handleDeposit}
             onLogin={() => login?.({ passkeyName: "OnChess" })}
-            onMove={handleMove}
             onRegister={() => register?.({ passkeyName: "OnChess" })}
-            onResign={handleResign}
+            onDisconnect={disconnect}
             player={playerState.player}
-            players={state?.players ?? {}}
-            sessionExpiry={sessionExpiry}
-            sessionId={sessionId}
-            sessionSupported={sessionSupported}
-            submitting={isPending || isConnecting}
             token={token}
-        />
+        >
+            <Stack>
+                <Stack p={20} align={isMobile ? undefined : "center"}>
+                    {ongoingGame && (
+                        <Gameboard
+                            error={error}
+                            game={ongoingGame}
+                            now={now}
+                            onClaimVictory={handleClaimVictory}
+                            onCreateSession={handleCreateSession}
+                            onMove={handleMove}
+                            onResign={handleResign}
+                            player={playerState.player}
+                            sessionExpiry={sessionExpiry}
+                            sessionId={sessionId}
+                            sessionSupported={sessionSupported}
+                            submitting={isPending || isConnecting}
+                        />
+                    )}
+                    {showLobby && (
+                        <Lobby
+                            executing={isPending || isConnecting}
+                            lobby={Object.values(state?.lobby ?? {})}
+                            onCancel={handleCancel}
+                            onConnect={handleConnect}
+                            onCreate={handleCreate}
+                            onDeposit={handleDeposit}
+                            onJoin={handleJoin}
+                            player={playerState.player}
+                            players={state?.players ?? {}}
+                            token={token}
+                        />
+                    )}
+                    {!ongoingGame && (
+                        <Flex gap={20} wrap="wrap" mt={50}>
+                            {pastGames.map((game) => (
+                                <Gameboard
+                                    key={game.address}
+                                    game={game}
+                                    now={now}
+                                    onClaimVictory={() => {}}
+                                    onCreateSession={() => {}}
+                                    onMove={() => {}}
+                                    onResign={() => {}}
+                                    player={playerState.player}
+                                    sessionExpiry={sessionExpiry}
+                                    sessionId={sessionId}
+                                    sessionSupported={sessionSupported}
+                                    submitting={false}
+                                />
+                            ))}
+                        </Flex>
+                    )}
+                </Stack>
+            </Stack>
+        </Shell>
     );
 };
 
