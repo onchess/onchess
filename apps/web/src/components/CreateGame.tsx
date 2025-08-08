@@ -32,7 +32,7 @@ export interface CreateGameProps extends PaperProps {
     token: Token;
 }
 
-export const timeControls = ["1500", "2700", "1500+10", "2700+10"];
+export const timeControls = ["604800", "2419200"];
 
 export const CreateGame: FC<CreateGameProps> = (props) => {
     const {

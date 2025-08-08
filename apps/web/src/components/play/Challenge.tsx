@@ -4,7 +4,6 @@ import {
     Paper,
     Stack,
     Text,
-    Tooltip,
     useMantineTheme,
 } from "@mantine/core";
 import type {
@@ -15,7 +14,8 @@ import type {
 } from "@onchess/core";
 import { IconChess, IconClock, IconCoin, IconStar } from "@tabler/icons-react";
 import type { FC } from "react";
-import { formatAmount, formatTimeControl } from "../../util/format";
+import { formatUnits } from "viem";
+import { formatTimeControl } from "../../util/format";
 import { AddressText } from "../AddressText";
 
 interface ChallengeProps {
@@ -57,6 +57,11 @@ export const ChallengeComponent: FC<ChallengeProps> = ({
     const isSelf = player && player.address === challenge.player;
     const canJoin = !isSelf && inRatingRange && hasEnoughBalance && !executing;
 
+    const betFormat = (value: bigint) =>
+        value === 0n
+            ? "No bet"
+            : `${formatUnits(value, token.decimals)} ${token.symbol}`;
+
     // use a different background shade for player's own challenge
     const theme = useMantineTheme();
     const bg = isSelf ? theme.colors[theme.primaryColor][0] : undefined;
@@ -90,7 +95,7 @@ export const ChallengeComponent: FC<ChallengeProps> = ({
                         <Text fw={800}>Bet</Text>
                     </Group>
                     <Text c={hasEnoughBalance ? undefined : "red"}>
-                        {formatAmount(BigInt(challenge.bet), token)}
+                        {betFormat(BigInt(challenge.bet))}
                     </Text>
                 </Group>
                 <Group justify="space-between">
@@ -98,9 +103,7 @@ export const ChallengeComponent: FC<ChallengeProps> = ({
                         <IconClock size={16} />
                         <Text fw={800}>Time Control</Text>
                     </Group>
-                    <Tooltip label={formatTimeControl(challenge.timeControl)}>
-                        <Text>{challenge.timeControl}</Text>
-                    </Tooltip>
+                    <Text>{formatTimeControl(challenge.timeControl)}</Text>
                 </Group>
                 <Group justify="space-between">
                     <Group gap={5}>

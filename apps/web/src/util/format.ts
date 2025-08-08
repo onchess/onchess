@@ -2,6 +2,8 @@ import { type Token, parseTimeControl } from "@onchess/core";
 import humanizeDuration from "humanize-duration";
 import { formatUnits } from "viem";
 
+const mediumEnglishHumanizer = humanizeDuration.humanizer();
+
 const shortEnglishHumanizer = humanizeDuration.humanizer({
     language: "shortEn",
     languages: {
@@ -21,9 +23,11 @@ const shortEnglishHumanizer = humanizeDuration.humanizer({
 export const formatTimeControl = (time: string) => {
     const [seconds, increment] = parseTimeControl(time);
     if (increment > 0) {
-        return `${shortEnglishHumanizer(seconds * 1000)} + ${shortEnglishHumanizer(increment * 1000)}`;
+        return `${shortEnglishHumanizer(
+            seconds * 1000
+        )} + ${shortEnglishHumanizer(increment * 1000)}`;
     }
-    return `${shortEnglishHumanizer(seconds * 1000, {})}`;
+    return `${mediumEnglishHumanizer(seconds * 1000, {})}`;
 };
 
 export const formatAmount = (bet: bigint, token: Token) =>
