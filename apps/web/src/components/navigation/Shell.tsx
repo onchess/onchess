@@ -18,7 +18,6 @@ export const Shell: FC<ShellProps> = (props) => {
                 breakpoint: "sm",
                 collapsed: { desktop: true, mobile: !opened },
             }}
-            padding="md"
         >
             <AppShell.Header withBorder={false}>
                 <Group h="100%" gap={0} justify="space-between">

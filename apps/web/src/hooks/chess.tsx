@@ -73,7 +73,8 @@ export const useChessActions = (
     application?: Address,
     paymasterUrl?: string,
 ) => {
-    const { sendCallsAsync, isPending } = useSendCalls();
+    const { calls, callsStatus, inputs } = useSendCartesiCalls();
+    const { sendCalls } = calls;
     const { supported: paymasterSupported } = usePaymasterServiceSupport();
     const capabilities: WalletCapabilities = {};
     if (paymasterSupported && paymasterUrl) {
@@ -82,77 +83,69 @@ export const useChessActions = (
 
     if (!application) {
         return {
-            cancelGameAsync: undefined,
-            claimVictoryAsync: undefined,
-            createGameAsync: undefined,
-            joinGameAsync: undefined,
-            isPending: false,
-            resignAsync: undefined,
-            sendMoveAsync: undefined,
+            calls,
+            callsStatus,
+            inputs,
+            cancelGame: undefined,
+            claimVictory: undefined,
+            createGame: undefined,
+            joinGame: undefined,
+            resign: undefined,
+            sendMove: undefined,
         };
     }
 
-    const createGameAsync = async (
-        params: Omit<CreateGamePayload, "metadata">,
-    ) => {
-        return sendCallsAsync({
+    const createGame = (params: Omit<CreateGamePayload, "metadata">) =>
+        sendCalls({
             calls: [createCreateGameCall(application, params)],
             capabilities,
         });
-    };
 
-    const cancelGameAsync = async (
-        params: Omit<GameBasePayload, "metadata">,
-    ) => {
-        return sendCallsAsync({
+    const cancelGame = (params: Omit<GameBasePayload, "metadata">) =>
+        sendCalls({
             calls: [createCancelGameCall(application, params)],
             capabilities,
         });
-    };
 
-    const joinGameAsync = async (params: Omit<GameBasePayload, "metadata">) => {
-        return sendCallsAsync({
+    const joinGame = (params: Omit<GameBasePayload, "metadata">) =>
+        sendCalls({
             calls: [createJoinGameCall(application, params)],
             capabilities,
         });
-    };
 
-    const sendMoveAsync = async (
+    const sendMove = (
         params: Omit<MovePiecePayload, "sender" | "metadata">,
         sessionId?: string,
-    ) => {
-        return sendCallsAsync({
+    ) =>
+        sendCalls({
             calls: [createSendMoveCall(application, params)],
             capabilities: {
                 ...capabilities,
                 permissions: { sessionId },
             },
         });
-    };
 
-    const resignAsync = async (params: Omit<GameBasePayload, "metadata">) => {
-        return sendCallsAsync({
+    const resign = (params: Omit<GameBasePayload, "metadata">) =>
+        sendCalls({
             calls: [createResignCall(application, params)],
             capabilities,
         });
-    };
 
-    const claimVictoryAsync = async (
-        params: Omit<GameBasePayload, "metadata">,
-    ) => {
-        return sendCallsAsync({
+    const claimVictory = (params: Omit<GameBasePayload, "metadata">) =>
+        sendCalls({
             calls: [createClaimVictoryCall(application, params)],
             capabilities,
         });
-    };
 
     return {
-        cancelGameAsync,
-        claimVictoryAsync,
-        createGameAsync,
-        joinGameAsync,
-        isPending,
-        resignAsync,
-        sendMoveAsync,
+        calls,
+        callsStatus,
+        inputs,
+        cancelGame,
+        claimVictory,
+        createGame,
+        joinGame,
+        resign,
+        sendMove,
     };
 };

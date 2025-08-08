@@ -17,6 +17,7 @@ import { useAccount, useConnect, useDisconnect } from "wagmi";
 import { Gameboard } from "../../components/Gameboard";
 import { Shell } from "../../components/navigation/Shell";
 import { Lobby } from "../../components/play/Lobby";
+import { InputStatus } from "../../containers/InputStatus";
 import { useChessActions } from "../../hooks/chess";
 import { useClock } from "../../hooks/clock";
 import { useApplicationAddress } from "../../hooks/config";
@@ -76,21 +77,18 @@ const Play = () => {
 
     // transactions
     const {
-        claimVictoryAsync,
-        cancelGameAsync,
-        createGameAsync,
-        joinGameAsync,
-        isPending,
-        resignAsync,
-        sendMoveAsync,
+        callsStatus,
+        inputs,
+        claimVictory,
+        cancelGame,
+        createGame,
+        joinGame,
+        resign,
+        sendMove,
     } = useChessActions(dapp, paymasterUrl);
 
     // transaction mining
-    // const [message, setMessage] = useState<string | undefined>();
-    // const { calls, callsStatus, inputs } = useSendCartesiCalls();
-
-    // error state
-    const [error, setError] = useState<string | undefined>();
+    const [message, setMessage] = useState<string | undefined>();
 
     // session keys
     const {
@@ -106,83 +104,52 @@ const Play = () => {
     const handleCreate = async (
         params: Omit<CreateGamePayload, "metadata">,
     ) => {
-        if (playerState.player && createGameAsync) {
-            // reset error
-            setError(undefined);
-            try {
-                await createGameAsync(params);
-            } catch (e: unknown) {
-                setError(e instanceof Error ? e.message : "An error occurred");
-            }
+        setMessage("Creating game...");
+        if (playerState.player && createGame) {
+            createGame(params);
         }
     };
 
     const handleCancel = async (
         params: Omit<ChallengeBasePayload, "metadata">,
     ) => {
-        if (playerState.player && cancelGameAsync) {
-            // reset error
-            setError(undefined);
-            try {
-                await cancelGameAsync(params);
-            } catch (e: unknown) {
-                setError(e instanceof Error ? e.message : "An error occurred");
-            }
+        setMessage("Canceling game...");
+        if (playerState.player && cancelGame) {
+            cancelGame(params);
         }
     };
 
     const handleJoin = async (
         params: Omit<ChallengeBasePayload, "metadata">,
     ) => {
-        if (playerState.player && joinGameAsync) {
-            // reset error
-            setError(undefined);
-            try {
-                await joinGameAsync(params);
-            } catch (e: unknown) {
-                setError(e instanceof Error ? e.message : "An error occurred");
-            }
+        setMessage("Joining game...");
+        if (playerState.player && joinGame) {
+            joinGame(params);
         }
     };
 
     const handleMove = async (
         params: Omit<MovePiecePayload, "sender" | "metadata">,
     ) => {
-        if (playerState.player && sendMoveAsync) {
-            // reset error
-            setError(undefined);
-
-            try {
-                await sendMoveAsync(params, sessionId);
-            } catch (e: unknown) {
-                setError(e instanceof Error ? e.message : "An error occurred");
-            }
+        setMessage("Sending move...");
+        if (playerState.player && sendMove) {
+            sendMove(params, sessionId);
         }
     };
 
     const handleResign = async (params: Omit<GameBasePayload, "metadata">) => {
-        if (playerState.player && resignAsync) {
-            // reset error
-            setError(undefined);
-            try {
-                await resignAsync(params);
-            } catch (e: unknown) {
-                setError(e instanceof Error ? e.message : "An error occurred");
-            }
+        setMessage("Resigning game...");
+        if (playerState.player && resign) {
+            resign(params);
         }
     };
 
     const handleClaimVictory = async (
         params: Omit<GameBasePayload, "metadata">,
     ) => {
-        if (playerState.player && claimVictoryAsync) {
-            // reset error
-            setError(undefined);
-            try {
-                await claimVictoryAsync(params);
-            } catch (e: unknown) {
-                setError(e instanceof Error ? e.message : "An error occurred");
-            }
+        setMessage("Claiming victory...");
+        if (playerState.player && claimVictory) {
+            claimVictory(params);
         }
     };
 
@@ -212,10 +179,18 @@ const Play = () => {
             token={token}
         >
             <Stack>
+                {inputs?.map((input) => (
+                    <InputStatus
+                        key={input.index}
+                        application={input.appContract}
+                        inputIndex={input.index}
+                        message={message}
+                    />
+                ))}
                 <Stack p={20} align={isMobile ? undefined : "center"}>
                     {ongoingGame && (
                         <Gameboard
-                            error={error}
+                            error={callsStatus.error?.message}
                             game={ongoingGame}
                             now={now}
                             onClaimVictory={handleClaimVictory}
@@ -226,12 +201,12 @@ const Play = () => {
                             sessionExpiry={sessionExpiry}
                             sessionId={sessionId}
                             sessionSupported={sessionSupported}
-                            submitting={isPending || isConnecting}
+                            submitting={callsStatus.isLoading || isConnecting}
                         />
                     )}
                     {showLobby && (
                         <Lobby
-                            executing={isPending || isConnecting}
+                            executing={callsStatus.isLoading || isConnecting}
                             lobby={Object.values(state?.lobby ?? {})}
                             onCancel={handleCancel}
                             onConnect={handleConnect}
