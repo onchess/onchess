@@ -58,7 +58,7 @@ export const CreateGame: FC<CreateGameProps> = (props) => {
             : `${formatUnits(value, decimals)} ${token.symbol}`;
 
     // bet
-    const [bet, setBet] = useState(bets[1].toString());
+    const [bet, setBet] = useState(bets[0].toString());
 
     // supported time controls
     const [timeControl, setTimeControl] = useState(timeControls[0]);
