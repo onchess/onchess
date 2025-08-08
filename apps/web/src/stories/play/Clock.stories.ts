@@ -21,6 +21,15 @@ export const Active: Story = {
     },
 };
 
+export const LongTime: Story = {
+    args: {
+        active: true,
+        now,
+        secondsRemaining: 603800,
+        startTime: now,
+    },
+};
+
 export const Inactive: Story = {
     args: {
         active: false,
