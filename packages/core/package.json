@@ -13,13 +13,13 @@
     "devDependencies": {
         "@tsconfig/node20": "^20.1.6",
         "npm-run-all": "^4.1.5",
-        "tsdown": "^0.13.3",
+        "tsup": "^8.5.0",
         "typescript": "^5.9.2",
         "vitest": "^3.2.4"
     },
     "scripts": {
-        "build": "tsdown",
-        "dev": "tsdown --watch",
+        "build": "tsup",
+        "dev": "tsup --watch",
         "lint": "biome check",
         "test": "vitest"
     },
