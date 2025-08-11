@@ -10,7 +10,6 @@ import {
     encodeFunctionData,
     erc20Abi,
 } from "viem";
-import { useSendCalls } from "wagmi";
 import {
     createAddInputCall,
     createDepositERC20TokensCall,
@@ -18,19 +17,19 @@ import {
 } from "../calls";
 import { useAtomicSupport, usePaymasterServiceSupport } from "./capabilities";
 import { useWriteErc20Approve } from "./contracts";
+import { useSendCartesiCalls } from "./utils";
 
 export const useBridgeActions = (
     application?: Address,
     paymasterUrl?: string,
 ) => {
-    const { sendCallsAsync, isPending } = useSendCalls();
+    const { calls, callsStatus, inputs } = useSendCartesiCalls();
+    const { sendCalls } = calls;
     const { supported: paymasterSupported } = usePaymasterServiceSupport();
     const { supported: atomicSupported } = useAtomicSupport();
 
-    const { writeContractAsync: approveAsync, isPending: approvePending } =
-        useWriteErc20Approve();
-    const { writeContractAsync: depositAsync, isPending: depositPending } =
-        useWriteErc20PortalDepositErc20Tokens();
+    const { writeContract: approve } = useWriteErc20Approve();
+    const { writeContract: deposit } = useWriteErc20PortalDepositErc20Tokens();
 
     const capabilities: WalletCapabilities = {};
     if (paymasterSupported && paymasterUrl) {
@@ -39,38 +38,39 @@ export const useBridgeActions = (
 
     if (!application) {
         return {
-            approveAsync,
-            approveAndDepositAsync: undefined,
-            depositAsync,
-            executeVoucherAsync: undefined,
-            isPending: isPending || approvePending || depositPending,
-            requestWithdrawAsync: undefined,
+            calls,
+            callsStatus,
+            inputs,
+            approve,
+            approveAndDeposit: undefined,
+            deposit,
+            executeVoucher: undefined,
+            requestWithdraw: undefined,
         };
     }
 
-    const executeVoucherAsync = async (output: Output) => {
-        const result = await sendCallsAsync({
+    const executeVoucher = async (output: Output) => {
+        sendCalls({
             calls: [createExecuteOutputCall({ application, output })],
             capabilities,
         });
-        return result;
     };
 
-    const requestWithdrawAsync = async (amount: bigint) => {
+    const requestWithdraw = async (amount: bigint) => {
         const payload = encodeFunctionData({
             abi: ABI,
             functionName: "withdraw",
             args: [amount],
         });
-        return sendCallsAsync({
+        sendCalls({
             calls: [createAddInputCall([application, payload])],
             capabilities,
         });
     };
 
-    const approveAndDepositAsync = atomicSupported
+    const approveAndDeposit = atomicSupported
         ? async (token: Address, amount: bigint) => {
-              return sendCallsAsync({
+              sendCalls({
                   calls: [
                       {
                           to: token,
@@ -97,11 +97,13 @@ export const useBridgeActions = (
         : undefined;
 
     return {
-        approveAsync,
-        approveAndDepositAsync,
-        depositAsync,
-        executeVoucherAsync,
-        isPending: isPending || approvePending || depositPending,
-        requestWithdrawAsync,
+        calls,
+        callsStatus,
+        inputs,
+        approve,
+        approveAndDeposit,
+        deposit,
+        executeVoucher,
+        requestWithdraw,
     };
 };

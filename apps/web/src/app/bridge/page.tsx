@@ -4,18 +4,12 @@ import { Group } from "@mantine/core";
 import { createPlayer } from "@onchess/core";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
-import type { Address, Hash } from "viem";
+import type { Address } from "viem";
 import { erc20Abi, getAddress } from "viem";
-import {
-    useAccount,
-    useCallsStatus,
-    useConnect,
-    useDisconnect,
-    useReadContracts,
-    useWaitForTransactionReceipt,
-} from "wagmi";
+import { useAccount, useConnect, useDisconnect, useReadContracts } from "wagmi";
 import { Bridge } from "../../components/bridge/Bridge";
 import { Shell } from "../../components/navigation/Shell";
+import { InputStatus } from "../../containers/InputStatus";
 import { useBridgeActions } from "../../hooks/bridge";
 import { useApplicationAddress } from "../../hooks/config";
 import { useLatestState } from "../../hooks/state";
@@ -91,93 +85,59 @@ const BridgePage = () => {
 
     const hasData = token !== undefined;
 
+    // transaction mining
+    const [message, setMessage] = useState<string | undefined>();
+
     // smart contracts actions
     const {
-        approveAsync,
-        approveAndDepositAsync,
-        depositAsync,
-        executeVoucherAsync,
-        isPending,
-        requestWithdrawAsync,
+        callsStatus,
+        inputs,
+        approve,
+        approveAndDeposit,
+        deposit,
+        executeVoucher,
+        requestWithdraw,
     } = useBridgeActions(application, paymasterUrl);
-
-    // transaction processing
-    const [error, setError] = useState<string | undefined>(undefined);
-    const [hash, setHash] = useState<Hash | undefined>(undefined);
-    const [callId, setCallId] = useState<string>("");
-    const { isFetching } = useWaitForTransactionReceipt({ hash });
-    const { isFetching: isBatchFetching } = useCallsStatus({
-        id: callId,
-        query: { enabled: !!callId },
-    });
 
     const handleApprove = async (amount: string) => {
         if (token) {
-            setError(undefined);
-            try {
-                const hash = await approveAsync({
-                    address: token.address,
-                    args: [erc20PortalAddress, BigInt(amount)],
-                });
-                setHash(hash);
-            } catch (e: unknown) {
-                setError(e instanceof Error ? e.message : String(e));
-            }
+            setMessage("Approving ERC-20 spending...");
+            approve({
+                address: token.address,
+                args: [erc20PortalAddress, BigInt(amount)],
+            });
         }
     };
 
     const handleDeposit = async (amount: string) => {
         if (application && token) {
-            setError(undefined);
-            try {
-                const hash = await depositAsync({
-                    args: [token.address, application, BigInt(amount), "0x"],
-                });
-                setHash(hash);
-            } catch (e: unknown) {
-                setError(e instanceof Error ? e.message : String(e));
-            }
+            setMessage("Depositing ERC-20...");
+            deposit({
+                args: [token.address, application, BigInt(amount), "0x"],
+            });
         }
     };
 
-    const handleApproveAndDeposit = approveAndDepositAsync
+    const handleApproveAndDeposit = approveAndDeposit
         ? async (amount: string) => {
               if (application && token) {
-                  setError(undefined);
-                  try {
-                      const { id } = await approveAndDepositAsync(
-                          token.address,
-                          BigInt(amount),
-                      );
-                      setCallId(id);
-                  } catch (e: unknown) {
-                      setError(e instanceof Error ? e.message : String(e));
-                  }
+                  setMessage("Depositing ERC-20...");
+                  approveAndDeposit(token.address, BigInt(amount));
               }
           }
         : undefined;
 
     const handleWithdraw = async (amount: string) => {
-        if (requestWithdrawAsync) {
-            setError(undefined);
-            try {
-                const { id } = await requestWithdrawAsync(BigInt(amount));
-                setCallId(id);
-            } catch (e: unknown) {
-                setError(e instanceof Error ? e.message : String(e));
-            }
+        if (requestWithdraw) {
+            setMessage("Requesting ERC-20 withdraw...");
+            requestWithdraw(BigInt(amount));
         }
     };
 
     const handleExecuteVoucher = async (output: ExecutableVoucher) => {
-        if (executeVoucherAsync && output.executable) {
-            setError(undefined);
-            try {
-                const { id } = await executeVoucherAsync(output);
-                setCallId(id);
-            } catch (e: unknown) {
-                setError(e instanceof Error ? e.message : String(e));
-            }
+        if (executeVoucher && output.executable) {
+            setMessage("Finalizing ERC-20 withdraw...");
+            executeVoucher(output);
         }
     };
 
@@ -193,6 +153,14 @@ const BridgePage = () => {
             player={player}
             token={token}
         >
+            {inputs?.map((input) => (
+                <InputStatus
+                    key={input.index}
+                    application={input.appContract}
+                    inputIndex={input.index}
+                    message={message}
+                />
+            ))}
             <Group p={20} justify="center">
                 {hasData && (
                     <Bridge
@@ -202,13 +170,8 @@ const BridgePage = () => {
                         connecting={isConnecting}
                         balance={balance?.toString()}
                         disabled={!application}
-                        error={error}
-                        executing={
-                            isFetching ||
-                            isBatchFetching ||
-                            isPending ||
-                            loading
-                        }
+                        error={callsStatus.error?.message}
+                        executing={callsStatus.isLoading || loading}
                         initialDepositAmount={depositAmount}
                         initialWithdrawAmount={withdrawAmount}
                         onApprove={handleApprove}
