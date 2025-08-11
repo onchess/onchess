@@ -20,7 +20,7 @@ export const NewPlayer: Story = {
             balance: "0",
             draws: 0,
             losses: 0,
-            played: 0,
+            games: 0,
             rating: INITIAL_RATING,
             wins: 0,
         },

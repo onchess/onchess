@@ -1,60 +1,67 @@
 "use client";
-
-import { ActionIcon, Anchor, Flex, Group, Text } from "@mantine/core";
-import { Player, Token } from "@onchess/core";
-import { IconBrandGithub, IconBrandX } from "@tabler/icons-react";
-import { FC } from "react";
+import { Group } from "@mantine/core";
+import type { Player, Token } from "@onchess/core";
+import type { FC } from "react";
+import type { Address } from "viem";
 import { getProviderType } from "../providers/wallet";
 import { ConnectButton } from "./ConnectButton";
+import { ColorSchemeToggle } from "./navigation/ColorSchemeToggle";
+import { GitHubLink } from "./navigation/GitHubLink";
+import { Menu } from "./navigation/Menu";
+import { TwitterLink } from "./navigation/TwitterLink";
 
 export type HeaderProps = {
-    address?: string;
+    address?: Address;
+    isConnected: boolean;
+    isConnecting: boolean;
+    onConnect: () => void;
+    onLogin?: () => void;
+    onRegister?: () => void;
+    onDisconnect: () => void;
     player?: Player;
     token?: Token;
 };
 
-export const Header: FC<HeaderProps> = ({ player, token }) => {
+export const Header: FC<HeaderProps> = (props) => {
+    const {
+        address,
+        isConnected,
+        isConnecting,
+        onConnect,
+        onLogin,
+        onRegister,
+        onDisconnect,
+        player,
+        token,
+    } = props;
     const provider = getProviderType();
 
     return (
-        <Group justify="space-between" py={10} px={20}>
-            <Group align="baseline">
-                <Text ff="Cardo" fz={26}>
-                    OnChess
-                </Text>
+        <Group justify="space-between" px={10}>
+            <Group visibleFrom="sm" gap="xs">
+                <Menu />
             </Group>
-            <Flex justify="flex-end" align="center" gap={5}>
-                {provider === "WalletConnect" && <w3m-button />}
-                {token && provider === "ZeroDev" && (
-                    <ConnectButton token={token} balance={player?.balance} />
-                )}
-                <Anchor href="https://github.com/onchess" target="_blank">
-                    <ActionIcon
-                        size="lg"
-                        color="gray"
-                        variant="subtle"
-                        radius="lg"
-                    >
-                        <IconBrandGithub
-                            style={{ width: "70%", height: "70%" }}
-                            stroke={1.5}
-                        />
-                    </ActionIcon>
-                </Anchor>
-                <Anchor href="https://x.com/OnChessProject" target="_blank">
-                    <ActionIcon
-                        size="lg"
-                        color="gray"
-                        variant="subtle"
-                        radius="lg"
-                    >
-                        <IconBrandX
-                            style={{ width: "70%", height: "70%" }}
-                            stroke={1.5}
-                        />
-                    </ActionIcon>
-                </Anchor>
-            </Flex>
+            {provider === "Reown" && <w3m-button />}
+            {(provider === "Coinbase" ||
+                provider === "MetaMask" ||
+                provider === "ZeroDev") && (
+                <ConnectButton
+                    address={address}
+                    balance={player?.balance}
+                    isConnecting={isConnecting}
+                    isConnected={isConnected}
+                    onConnect={onConnect}
+                    onLogin={onLogin}
+                    onRegister={onRegister}
+                    onDisconnect={onDisconnect}
+                    token={token}
+                />
+            )}
+            <ColorSchemeToggle />
+            <Group visibleFrom="md" gap="xs">
+                <GitHubLink />
+                <TwitterLink />
+            </Group>
         </Group>
     );
 };

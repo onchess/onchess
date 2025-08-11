@@ -1,40 +1,47 @@
-import { Voucher } from "@deroll/core";
-import { PayloadAction } from "@reduxjs/toolkit";
+import { erc20PortalAbi, erc20PortalAddress } from "@cartesi/viem/abi";
+import type { Voucher } from "@deroll/core";
+import type { PayloadAction } from "@reduxjs/toolkit";
+import type {
+    AbiParametersToPrimitiveTypes,
+    ExtractAbiFunction,
+} from "abitype";
 import {
-    Address,
-    Hex,
+    type Address,
     encodeFunctionData,
     erc20Abi,
     getAddress,
     stringToHex,
 } from "viem";
-import { erc20PortalAbi, erc20PortalAddress } from "../contracts.js";
-import { ExportPayload } from "../payloads.js";
-import { State } from "../state.js";
+import type { ExportPayload } from "../payloads.js";
+import type { State } from "../state.js";
+
+type DepositERC20VoucherParameters = AbiParametersToPrimitiveTypes<
+    ExtractAbiFunction<typeof erc20PortalAbi, "depositERC20Tokens">["inputs"]
+>;
 
 const createERC20DepositVoucher = (
-    token: Address,
-    dapp: Address,
-    amount: bigint,
-    execLayerData: Hex,
+    args: DepositERC20VoucherParameters,
 ): Voucher => {
     const call = encodeFunctionData({
         abi: erc20PortalAbi,
         functionName: "depositERC20Tokens",
-        args: [token, dapp, amount, execLayerData],
+        args,
     });
 
     // create voucher to deposit ERC20 to portal
     return {
         destination: erc20PortalAddress,
+        value: "0x",
         payload: call,
     };
 };
 
+type ApproveERC20PortalVoucherParameters = readonly [Address, bigint];
+
 const createApproveERC20PortalVoucher = (
-    token: Address,
-    amount: bigint,
+    params: ApproveERC20PortalVoucherParameters,
 ): Voucher => {
+    const [token, amount] = params;
     const call = encodeFunctionData({
         abi: erc20Abi,
         functionName: "approve",
@@ -44,6 +51,7 @@ const createApproveERC20PortalVoucher = (
     // create voucher to approve deposit by erc20PortalAddress
     return {
         destination: token,
+        value: "0x",
         payload: call,
     };
 };
@@ -66,7 +74,10 @@ const tvl = (state: State) => {
     );
 
     // lobby bets
-    amount += state.lobby.reduce((acc, item) => acc + BigInt(item.bet), 0n);
+    amount += Object.values(state.lobby).reduce(
+        (acc, challenge) => acc + BigInt(challenge.bet),
+        0n,
+    );
 
     // games pots
     amount += Object.values(state.games).reduce(
@@ -86,7 +97,7 @@ export default (state: State, action: PayloadAction<ExportPayload>) => {
 
     // check permission
     if (getAddress(metadata.msg_sender) !== owner) {
-        // only current owner can transfer ownership
+        // only current owner can perform this action
         return;
     }
 
@@ -97,17 +108,17 @@ export default (state: State, action: PayloadAction<ExportPayload>) => {
     const amount = tvl(state);
 
     // create approve voucher
-    state.vouchers.push(createApproveERC20PortalVoucher(token, amount));
+    state.vouchers.push(createApproveERC20PortalVoucher([token, amount]));
 
     // create voucher to deposit (transfer) all funds to another dapp
     // this dapp state is sent as execLayerData
     state.vouchers.push(
-        createERC20DepositVoucher(token, dapp, amount, execLayerData),
+        createERC20DepositVoucher([token, dapp, amount, execLayerData]),
     );
 
     // reset state to initial state
     state.games = {};
-    state.lobby = [];
+    state.lobby = {};
     state.players = {};
     state.rake = "0";
 };

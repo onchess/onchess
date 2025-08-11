@@ -1,5 +1,5 @@
-import { RequestMetadata } from "@deroll/core";
-import { Address } from "viem";
+import type { RequestMetadata } from "@deroll/core";
+import type { Address } from "viem";
 
 /**
  * Base payload contains metadata of a Cartesi rollups request
@@ -9,10 +9,17 @@ export interface BasePayload {
 }
 
 /**
+ * Challenge payload
+ */
+export interface ChallengeBasePayload extends BasePayload {
+    address: Address;
+}
+
+/**
  * Game payload adds the address of a game
  */
 export interface GameBasePayload extends BasePayload {
-    address: string;
+    address: Address;
 }
 
 /**

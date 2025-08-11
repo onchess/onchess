@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
-import { useChainId } from "wagmi";
-import { useCapabilities } from "wagmi/experimental";
+import { useCapabilities, useChainId } from "wagmi";
 
-export const useAtomicBatchSupport = () => {
+export const useAtomicSupport = () => {
     const chainId = useChainId();
     const capabilities = useCapabilities();
     const [supported, setSupported] = useState<boolean | undefined>(undefined);
@@ -17,17 +16,22 @@ export const useAtomicBatchSupport = () => {
                 break;
             }
             case "success": {
-                if (capabilities.data && chainId) {
-                    const chainCapabilities = capabilities.data[chainId];
-                    const { atomicBatch } = chainCapabilities;
-                    setSupported(atomicBatch?.supported || false);
+                if (
+                    capabilities.data &&
+                    chainId &&
+                    (capabilities.data[chainId] || capabilities.data[0])
+                ) {
+                    const chainCapabilities =
+                        capabilities.data[chainId] || capabilities.data[0];
+                    const { atomic } = chainCapabilities || {};
+                    setSupported(atomic?.status === "supported" || false); // TODO: support ready (7702)?
                 } else {
                     setSupported(false);
                 }
                 break;
             }
         }
-    }, [capabilities.status, chainId]);
+    }, [chainId, capabilities.data, capabilities.status]);
     return { ...capabilities, supported };
 };
 
@@ -47,9 +51,10 @@ export const usePermissionsSupport = () => {
                 break;
             }
             case "success": {
-                if (capabilities.data && chainId) {
-                    const chainCapabilities = capabilities.data[chainId];
-                    const { permissions } = chainCapabilities;
+                if (capabilities.data) {
+                    const chainCapabilities =
+                        capabilities.data[chainId] || capabilities.data[0];
+                    const { permissions } = chainCapabilities || {};
                     setSupported(permissions?.supported || false);
                     setPermissionTypes(permissions?.permissionTypes || []);
                 } else {
@@ -59,7 +64,7 @@ export const usePermissionsSupport = () => {
                 break;
             }
         }
-    }, [capabilities.status, chainId]);
+    }, [chainId, capabilities.data, capabilities.status]);
     return { ...capabilities, supported, permissionTypes };
 };
 
@@ -78,9 +83,10 @@ export const usePaymasterServiceSupport = () => {
                 break;
             }
             case "success": {
-                if (capabilities.data && chainId) {
-                    const chainCapabilities = capabilities.data[chainId];
-                    const { paymasterService } = chainCapabilities;
+                if (capabilities.data) {
+                    const chainCapabilities =
+                        capabilities.data[chainId] || capabilities.data[0];
+                    const { paymasterService } = chainCapabilities || {};
                     setSupported(paymasterService?.supported || false);
                 } else {
                     setSupported(false);
@@ -88,6 +94,6 @@ export const usePaymasterServiceSupport = () => {
                 break;
             }
         }
-    }, [capabilities.status, chainId]);
+    }, [chainId, capabilities.data, capabilities.status]);
     return { ...capabilities, supported };
 };

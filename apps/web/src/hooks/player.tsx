@@ -1,6 +1,6 @@
 "use client";
 
-import { Player } from "@onchess/core";
+import type { Player } from "@onchess/core";
 import { useAccount } from "wagmi";
 import {
     selectPlayer,

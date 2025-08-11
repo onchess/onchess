@@ -1,3 +1,13 @@
 packages:
-    - "apps/*"
-    - "packages/*"
+  - apps/*
+  - packages/*
+
+onlyBuiltDependencies:
+  - "@reown/appkit"
+  - bufferutil
+  - core-js-pure
+  - esbuild
+  - keccak
+  - secp256k1
+  - sharp
+  - utf-8-validate

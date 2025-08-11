@@ -1,16 +1,15 @@
 import { createApp } from "@deroll/app";
-import { State, createChess } from "@onchess/core";
+import { type State, createChess } from "@onchess/core";
 import { getConfig } from "./config";
 
 // rollups URL
-export const url =
-    process.env.ROLLUP_HTTP_SERVER_URL || "http://127.0.0.1:8080/host-runner";
+export const baseUrl = process.env.ROLLUP_HTTP_SERVER_URL as string;
 
 // create deroll app
-const app = createApp({ url });
+const app = createApp({ baseUrl });
 
 // load configuration for the chain
-const chainId = parseInt(process.env.CHAIN_ID ?? "31337");
+const chainId = Number.parseInt(process.env.CHAIN_ID ?? "13370");
 console.log(
     `starting application for chain ${chainId} with the following configuration`,
 );
@@ -22,7 +21,7 @@ console.log(config);
 const initialState: State = {
     config,
     games: {},
-    lobby: [],
+    lobby: {},
     players: {},
     rake: "0",
     vouchers: [],

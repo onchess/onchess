@@ -1,13 +1,15 @@
-import { AdvanceRequestData, App } from "@deroll/core";
+import type { AdvanceRequestData, App } from "@deroll/core";
 import { isERC20Deposit, parseERC20Deposit } from "@deroll/wallet";
-import { Action, combineSlices, configureStore } from "@reduxjs/toolkit";
+import { type Action, combineSlices, configureStore } from "@reduxjs/toolkit";
 import { decodeFunctionData, parseAbi, stringToHex } from "viem";
-import chessSlice, { ChessSlice, Config, State } from "./index.js";
+import type { ChessSlice, Config, State } from "./index.js";
+import chessSlice from "./index.js";
 
 // game onchain API
 export const ABI = parseAbi([
     "function create(uint256 bet, string timeControl, uint32 minRating, uint32 maxRating) returns (address)",
-    "function cancel()",
+    "function cancel(address challenge)",
+    "function join(address challenge)",
     "function move(address game, string move)",
     "function resign(address game)",
     "function claim(address game)",
@@ -30,6 +32,7 @@ const makeActionCreator = (config: Config, chess: ChessSlice) => {
         claim,
         create,
         deposit,
+        join,
         move,
         resign,
         setRakeDivider,
@@ -46,7 +49,7 @@ const makeActionCreator = (config: Config, chess: ChessSlice) => {
         // handle ERC-20 deposit
         if (isERC20Deposit(data)) {
             const parsed = parseERC20Deposit(data.payload);
-            if (parsed.success && parsed.token === config.token.address) {
+            if (parsed.token === config.token.address) {
                 return deposit({
                     metadata,
                     amount: parsed.amount.toString(),
@@ -74,7 +77,8 @@ const makeActionCreator = (config: Config, chess: ChessSlice) => {
             }
 
             case "cancel": {
-                return cancel({ metadata });
+                const [address] = args;
+                return cancel({ address, metadata });
             }
 
             case "move": {
@@ -90,6 +94,11 @@ const makeActionCreator = (config: Config, chess: ChessSlice) => {
             case "claim": {
                 const [address] = args;
                 return claim({ metadata, address });
+            }
+
+            case "join": {
+                const [address] = args;
+                return join({ metadata, address });
             }
 
             case "withdraw": {
@@ -138,6 +147,8 @@ export const createChess = (app: App, initialState: State) => {
         const action = actionCreator(data);
 
         if (action) {
+            console.log(`Processing action '${action.type}'`);
+
             // keep track of vouchers before action processing
             const voucherCount = store.getState().chess.vouchers.length;
 
@@ -163,9 +174,10 @@ export const createChess = (app: App, initialState: State) => {
             }
 
             return "accept";
-        } else {
-            // if no action was created, reject the request
-            return "reject";
         }
+
+        // if no action was created, reject the request
+        console.error("Rejecting unknown action", data.payload);
+        return "reject";
     });
 };

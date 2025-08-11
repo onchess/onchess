@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
  * @param resolution how often the clock should update in milliseconds
  * @returns clock in seconds
  */
-export const useClock = (resolution: number = 1000) => {
+export const useClock = (resolution = 1000) => {
     const [clock, setClock] = useState(Math.floor(Date.now() / 1000));
     useEffect(() => {
         const interval = setInterval(() => {
@@ -13,7 +13,7 @@ export const useClock = (resolution: number = 1000) => {
             setClock(now);
         }, resolution);
         return () => clearInterval(interval);
-    }, []);
+    }, [resolution]);
     return clock;
 };
 

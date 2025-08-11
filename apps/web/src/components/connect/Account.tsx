@@ -1,12 +1,12 @@
 import { Avatar, Group, Stack, Text } from "@mantine/core";
 import Jazzicon from "@raugfer/jazzicon";
-import { FC } from "react";
-import { Address } from "viem";
+import type { FC } from "react";
+import type { Address } from "viem";
 import { AddressText } from "../AddressText";
 
 // builds an image data url for embedding
 function buildDataUrl(address: Address): string {
-    return "data:image/svg+xml;base64," + btoa(Jazzicon(address));
+    return `data:image/svg+xml;base64,${btoa(Jazzicon(address))}`;
 }
 
 export type AccountProps = {

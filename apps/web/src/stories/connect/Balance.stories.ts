@@ -1,4 +1,4 @@
-import { Token } from "@onchess/core";
+import type { Token } from "@onchess/core";
 import type { Meta, StoryObj } from "@storybook/react";
 import { Balance } from "../../components/connect/Balance";
 
@@ -55,7 +55,7 @@ export const Loading: Story = {
     },
 };
 
-export const Error: Story = {
+export const ErrorMessage: Story = {
     args: {
         error: "Error loading",
         token,

@@ -1,17 +1,22 @@
 "use client";
 
 import { Alert, Box, LoadingOverlay, Stack, Textarea } from "@mantine/core";
-import { Game, GameBasePayload, MovePiecePayload, Player } from "@onchess/core";
-import { Position } from "chess-fen";
+import type {
+    Game,
+    GameBasePayload,
+    MovePiecePayload,
+    Player,
+} from "@onchess/core";
+import type { Position } from "chess-fen";
 import { Chess } from "chess.js";
-import { FC, useEffect, useState } from "react";
+import { type FC, useEffect, useState } from "react";
 import {
-    BoardTheme,
+    type BoardTheme,
     ChessBoard,
     ChessBoardDndProvider,
-    MoveHandler,
+    type MoveHandler,
     PromotionView,
-    SquareRendererFunc,
+    type SquareRendererFunc,
     defaultRenderSquare,
 } from "react-fen-chess-board";
 import { PlayerBar } from "./PlayerBar";
@@ -28,6 +33,7 @@ export type GameboardProps = {
     player?: Player; // optional, so we can support "expectators"
     sessionExpiry?: number;
     sessionId?: string;
+    sessionSupported?: boolean;
 };
 
 export interface Promotion {
@@ -52,6 +58,7 @@ export const Gameboard: FC<GameboardProps> = (props) => {
         player,
         sessionExpiry,
         sessionId,
+        sessionSupported,
         submitting,
     } = props;
 
@@ -81,6 +88,7 @@ export const Gameboard: FC<GameboardProps> = (props) => {
 
     const [promotion, setPromotion] = useState<Promotion | null>(null);
     const [fen, setFen] = useState(chess.fen());
+    // biome-ignore lint/correctness/useExhaustiveDependencies: fen
     useEffect(() => {
         const fen = chess.fen();
         setFen(fen);
@@ -104,6 +112,7 @@ export const Gameboard: FC<GameboardProps> = (props) => {
             result={result}
             sessionExpiry={sessionExpiry}
             sessionId={sessionId}
+            sessionSupported={sessionSupported}
             time={game.whiteTime}
             turn={turn}
             updatedAt={game.updatedAt}
@@ -124,6 +133,7 @@ export const Gameboard: FC<GameboardProps> = (props) => {
             result={result}
             sessionExpiry={sessionExpiry}
             sessionId={sessionId}
+            sessionSupported={sessionSupported}
             time={game.blackTime}
             turn={turn}
             updatedAt={game.updatedAt}
@@ -162,7 +172,7 @@ export const Gameboard: FC<GameboardProps> = (props) => {
 
     // render square function that is able to handle promotions
     const renderSquare: SquareRendererFunc = (props) => {
-        if (promotion && promotion.to.equals(props.position)) {
+        if (promotion?.to?.equals(props.position)) {
             return (
                 <PromotionView
                     key={props.position.toCoordinate()}
@@ -188,7 +198,7 @@ export const Gameboard: FC<GameboardProps> = (props) => {
     };
 
     return (
-        <Stack miw={600}>
+        <Stack maw={600}>
             {error && (
                 <Alert color="red" title="Error">
                     <Textarea

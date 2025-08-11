@@ -1,6 +1,6 @@
-import { Chess } from "chess.js";
+import type { Chess } from "chess.js";
 import { getRatingDelta } from "./elo.js";
-import { Game, Player, State } from "./state.js";
+import type { Game, Player, State } from "./state.js";
 
 export const terminateGame = (
     state: State,
@@ -13,6 +13,8 @@ export const terminateGame = (
     const { eloKFactor, rakeDivider } = state.config;
 
     // adjust wins/losses/draws
+    whitePlayer.games++;
+    blackPlayer.games++;
     switch (result) {
         case 1:
             whitePlayer.wins++;
@@ -55,7 +57,8 @@ export const terminateGame = (
         0: "0-1",
         0.5: "1/2-1/2",
     };
-    game.pgn = `${chess.pgn()} ${results[result]}`;
+    chess.setHeader("Result", results[result]);
+    game.pgn = chess.pgn();
 
     // update elo
     const delta = getRatingDelta(

@@ -1,11 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { Address, getAddress } from "viem";
+import { type Address, getAddress } from "viem";
 import { createPlayer } from "./players.js";
 import {
     cancelReducer,
     claimReducer,
     createReducer,
     depositReducer,
+    joinReducer,
     moveReducer,
     resignReducer,
     setRakeDividerReducer,
@@ -15,7 +16,7 @@ import {
     withdrawRakeReducer,
     withdrawReducer,
 } from "./reducers/index.js";
-import { Game, State } from "./state.js";
+import type { Challenge, Game, State } from "./state.js";
 
 export * from "./app.js";
 export * from "./payloads.js";
@@ -28,16 +29,17 @@ const chessSlice = (initialState: State) => {
         name: "chess",
         initialState,
         reducers: {
-            deposit: depositReducer,
-            create: createReducer,
             cancel: cancelReducer,
+            claim: claimReducer,
+            create: createReducer,
+            deposit: depositReducer,
+            join: joinReducer,
             move: moveReducer,
             resign: resignReducer,
-            claim: claimReducer,
-            upgrade: upgradeReducer,
             setRakeDivider: setRakeDividerReducer,
             shutdown: shutdownReducer,
             transferOwnership: transferOwnershipReducer,
+            upgrade: upgradeReducer,
             withdraw: withdrawReducer,
             withdrawRake: withdrawRakeReducer,
         },
@@ -45,19 +47,28 @@ const chessSlice = (initialState: State) => {
             selectLobby: (state) => state.lobby,
             selectPlayer: (state, address?: Address) =>
                 address
-                    ? state.players[getAddress(address)] ??
-                      createPlayer(address)
+                    ? (state.players[getAddress(address)] ??
+                      createPlayer(address))
                     : undefined,
             selectPlayerState: (state, address?: Address) => {
                 const player = address
-                    ? state.players[getAddress(address)] ??
-                      createPlayer(address)
+                    ? (state.players[getAddress(address)] ??
+                      createPlayer(address))
                     : undefined;
                 const lobby = address
-                    ? state.lobby.filter(
-                          (item) => item.player === getAddress(address),
-                      )
-                    : [];
+                    ? Object.values(state.lobby)
+                          .filter(
+                              (challenge) =>
+                                  challenge.player === getAddress(address),
+                          )
+                          .reduce<Record<Address, Challenge>>(
+                              (acc, challenge) => {
+                                  acc[challenge.address] = challenge;
+                                  return acc;
+                              },
+                              {},
+                          )
+                    : {};
                 const games = address
                     ? Object.values(state.games)
                           .filter(

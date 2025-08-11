@@ -1,4 +1,3 @@
-import hardhatDeploy from "@sunodo/wagmi-plugin-hardhat-deploy";
 import { defineConfig } from "@wagmi/cli";
 import { react } from "@wagmi/cli/plugins";
 import { erc20Abi } from "viem";
@@ -11,10 +10,5 @@ export default defineConfig({
             name: "erc20",
         },
     ],
-    plugins: [
-        hardhatDeploy({
-            directory: "node_modules/@cartesi/rollups/export/abi",
-        }),
-        react(),
-    ],
+    plugins: [react()],
 });

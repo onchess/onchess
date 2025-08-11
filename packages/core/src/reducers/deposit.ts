@@ -1,8 +1,8 @@
-import { PayloadAction } from "@reduxjs/toolkit";
+import type { PayloadAction } from "@reduxjs/toolkit";
 import { getAddress } from "viem";
-import { DepositPayload } from "../payloads.js";
+import type { DepositPayload } from "../payloads.js";
 import { getPlayer } from "../players.js";
-import { State } from "../state.js";
+import type { State } from "../state.js";
 import { sum } from "../util.js";
 
 export default (state: State, action: PayloadAction<DepositPayload>) => {

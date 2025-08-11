@@ -1,6 +1,13 @@
-import { Avatar, Badge, BadgeProps, Group, Loader, Text } from "@mantine/core";
-import { Token } from "@onchess/core";
-import { FC } from "react";
+import {
+    Avatar,
+    Badge,
+    type BadgeProps,
+    Group,
+    Loader,
+    Text,
+} from "@mantine/core";
+import type { Token } from "@onchess/core";
+import type { FC } from "react";
 import { formatUnits } from "viem";
 import classes from "./Balance.module.css";
 
@@ -13,9 +20,9 @@ export type BalanceProps = BadgeProps & {
 };
 
 export const Balance: FC<BalanceProps> = (props) => {
-    const { balance, error, loading, token, ...badgeProps } = props;
+    const { balance, error, iconPosition, loading, token, ...badgeProps } =
+        props;
     const c = balance === "0" ? "dimmed" : undefined;
-    const iconPosition = props.iconPosition || "left";
 
     return (
         <Badge
@@ -40,7 +47,7 @@ export const Balance: FC<BalanceProps> = (props) => {
             }
         >
             {balance && (
-                <Group align="baseline" gap={2}>
+                <Group align="baseline" gap={2} wrap="nowrap">
                     <Text size="lg" c={c} fw={800}>
                         {formatUnits(BigInt(balance), token.decimals)}
                     </Text>

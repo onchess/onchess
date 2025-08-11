@@ -4,54 +4,58 @@ import {
     Alert,
     Button,
     Group,
+    NativeSelect,
     Paper,
-    PaperProps,
-    RangeSlider,
-    SegmentedControl,
+    type PaperProps,
     Stack,
     Text,
     Textarea,
 } from "@mantine/core";
-import { CreateGamePayload, INITIAL_RATING, Player } from "@onchess/core";
+import {
+    type CreateGamePayload,
+    INITIAL_RATING,
+    type Player,
+    type Token,
+} from "@onchess/core";
 import { IconClock, IconCoin, IconStar } from "@tabler/icons-react";
-import { FC, useState } from "react";
+import { type FC, useState } from "react";
 import { formatUnits, parseUnits } from "viem";
 import { formatTimeControl } from "../util/format";
 
 export interface CreateGameProps extends PaperProps {
     error?: string;
     player?: Player;
-    decimals: number;
     executing: boolean;
-    symbol: string;
-    onConnect?: () => {};
+    onConnect?: () => void;
     onCreate: (params: Omit<CreateGamePayload, "metadata">) => void;
+    onDeposit?: (amount: string) => void;
+    token: Token;
 }
 
-export const timeControls = ["1500", "2700", "1500+10", "2700+10"];
+export const timeControls = ["604800", "2419200"];
 
 export const CreateGame: FC<CreateGameProps> = (props) => {
     const {
-        decimals,
         executing,
         error,
         onConnect,
         onCreate,
+        onDeposit,
         player,
-        symbol,
+        token,
         ...otherProps
     } = props;
+    const { decimals } = token;
 
     // player balance
     const balance = player ? BigInt(player.balance) : undefined;
 
     // possible bets
-    const bets = ["0.5", "1", "5"].map((v) => parseUnits(v, decimals));
-    const betFormat = (value: bigint) => (
-        <Text>
-            {formatUnits(value, decimals)} {symbol}
-        </Text>
-    );
+    const bets = ["0", "0.5", "1", "5"].map((v) => parseUnits(v, decimals));
+    const betFormat = (value: bigint) =>
+        value === 0n
+            ? "No bet"
+            : `${formatUnits(value, decimals)} ${token.symbol}`;
 
     // bet
     const [bet, setBet] = useState(bets[0].toString());
@@ -61,61 +65,101 @@ export const CreateGame: FC<CreateGameProps> = (props) => {
 
     // opponent rating
     const playerRating = player ? player.rating : INITIAL_RATING;
-    const minRating = Math.max(0, playerRating - 300);
-    const maxRating = Math.min(3000, playerRating + 300);
-    const [rating, setRating] = useState<[number, number]>([
-        minRating,
-        maxRating,
-    ]);
+    const step = 50;
+    const defaultRangeSteps = 10;
+    const ratings = Array.from({ length: 3000 / step + 1 }, (_, i) => i * step);
+    const playerRoundedRating = Math.round(playerRating / step) * step;
+    const initialMinRating = Math.max(
+        0,
+        playerRoundedRating - (defaultRangeSteps / 2) * step,
+    );
+    const initialMaxRating = Math.min(
+        3000,
+        playerRoundedRating + (defaultRangeSteps / 2) * step,
+    );
+    const [minRating, setMinRating] = useState(initialMinRating);
+    const [maxRating, setMaxRating] = useState(initialMaxRating);
+
+    const insufficientBalance =
+        player && balance !== undefined && BigInt(bet) > balance;
 
     return (
-        <Paper {...otherProps} p={20} withBorder>
-            <Stack justify="space-around" gap={30}>
-                <Stack gap={5}>
+        <Paper {...otherProps} p={20} withBorder shadow="md">
+            <Stack justify="space-between" h="100%">
+                <Group justify="space-between">
                     <Group gap={5}>
                         <IconCoin size={16} />
                         <Text fw={800}>Bet</Text>
                     </Group>
-                    <SegmentedControl
-                        value={bet}
-                        onChange={setBet}
+                    <NativeSelect
                         data={bets.map((v) => ({
                             value: v.toString(),
                             label: betFormat(v),
                         }))}
+                        onChange={(event) => setBet(event.target.value)}
+                        value={bet}
+                        error={insufficientBalance && "Insufficient balance"}
                     />
-                </Stack>
-                <Stack gap={5}>
+                </Group>
+                <Group justify="space-between">
                     <Group gap={5}>
                         <IconClock size={16} />
                         <Text fw={800}>Time Control</Text>
                     </Group>
-                    <SegmentedControl
-                        value={timeControl}
-                        onChange={setTimeControl}
+                    <NativeSelect
                         data={timeControls.map((value) => ({
                             value,
                             label: formatTimeControl(value),
                         }))}
+                        onChange={(event) => setTimeControl(event.target.value)}
+                        value={timeControl}
                     />
-                </Stack>
-                <Stack gap={5}>
+                </Group>
+                <Group justify="space-between">
                     <Group gap={5}>
                         <IconStar size={16} />
-                        <Text fw={800}>Opponent Rating</Text>
+                        <Text fw={800}>Opponent</Text>
                     </Group>
-                    <RangeSlider
-                        mt={40}
-                        min={0}
-                        max={3000}
-                        minRange={200}
-                        precision={0}
-                        step={10}
-                        value={rating}
-                        onChange={setRating}
-                        labelAlwaysOn
-                    />
-                </Stack>
+                    <Group gap={5}>
+                        <NativeSelect
+                            name="minRating"
+                            data={ratings.map((value) => ({
+                                value: value.toString(),
+                                label: value.toString(),
+                            }))}
+                            value={minRating.toString()}
+                            onChange={(event) => {
+                                const value = Number(event.target.value);
+                                setMinRating(value);
+                                setMaxRating(
+                                    Math.max(
+                                        Math.min(value + step, 3000),
+                                        maxRating,
+                                    ),
+                                );
+                            }}
+                        />
+                        <Text>to</Text>
+                        <NativeSelect
+                            name="maxRating"
+                            data={ratings.map((value) => ({
+                                value: value.toString(),
+                                label: value.toString(),
+                            }))}
+                            value={maxRating.toString()}
+                            onChange={(event) => {
+                                const value = Number(event.target.value);
+                                setMaxRating(value);
+                                setMinRating(
+                                    Math.min(
+                                        Math.max(value - step, 0),
+                                        minRating,
+                                    ),
+                                );
+                            }}
+                        />
+                    </Group>
+                </Group>
                 {error && (
                     <Alert color="red" title="Error">
                         <Textarea
@@ -126,33 +170,33 @@ export const CreateGame: FC<CreateGameProps> = (props) => {
                         />
                     </Alert>
                 )}
-                <Group>
-                    {player &&
-                        balance !== undefined &&
-                        BigInt(bet) <= balance && (
-                            <Button
-                                loading={executing}
-                                onClick={() => {
-                                    onCreate({
-                                        bet,
-                                        timeControl,
-                                        minRating: rating[0],
-                                        maxRating: rating[1],
-                                    });
-                                }}
-                            >
-                                Play
-                            </Button>
-                        )}
-                    {player &&
-                        balance !== undefined &&
-                        BigInt(bet) > balance && (
-                            <Button disabled>Insufficient balance</Button>
-                        )}
-                    {!player && onConnect && (
-                        <Button onClick={onConnect}>Connect</Button>
-                    )}
-                </Group>
+                {player && balance !== undefined && BigInt(bet) <= balance && (
+                    <Button
+                        loading={executing}
+                        onClick={() => {
+                            onCreate({
+                                bet,
+                                timeControl,
+                                minRating,
+                                maxRating,
+                            });
+                        }}
+                    >
+                        Create Game
+                    </Button>
+                )}
+                {insufficientBalance && (
+                    <Group justify="space-evenly" grow>
+                        <Button onClick={() => onDeposit?.(bet)}>
+                            Deposit
+                        </Button>
+                    </Group>
+                )}
+                {!player && (
+                    <Button onClick={onConnect} loading={executing}>
+                        Connect
+                    </Button>
+                )}
             </Stack>
         </Paper>
     );

@@ -1,18 +1,33 @@
 "use client";
 
-import { Badge, BadgeProps } from "@mantine/core";
-import { FC } from "react";
+import { Badge, type BadgeProps } from "@mantine/core";
+import humanizeDuration from "humanize-duration";
+import type { FC } from "react";
+
+const timeHumanizer = humanizeDuration.humanizer({
+    delimiter: " ",
+    language: "shortEn",
+    languages: {
+        shortEn: {
+            y: () => "y",
+            mo: () => "mo",
+            w: () => "w",
+            d: () => "d",
+            h: () => "h",
+            m: () => "m",
+            s: () => "s",
+            ms: () => "ms",
+        },
+    },
+    spacer: "",
+});
 
 /**
  * Format seconds to "minutes:seconds"
  * @param seconds number of seconds
  * @returns string formatted as "minutes:seconds"
  */
-const format = (seconds: number) => {
-    const minutes = Math.floor(seconds / 60);
-    const secondsRemainder = seconds % 60;
-    return `${minutes}:${secondsRemainder.toString().padStart(2, "0")}`;
-};
+const format = (seconds: number) => timeHumanizer(seconds * 1000);
 
 export interface ClockProps extends BadgeProps {
     active: boolean; // running or paused
@@ -36,7 +51,12 @@ export const Clock: FC<ClockProps> = (props) => {
         seconds < 20 ? (seconds > 0 ? "red" : "lightgray") : undefined;
 
     return (
-        <Badge {...badgeProps} variant={active ? "dot" : "default"} c={color}>
+        <Badge
+            {...badgeProps}
+            variant={active ? "dot" : "default"}
+            c={color}
+            style={{ textTransform: "none" }}
+        >
             {str}
         </Badge>
     );

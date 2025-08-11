@@ -5,16 +5,15 @@
         "build": "turbo build",
         "dev": "turbo dev",
         "lint": "turbo lint",
-        "format": "prettier --write \"**/*.{ts,tsx,md}\""
+        "test": "turbo test"
     },
     "devDependencies": {
-        "@repo/eslint-config": "workspace:*",
+        "@biomejs/biome": "^2.1.4",
         "@repo/typescript-config": "workspace:*",
-        "prettier": "^3.3.2",
-        "turbo": "^2.0.5"
+        "turbo": "^2.5.5"
     },
-    "packageManager": "pnpm@9.4.0",
+    "packageManager": "pnpm@10.14.0",
     "engines": {
-        "node": ">=18"
+        "node": ">=20"
     }
 }
