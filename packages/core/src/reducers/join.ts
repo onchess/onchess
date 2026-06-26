@@ -12,11 +12,12 @@ import { formatToPGNDate, hexToFraction } from "../util.js";
 export default (state: State, action: PayloadAction<ChallengeBasePayload>) => {
     // join game
     const { address, metadata } = action.payload;
-    const { input_index, block_timestamp } = metadata;
-    const msg_sender = getAddress(metadata.msg_sender);
+    const { index } = metadata;
+    const blockTimestamp = Number(metadata.blockTimestamp);
+    const msgSender = getAddress(metadata.msgSender);
 
     // get player
-    const player = getPlayer(state, msg_sender);
+    const player = getPlayer(state, msgSender);
 
     // get challenge
     const challenge = state.lobby[address];
@@ -24,7 +25,7 @@ export default (state: State, action: PayloadAction<ChallengeBasePayload>) => {
     if (!challenge) {
         player.message = createError({
             text: "Challenge not found",
-            timestamp: block_timestamp,
+            timestamp: blockTimestamp,
         });
         return;
     }
@@ -39,7 +40,7 @@ export default (state: State, action: PayloadAction<ChallengeBasePayload>) => {
         // player don't have enough funds
         player.message = createError({
             text: "Not enough funds",
-            timestamp: block_timestamp,
+            timestamp: blockTimestamp,
         });
         return;
     }
@@ -50,7 +51,7 @@ export default (state: State, action: PayloadAction<ChallengeBasePayload>) => {
     // calculate game address
     const gameAddress = getAddress(
         slice(
-            keccak256(concat([numberToHex(input_index), msg_sender, opponent])),
+            keccak256(concat([numberToHex(index), msgSender, opponent])),
             0,
             20,
         ),
@@ -59,8 +60,8 @@ export default (state: State, action: PayloadAction<ChallengeBasePayload>) => {
     // "random" color assignment
     // XXX: not really random, predictable, but that's ok
     const starter = hexToFraction(address);
-    const white = starter > 0.5 ? msg_sender : opponent;
-    const black = starter > 0.5 ? opponent : msg_sender;
+    const white = starter > 0.5 ? msgSender : opponent;
+    const black = starter > 0.5 ? opponent : msgSender;
 
     // create new chess.js game
     const chess = new Chess();
@@ -68,7 +69,7 @@ export default (state: State, action: PayloadAction<ChallengeBasePayload>) => {
     chess.setHeader("Black", black);
     chess.setHeader("Event", "Casual Game");
     chess.setHeader("Site", "OnChess.xyz");
-    chess.setHeader("Date", formatToPGNDate(metadata.block_timestamp * 1000));
+    chess.setHeader("Date", formatToPGNDate(blockTimestamp * 1000));
 
     // calculate initial clock
     const time = startTime(timeControl);
@@ -76,7 +77,7 @@ export default (state: State, action: PayloadAction<ChallengeBasePayload>) => {
     // create game object
     const game: Game = {
         address: gameAddress,
-        updatedAt: block_timestamp,
+        updatedAt: blockTimestamp,
         white,
         black,
         whiteTime: time,

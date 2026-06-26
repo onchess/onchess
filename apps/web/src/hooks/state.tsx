@@ -47,7 +47,7 @@ export const useLatestState = (pollInterval = 2000): StateResponse => {
     useEffect(() => {
         if (outputs && outputs.data.length > 0) {
             const firstNotice = outputs.data[0];
-            if (firstNotice.decodedData.type === "Notice") {
+            if (firstNotice.decodedData?.type === "Notice") {
                 const payload = firstNotice.decodedData.payload;
                 const str = hexToString(payload);
                 const obj = JSON.parse(str);

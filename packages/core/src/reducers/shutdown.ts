@@ -13,7 +13,7 @@ export default (state: State, action: PayloadAction<BasePayload>) => {
     const owner = state.config.owner;
 
     // check permission
-    if (getAddress(metadata.msg_sender) !== owner) {
+    if (getAddress(metadata.msgSender) !== owner) {
         // only current owner can perform this action
         return;
     }

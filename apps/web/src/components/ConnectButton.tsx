@@ -13,8 +13,6 @@ export type ConnectButtonProps = {
     isConnected: boolean;
     isConnecting: boolean;
     onConnect: () => void;
-    onLogin?: () => void;
-    onRegister?: () => void;
     onDisconnect: () => void;
     token?: Token;
 };
@@ -26,8 +24,6 @@ export const ConnectButton: FC<ConnectButtonProps> = (props) => {
         isConnecting,
         isConnected,
         onConnect,
-        onLogin,
-        onRegister,
         onDisconnect,
         token,
     } = props;
@@ -36,33 +32,15 @@ export const ConnectButton: FC<ConnectButtonProps> = (props) => {
 
     return (
         <>
-            {!isConnected &&
-                (onLogin && onRegister ? (
-                    <>
-                        <Button
-                            disabled={isConnecting}
-                            loading={isConnecting}
-                            onClick={onRegister}
-                        >
-                            Signup
-                        </Button>
-                        <Button
-                            disabled={isConnecting}
-                            loading={isConnecting}
-                            onClick={onLogin}
-                        >
-                            Login
-                        </Button>
-                    </>
-                ) : (
-                    <Button
-                        disabled={isConnecting}
-                        loading={isConnecting}
-                        onClick={onConnect}
-                    >
-                        Connect
-                    </Button>
-                ))}
+            {!isConnected && (
+                <Button
+                    disabled={isConnecting}
+                    loading={isConnecting}
+                    onClick={onConnect}
+                >
+                    Connect
+                </Button>
+            )}
             {address && token && (
                 <ConnectedButton
                     address={address}

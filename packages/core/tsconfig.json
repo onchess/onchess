@@ -1,8 +1,12 @@
 {
-    "extends": "@tsconfig/node20/tsconfig.json",
+    "extends": "@tsconfig/node24/tsconfig.json",
     "compilerOptions": {
         "lib": ["es2023", "dom"],
         "declaration": true,
-        "outDir": "dist"
+        "outDir": "dist",
+        // tsup injects the (now-deprecated) `baseUrl` option when generating
+        // declarations; TypeScript 6 turns that into a hard error (TS5101)
+        // without this acknowledgement. Remove once tsup stops setting baseUrl.
+        "ignoreDeprecations": "6.0"
     }
 }

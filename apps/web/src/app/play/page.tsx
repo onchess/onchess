@@ -13,7 +13,7 @@ import { createPlayer } from "@onchess/core";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { type Address, getAddress } from "viem";
-import { useAccount, useConnect, useDisconnect } from "wagmi";
+import { useAccount } from "wagmi";
 import { Gameboard } from "../../components/Gameboard";
 import { Shell } from "../../components/navigation/Shell";
 import { Lobby } from "../../components/play/Lobby";
@@ -23,7 +23,7 @@ import { useClock } from "../../hooks/clock";
 import { useApplicationAddress } from "../../hooks/config";
 import { useSessionId } from "../../hooks/session";
 import { useLatestState } from "../../hooks/state";
-import { usePasskeyConnect } from "../../providers/wallet/zerodev/usePasskeyConnect";
+import { useWalletConnect } from "../../providers/wallet/useWalletConnect";
 
 const selectPlayerState = (state: State, address?: Address) => {
     const player = address
@@ -56,10 +56,7 @@ const Play = () => {
 
     // connection
     const { address, isConnected } = useAccount();
-    const { connect, connectors } = useConnect();
-    const { login, register, isPending: isConnecting } = usePasskeyConnect();
-    const handleConnect = () => connect({ connector: connectors[0] });
-    const { disconnect } = useDisconnect();
+    const { connect, disconnect, isConnecting } = useWalletConnect();
 
     const playerState = state
         ? selectPlayerState(state, address)
@@ -171,9 +168,7 @@ const Play = () => {
             address={address}
             isConnected={isConnected}
             isConnecting={isConnecting}
-            onConnect={handleConnect}
-            onLogin={() => login?.({ passkeyName: "OnChess" })}
-            onRegister={() => register?.({ passkeyName: "OnChess" })}
+            onConnect={connect}
             onDisconnect={disconnect}
             player={playerState.player}
             token={token}
@@ -209,7 +204,7 @@ const Play = () => {
                             executing={callsStatus.isLoading || isConnecting}
                             lobby={Object.values(state?.lobby ?? {})}
                             onCancel={handleCancel}
-                            onConnect={handleConnect}
+                            onConnect={connect}
                             onCreate={handleCreate}
                             onDeposit={handleDeposit}
                             onJoin={handleJoin}

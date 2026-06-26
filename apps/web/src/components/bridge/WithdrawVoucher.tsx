@@ -14,7 +14,7 @@ export type WithdrawVoucherProps = {
 export const WithdrawVoucher: FC<WithdrawVoucherProps> = (props) => {
     const { executing, onExecute, token, voucher } = props;
     if (
-        voucher.decodedData.type === "Voucher" &&
+        voucher.decodedData?.type === "Voucher" &&
         getAddress(voucher.decodedData.destination) ===
             getAddress(token.address)
     ) {

@@ -1,7 +1,8 @@
 "use client";
 import { createPlayer } from "@onchess/core";
 import { getAddress } from "viem";
-import { useAccount, useConnect, useDisconnect } from "wagmi";
+import { useAccount } from "wagmi";
+import { useWalletConnect } from "../../providers/wallet/useWalletConnect";
 import { Leaderboard } from "../../components/Leaderboard";
 import { Shell } from "../../components/navigation/Shell";
 import { useLatestState } from "../../hooks/state";
@@ -12,9 +13,7 @@ export default function LeaderboardPage() {
 
     // connection
     const { address, isConnected } = useAccount();
-    const { connect, connectors, isPending: isConnecting } = useConnect();
-    const { disconnect } = useDisconnect();
-    const handleConnect = () => connect({ connector: connectors[0] });
+    const { connect, disconnect, isConnecting } = useWalletConnect();
 
     const player = address
         ? state?.players
@@ -28,7 +27,7 @@ export default function LeaderboardPage() {
             address={address}
             isConnecting={isConnecting}
             isConnected={isConnected}
-            onConnect={handleConnect}
+            onConnect={connect}
             onDisconnect={disconnect}
             player={player}
             token={token}

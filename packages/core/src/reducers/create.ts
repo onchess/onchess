@@ -8,17 +8,18 @@ import { isValid } from "../time.js";
 
 export default (state: State, action: PayloadAction<CreateGamePayload>) => {
     const { metadata } = action.payload;
-    const { input_index, block_timestamp } = metadata;
-    const msg_sender = getAddress(metadata.msg_sender);
+    const { index } = metadata;
+    const blockTimestamp = Number(metadata.blockTimestamp);
+    const msgSender = getAddress(metadata.msgSender);
 
     // get player (add player if not exists)
-    const player = getPlayer(state, msg_sender);
+    const player = getPlayer(state, msgSender);
 
     // deny if application is shutdown
     if (state.isShutdown) {
         player.message = createError({
             text: "Application is shutdown",
-            timestamp: block_timestamp,
+            timestamp: blockTimestamp,
         });
         return;
     }
@@ -32,7 +33,7 @@ export default (state: State, action: PayloadAction<CreateGamePayload>) => {
     if (!isValid(timeControl)) {
         player.message = createError({
             text: `Invalid time control: ${timeControl}`,
-            timestamp: block_timestamp,
+            timestamp: blockTimestamp,
         });
         return;
     }
@@ -44,7 +45,7 @@ export default (state: State, action: PayloadAction<CreateGamePayload>) => {
         // player don't have enough funds
         player.message = createError({
             text: "Not enough funds",
-            timestamp: block_timestamp,
+            timestamp: blockTimestamp,
         });
         return;
     }
@@ -54,15 +55,15 @@ export default (state: State, action: PayloadAction<CreateGamePayload>) => {
 
     // calculate lobby address
     const address = getAddress(
-        slice(keccak256(concat([numberToHex(input_index), msg_sender])), 0, 20)
+        slice(keccak256(concat([numberToHex(index), msgSender])), 0, 20)
     );
 
     // create challenge
     const challenge: Challenge = {
         address,
         bet: bet.toString(),
-        createdAt: block_timestamp,
-        player: msg_sender,
+        createdAt: blockTimestamp,
+        player: msgSender,
         timeControl,
         minRating,
         maxRating,

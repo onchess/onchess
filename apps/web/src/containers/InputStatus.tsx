@@ -17,7 +17,7 @@ export const InputStatus: FC<{
         retryDelay: 2000,
     });
     return (
-        <Collapse in={!isSuccess}>
+        <Collapse expanded={!isSuccess}>
             <InputStatusComponent inputIndex={inputIndex} message={message} />
         </Collapse>
     );

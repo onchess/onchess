@@ -19,6 +19,9 @@ const dateFormatter = new Intl.DateTimeFormat(undefined, {
 export const ERC20Voucher: FC<ERC20VoucherProps> = (props) => {
     const { executing, onExecute, token, voucher } = props;
     const { createdAt, executable, executed, decodedData } = voucher;
+    if (decodedData?.type !== "Voucher") {
+        return null;
+    }
     const { payload } = decodedData;
 
     const { functionName, args } = decodeFunctionData({

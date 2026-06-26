@@ -1,7 +1,8 @@
 "use client";
 import { createPlayer } from "@onchess/core";
 import { getAddress } from "viem";
-import { useAccount, useConnect, useDisconnect } from "wagmi";
+import { useAccount } from "wagmi";
+import { useWalletConnect } from "../../providers/wallet/useWalletConnect";
 import { Games } from "../../components/Games";
 import { Shell } from "../../components/navigation/Shell";
 import { useClock } from "../../hooks/clock";
@@ -14,9 +15,7 @@ export default function WatchPage() {
 
     // connection
     const { address, isConnected } = useAccount();
-    const { connect, connectors, isPending: isConnecting } = useConnect();
-    const { disconnect } = useDisconnect();
-    const handleConnect = () => connect({ connector: connectors[0] });
+    const { connect, disconnect, isConnecting } = useWalletConnect();
 
     const player = address
         ? state?.players
@@ -30,7 +29,7 @@ export default function WatchPage() {
             address={address}
             isConnecting={isConnecting}
             isConnected={isConnected}
-            onConnect={handleConnect}
+            onConnect={connect}
             onDisconnect={disconnect}
             player={player}
             token={token}

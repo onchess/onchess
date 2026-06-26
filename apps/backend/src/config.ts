@@ -1,5 +1,6 @@
+import { cartesi } from "@cartesi/viem/chains";
 import type { Config } from "@onchess/core";
-import { base, baseSepolia, cannon } from "viem/chains";
+import { base, baseSepolia } from "viem/chains";
 
 const rakeDivider = 20; // (divider) 5%
 const eloKFactor = 20;
@@ -27,15 +28,15 @@ const configs: Record<number, Config> = {
             symbol: "USDC",
         },
     },
-    [cannon.id]: {
+    [cartesi.id]: {
         eloKFactor,
         rakeDivider,
         owner: "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC", // anvil default account 2
         token: {
-            address: "0xFBdB734EF6a23aD76863CbA6f10d0C5CBBD8342C", // TestToken
+            address: "0x88A2120B7068E78692C8fd12E751d610B6377E4d", // TestToken
             decimals: 18,
-            name: "Test",
-            symbol: "TEST",
+            name: "Fungible",
+            symbol: "FUN",
         },
     },
 };

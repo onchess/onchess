@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import type { Address } from "viem";
 import { erc20Abi, getAddress } from "viem";
-import { useAccount, useConnect, useDisconnect, useReadContracts } from "wagmi";
+import { useAccount, useReadContracts } from "wagmi";
 import { Bridge } from "../../components/bridge/Bridge";
 import { Shell } from "../../components/navigation/Shell";
 import { InputStatus } from "../../containers/InputStatus";
@@ -15,7 +15,7 @@ import { useApplicationAddress } from "../../hooks/config";
 import { useLatestState } from "../../hooks/state";
 import { type ExecutableVoucher, useVouchers } from "../../hooks/voucher";
 import { extractChain } from "../../providers/wallet";
-import { usePasskeyConnect } from "../../providers/wallet/zerodev/usePasskeyConnect";
+import { useWalletConnect } from "../../providers/wallet/useWalletConnect";
 import { destination, transferTo } from "../../util/voucher";
 
 const BridgePage = () => {
@@ -32,10 +32,7 @@ const BridgePage = () => {
 
     // connection
     const { address, isConnected } = useAccount();
-    const { connect, connectors } = useConnect();
-    const { login, register, isPending: isConnecting } = usePasskeyConnect();
-    const { disconnect } = useDisconnect();
-    const handleConnect = () => connect({ connector: connectors[0] });
+    const { connect, disconnect, isConnecting } = useWalletConnect();
 
     // paymaster configuration
     const paymasterUrl = process.env.NEXT_PUBLIC_PAYMASTER_URL;
@@ -146,9 +143,7 @@ const BridgePage = () => {
             address={address}
             isConnecting={isConnecting}
             isConnected={isConnected}
-            onConnect={handleConnect}
-            onLogin={() => login?.({ passkeyName: "OnChess" })}
-            onRegister={() => register?.({ passkeyName: "OnChess" })}
+            onConnect={connect}
             onDisconnect={disconnect}
             player={player}
             token={token}
@@ -176,7 +171,7 @@ const BridgePage = () => {
                         initialWithdrawAmount={withdrawAmount}
                         onApprove={handleApprove}
                         onApproveAndDeposit={handleApproveAndDeposit}
-                        onConnect={handleConnect}
+                        onConnect={connect}
                         onDeposit={handleDeposit}
                         onExecuteVoucher={handleExecuteVoucher}
                         onWithdraw={handleWithdraw}

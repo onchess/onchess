@@ -11,12 +11,12 @@ import { parseTimeControl } from "../time.js";
 export default (state: State, action: PayloadAction<MovePiecePayload>) => {
     // move a piece
     const { metadata } = action.payload;
-    const { block_timestamp } = metadata;
-    const msg_sender = getAddress(metadata.msg_sender);
+    const blockTimestamp = Number(metadata.blockTimestamp);
+    const msgSender = getAddress(metadata.msgSender);
     const { address, move } = action.payload;
 
     // get player
-    const player = getPlayer(state, msg_sender);
+    const player = getPlayer(state, msgSender);
 
     // get game
     const game = state.games[getAddress(address)];
@@ -24,16 +24,16 @@ export default (state: State, action: PayloadAction<MovePiecePayload>) => {
         // game not found
         player.message = createError({
             text: `Game not found: ${address}`,
-            timestamp: block_timestamp,
+            timestamp: blockTimestamp,
         });
         return;
     }
 
     // check player access
-    if (msg_sender !== game.white && msg_sender !== game.black) {
+    if (msgSender !== game.white && msgSender !== game.black) {
         player.message = createError({
             text: `Unauthorized game: ${address}`,
-            timestamp: block_timestamp,
+            timestamp: blockTimestamp,
         });
         return;
     }
@@ -46,7 +46,7 @@ export default (state: State, action: PayloadAction<MovePiecePayload>) => {
     if (chess.isGameOver()) {
         player.message = createError({
             text: "Game is already over",
-            timestamp: block_timestamp,
+            timestamp: blockTimestamp,
         });
         return;
     }
@@ -54,23 +54,23 @@ export default (state: State, action: PayloadAction<MovePiecePayload>) => {
     // check players turn
     const turn = chess.turn();
     if (
-        (turn === "w" && msg_sender !== game.white) ||
-        (turn === "b" && msg_sender !== game.black)
+        (turn === "w" && msgSender !== game.white) ||
+        (turn === "b" && msgSender !== game.black)
     ) {
         player.message = createError({
             text: "Not your turn",
-            timestamp: block_timestamp,
+            timestamp: blockTimestamp,
         });
         return;
     }
 
     // check time control
-    const elapsedTime = block_timestamp - game.updatedAt;
+    const elapsedTime = blockTimestamp - game.updatedAt;
     const timeLeft = turn === "w" ? game.whiteTime : game.blackTime;
     if (elapsedTime > timeLeft) {
         player.message = createError({
             text: "Out of time",
-            timestamp: block_timestamp,
+            timestamp: blockTimestamp,
         });
 
         // give victory to opponent
@@ -87,13 +87,13 @@ export default (state: State, action: PayloadAction<MovePiecePayload>) => {
     } catch {
         player.message = createError({
             text: `Invalid move: ${move}`,
-            timestamp: block_timestamp,
+            timestamp: blockTimestamp,
         });
         return;
     }
 
     // update game timestamp
-    game.updatedAt = block_timestamp;
+    game.updatedAt = blockTimestamp;
 
     // update player clock
     const [_, extraMoveTime] = parseTimeControl(game.timeControl);

@@ -2,14 +2,11 @@ import { createApp } from "@deroll/app";
 import { type State, createChess } from "@onchess/core";
 import { getConfig } from "./config";
 
-// rollups URL
-export const baseUrl = process.env.ROLLUP_HTTP_SERVER_URL as string;
-
 // create deroll app
-const app = createApp({ baseUrl });
+const app = createApp();
 
 // load configuration for the chain
-const chainId = Number.parseInt(process.env.CHAIN_ID ?? "13370");
+const chainId = Number.parseInt(process.env.CHAIN_ID ?? "31337");
 console.log(
     `starting application for chain ${chainId} with the following configuration`,
 );

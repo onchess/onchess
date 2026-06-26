@@ -7,11 +7,11 @@ import type {
 import { type Address, decodeFunctionData, erc20Abi, getAddress } from "viem";
 
 export const destination = (token: Address) => (output: Output) =>
-    output.decodedData.type === "Voucher" &&
+    output.decodedData?.type === "Voucher" &&
     getAddress(output.decodedData.destination) === getAddress(token);
 
 export const transferTo = (recipient: Address) => (output: Output) => {
-    if (output.decodedData.type !== "Voucher") {
+    if (output.decodedData?.type !== "Voucher") {
         return false;
     }
     try {

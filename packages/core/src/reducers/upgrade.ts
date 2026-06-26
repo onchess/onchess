@@ -31,7 +31,6 @@ const createERC20DepositVoucher = (
     // create voucher to deposit ERC20 to portal
     return {
         destination: erc20PortalAddress,
-        value: "0x",
         payload: call,
     };
 };
@@ -51,7 +50,6 @@ const createApproveERC20PortalVoucher = (
     // create voucher to approve deposit by erc20PortalAddress
     return {
         destination: token,
-        value: "0x",
         payload: call,
     };
 };
@@ -96,7 +94,7 @@ export default (state: State, action: PayloadAction<ExportPayload>) => {
     const owner = state.config.owner;
 
     // check permission
-    if (getAddress(metadata.msg_sender) !== owner) {
+    if (getAddress(metadata.msgSender) !== owner) {
         // only current owner can perform this action
         return;
     }

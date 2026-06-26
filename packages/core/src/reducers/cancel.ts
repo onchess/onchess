@@ -9,11 +9,11 @@ import { sum } from "../util.js";
 export default (state: State, action: PayloadAction<ChallengeBasePayload>) => {
     // leave lobby
     const { address, metadata } = action.payload;
-    const { block_timestamp } = metadata;
-    const msg_sender = getAddress(metadata.msg_sender);
+    const blockTimestamp = Number(metadata.blockTimestamp);
+    const msgSender = getAddress(metadata.msgSender);
 
     // get player
-    const player = getPlayer(state, msg_sender);
+    const player = getPlayer(state, msgSender);
 
     // get challenge
     const challenge = state.lobby[address];
@@ -21,7 +21,7 @@ export default (state: State, action: PayloadAction<ChallengeBasePayload>) => {
     if (!challenge) {
         player.message = createError({
             text: "Challenge not found",
-            timestamp: block_timestamp,
+            timestamp: blockTimestamp,
         });
         return;
     }
@@ -30,7 +30,7 @@ export default (state: State, action: PayloadAction<ChallengeBasePayload>) => {
     if (challenge.player !== player.address) {
         player.message = createError({
             text: "Not authorized",
-            timestamp: block_timestamp,
+            timestamp: blockTimestamp,
         });
         return;
     }

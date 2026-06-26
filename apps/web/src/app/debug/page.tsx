@@ -13,7 +13,7 @@ import {
 } from "@mantine/core";
 import { IconCircleCheck, IconCircleX } from "@tabler/icons-react";
 import type { FC } from "react";
-import { useAccount, useCapabilities, useDisconnect } from "wagmi";
+import { useAccount, useCapabilities } from "wagmi";
 import { Shell } from "../../components/navigation/Shell";
 import {
     useAtomicSupport,
@@ -23,7 +23,7 @@ import {
 import { useClock } from "../../hooks/clock";
 import { useSessionId } from "../../hooks/session";
 import { useLatestState } from "../../hooks/state";
-import { usePasskeyConnect } from "../../providers/wallet/zerodev/usePasskeyConnect";
+import { useWalletConnect } from "../../providers/wallet/useWalletConnect";
 
 export default () => {
     const { data: capabilities } = useCapabilities();
@@ -33,8 +33,7 @@ export default () => {
 
     // wallet actions
     const { address, isConnected } = useAccount();
-    const { login, register, isPending: isConnecting } = usePasskeyConnect();
-    const { disconnect } = useDisconnect();
+    const { connect, disconnect, isConnecting } = useWalletConnect();
 
     // wallet capabilities
     const { requestPermissionsAsync, sessionId } = useSessionId();
@@ -58,9 +57,7 @@ export default () => {
         <Shell
             isConnected={isConnected}
             isConnecting={isConnecting}
-            onConnect={() => {}}
-            onLogin={() => login?.({ passkeyName: "OnChess" })}
-            onRegister={() => register?.({ passkeyName: "OnChess" })}
+            onConnect={connect}
             onDisconnect={disconnect}
             address={address}
             token={token}

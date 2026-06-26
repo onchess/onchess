@@ -9,12 +9,12 @@ import type { State } from "../state.js";
 
 export default (state: State, action: PayloadAction<GameBasePayload>) => {
     const { metadata } = action.payload;
-    const { block_timestamp } = metadata;
-    const msg_sender = getAddress(metadata.msg_sender);
+    const blockTimestamp = Number(metadata.blockTimestamp);
+    const msgSender = getAddress(metadata.msgSender);
     const { address } = action.payload;
 
     // get player
-    const player = getPlayer(state, msg_sender);
+    const player = getPlayer(state, msgSender);
 
     // get game
     const game = state.games[getAddress(address)];
@@ -22,16 +22,16 @@ export default (state: State, action: PayloadAction<GameBasePayload>) => {
         // game not found
         player.message = createError({
             text: "Game not found",
-            timestamp: block_timestamp,
+            timestamp: blockTimestamp,
         });
         return;
     }
 
     // check player access
-    if (msg_sender !== game.white && msg_sender !== game.black) {
+    if (msgSender !== game.white && msgSender !== game.black) {
         player.message = createError({
             text: "Unauthorized game",
-            timestamp: block_timestamp,
+            timestamp: blockTimestamp,
         });
         return;
     }
@@ -40,7 +40,7 @@ export default (state: State, action: PayloadAction<GameBasePayload>) => {
     if (game.result !== undefined) {
         player.message = createError({
             text: "Game already terminated",
-            timestamp: block_timestamp,
+            timestamp: blockTimestamp,
         });
         return;
     }
@@ -56,7 +56,7 @@ export default (state: State, action: PayloadAction<GameBasePayload>) => {
     const opponentTime = turn === "w" ? game.blackTime : game.whiteTime;
 
     // amount of time passed since last move
-    const elapsedTime = block_timestamp - game.updatedAt;
+    const elapsedTime = blockTimestamp - game.updatedAt;
     if (elapsedTime > opponentTime) {
         // opponent clock was over, allow victory claim
 
@@ -70,7 +70,7 @@ export default (state: State, action: PayloadAction<GameBasePayload>) => {
         // opponent still has time
         player.message = createError({
             text: "Opponent still has time",
-            timestamp: block_timestamp,
+            timestamp: blockTimestamp,
         });
     }
 };

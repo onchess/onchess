@@ -9,8 +9,8 @@ import { subtract } from "../util.js";
 
 export default (state: State, action: PayloadAction<WithdrawPayload>) => {
     const { metadata } = action.payload;
-    const { block_timestamp } = metadata;
-    const msg_sender = getAddress(metadata.msg_sender);
+    const blockTimestamp = Number(metadata.blockTimestamp);
+    const msg_sender = getAddress(metadata.msgSender);
     const amount = BigInt(action.payload.amount);
 
     // get player
@@ -20,7 +20,7 @@ export default (state: State, action: PayloadAction<WithdrawPayload>) => {
     // check balance
     if (balance < amount) {
         player.message = createError({
-            timestamp: block_timestamp,
+            timestamp: blockTimestamp,
             text: "Insufficient funds",
         });
         return;

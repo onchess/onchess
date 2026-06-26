@@ -1,7 +1,8 @@
 "use client";
 import { Center, Stack } from "@mantine/core";
 import { isAddress } from "viem";
-import { useAccount, useConnect, useDisconnect } from "wagmi";
+import { useAccount } from "wagmi";
+import { useWalletConnect } from "../../providers/wallet/useWalletConnect";
 import { Gameboard } from "../../components/Gameboard";
 import { Profile } from "../../components/Profile";
 import { Shell } from "../../components/navigation/Shell";
@@ -18,9 +19,7 @@ export default async function AddressPage({
 
     // connection
     const { address: connectedAddress, isConnected } = useAccount();
-    const { connect, connectors, isPending: isConnecting } = useConnect();
-    const handleConnect = () => connect({ connector: connectors[0] });
-    const { disconnect } = useDisconnect();
+    const { connect, disconnect, isConnecting } = useWalletConnect();
 
     const token = state?.config.token;
     const { address } = await params;
@@ -32,7 +31,7 @@ export default async function AddressPage({
             address={connectedAddress}
             isConnecting={isConnecting}
             isConnected={isConnected}
-            onConnect={handleConnect}
+            onConnect={connect}
             onDisconnect={disconnect}
             player={player}
             token={token}

@@ -11,7 +11,7 @@ export const metadata = {
     description: "OnChain Chess Game",
 };
 
-const RootLayout = async ({ children }: { children: React.ReactNode[] }) => {
+const RootLayout = async ({ children }: { children: React.ReactNode }) => {
     const cookies = (await headers()).get("cookie");
     return (
         <html lang="en" suppressHydrationWarning={true}>

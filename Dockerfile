@@ -2,90 +2,98 @@
 
 # This enforces that the packages downloaded from the repositories are the same
 # for the defined date, no matter when the image is built.
-ARG APT_UPDATE_SNAPSHOT=20250424T030400Z
+ARG APT_UPDATE_SNAPSHOT=20260415T030400Z
+ARG MACHINE_GUEST_TOOLS_VERSION=0.17.2
+ARG MACHINE_GUEST_TOOLS_SHA256SUM=c077573dbcf0cdc146adf14b480bfe454ca63aa4d3e8408c5487f550a5b77a41
 
 ################################################################################
 # riscv64 base stage
-FROM --platform=linux/riscv64 cartesi/node:22.14.0-noble-slim AS base
+FROM --platform=linux/riscv64 cartesi/node:24.17.0-noble-slim AS base
 
 ARG APT_UPDATE_SNAPSHOT
 ARG DEBIAN_FRONTEND=noninteractive
 RUN <<EOF
 set -eu
 apt-get update
-apt-get install -y --no-install-recommends ca-certificates curl
+apt-get install -y --no-install-recommends ca-certificates
 apt-get update --snapshot=${APT_UPDATE_SNAPSHOT}
+apt-get remove -y --purge ca-certificates
+apt-get autoremove -y --purge
 EOF
 
 ################################################################################
-# build stage: includes resources necessary for installing dependencies
+# tooling base: bun + turbo, shared by the prune and build stages
 
-# Here the image's platform does not necessarily have to be riscv64.
-# If any needed dependencies rely on native binaries, you must use
-# a riscv64 image such as cartesi/node:20-jammy for the build stage,
-# to ensure that the appropriate binaries will be generated.
-FROM --platform=$BUILDPLATFORM node:22.14.0-bookworm AS builder
-
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable
-
-# install turbo globally
-RUN pnpm add -g turbo@2.5.3
-
-# set working directory
+# The build does not need to run on riscv64: @tuler/node-libcmt ships a
+# linux-riscv64 prebuild that node-gyp-build selects at runtime, so the addon
+# installed here on $BUILDPLATFORM still loads inside the riscv64 machine.
+FROM --platform=$BUILDPLATFORM oven/bun:1 AS bun-turbo
+RUN bun install -g turbo
 WORKDIR /app
 
-# copy project
+################################################################################
+# prune stage: produce a partial monorepo containing only what
+# @onchess/backend needs (package.json files, pruned lockfile and sources)
+FROM bun-turbo AS prune
 COPY . .
-
-# Generate a partial monorepo with a pruned lockfile for the backend
 RUN turbo prune @onchess/backend --docker
 
-# First install the dependencies (as they change less often)
-FROM builder AS installer
-WORKDIR /app
-COPY --from=builder /app/out/json/ .
-RUN pnpm install
+################################################################################
+# build stage: install the pruned deps and build the backend bundle
 
-# Build the project
-COPY --from=builder /app/out/full/ .
-RUN pnpm run build --filter=@onchess/backend
+FROM bun-turbo AS build-stage
 
+# Install dependencies first (they change less often than source). The hoisted
+# linker keeps the native addon (@tuler/node-libcmt) and its node-gyp-build
+# loader as real top-level dirs, which the rootfs step below copies verbatim.
+COPY --from=prune /app/out/json/ .
+RUN bun install --linker=hoisted
+
+# Build the backend (turbo builds @onchess/core first via ^build). esbuild
+# bundles src/index.ts into dist/index.js with @tuler/node-libcmt left external.
+COPY --from=prune /app/out/full/ .
+RUN turbo build --filter=@onchess/backend
+
+# Stage the runtime files: the JS bundle plus @tuler/node-libcmt's native addon,
+# which esbuild cannot inline (it is marked --external) and must be required at
+# runtime. Copy the addon and its node-gyp-build loader next to the bundle.
+RUN mkdir -p rootfs/node_modules/@tuler \
+ && cp apps/backend/dist/index.js rootfs/index.js \
+ && cp -R node_modules/@tuler/node-libcmt rootfs/node_modules/@tuler/ \
+ && cp -R node_modules/node-gyp-build rootfs/node_modules/node-gyp-build
+
+################################################################################
 # runtime stage: produces final image that will be executed
 
 # Here the image's platform MUST be linux/riscv64.
 # Give preference to small base images, which lead to better start-up
 # performance when loading the Cartesi Machine.
-FROM base as runtime
+FROM base AS runtime
 
-ARG MACHINE_GUEST_TOOLS_VERSION=0.17.0
+ARG MACHINE_GUEST_TOOLS_VERSION
+ARG MACHINE_GUEST_TOOLS_SHA256SUM
+ADD --checksum=sha256:${MACHINE_GUEST_TOOLS_SHA256SUM} \
+  https://github.com/cartesi/machine-guest-tools/releases/download/v${MACHINE_GUEST_TOOLS_VERSION}/machine-guest-tools_riscv64.deb \
+  /tmp/machine-guest-tools_riscv64.deb
+
 ARG DEBIAN_FRONTEND=noninteractive
 RUN <<EOF
 set -e
 apt-get install -y --no-install-recommends \
-  busybox-static
-
-cd /tmp
-busybox wget https://github.com/cartesi/machine-guest-tools/releases/download/v${MACHINE_GUEST_TOOLS_VERSION}/machine-guest-tools_riscv64.deb
-echo "973943b3a3e40164175da7d7b5b7857642d1277e1fd38be268da12daca5ff458735f93a7ac25b350b3de58b073a25b64c860d9eb92157bfc946b03dd1a345cc9 /tmp/machine-guest-tools_riscv64.deb" \
-  | sha512sum -c
-apt-get install -y --no-install-recommends \
+  busybox-static \
   /tmp/machine-guest-tools_riscv64.deb
-rm /tmp/machine-guest-tools_riscv64.deb
 
+rm /tmp/machine-guest-tools_riscv64.deb
 rm -rf /var/lib/apt/lists/* /var/log/* /var/cache/*
 EOF
 
 ENV PATH="/opt/cartesi/bin:${PATH}"
 
 WORKDIR /opt/cartesi/dapp
-COPY --from=installer /app/apps/backend/dist .
+COPY --from=build-stage /app/rootfs .
 
-ENV ROLLUP_HTTP_SERVER_URL="http://127.0.0.1:5004"
-
-ENTRYPOINT ["rollup-init"]
-CMD ["node", "index.js"]
+ENTRYPOINT ["node"]
+CMD ["index.js"]
 
 FROM runtime AS mainnet
 ENV CHAIN_ID=8453
@@ -94,4 +102,4 @@ FROM runtime AS testnet
 ENV CHAIN_ID=84532
 
 FROM runtime
-ENV CHAIN_ID=13370
+ENV CHAIN_ID=31337

@@ -9,12 +9,12 @@ import type { State } from "../state.js";
 
 export default (state: State, action: PayloadAction<GameBasePayload>) => {
     const { metadata } = action.payload;
-    const { block_timestamp } = metadata;
-    const msg_sender = getAddress(metadata.msg_sender);
+    const blockTimestamp = Number(metadata.blockTimestamp);
+    const msgSender = getAddress(metadata.msgSender);
     const { address } = action.payload;
 
     // get player
-    const player = getPlayer(state, msg_sender);
+    const player = getPlayer(state, msgSender);
 
     // get game
     const game = state.games[getAddress(address)];
@@ -22,7 +22,7 @@ export default (state: State, action: PayloadAction<GameBasePayload>) => {
         // game not found
         player.message = createError({
             text: "Game not found",
-            timestamp: block_timestamp,
+            timestamp: blockTimestamp,
         });
         return;
     }
@@ -31,7 +31,7 @@ export default (state: State, action: PayloadAction<GameBasePayload>) => {
     if (player.address !== game.white && player.address !== game.black) {
         player.message = createError({
             text: "Unauthorized game",
-            timestamp: block_timestamp,
+            timestamp: blockTimestamp,
         });
         return;
     }

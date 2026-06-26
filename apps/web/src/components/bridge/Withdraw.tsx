@@ -164,7 +164,7 @@ export const Withdraw: FC<WithdrawProps> = (props) => {
                     >
                         History
                     </Button>
-                    <Collapse in={opened}>
+                    <Collapse expanded={opened}>
                         <Vouchers
                             onExecute={onExecuteVoucher}
                             token={token}

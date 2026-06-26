@@ -1,7 +1,7 @@
 name: Backend
 on: [push]
 env:
-    CARTESI_CLI_VERSION: 2.0.0-alpha.16
+    CARTESI_CLI_VERSION: 2.0.0-alpha.35
 jobs:
     build:
         runs-on: ubuntu-latest
