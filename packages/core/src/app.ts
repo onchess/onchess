@@ -1,7 +1,7 @@
 import type { AdvanceRequestData, App } from "@deroll/core";
 import { isERC20Deposit, parseERC20Deposit } from "@deroll/wallet";
 import { type Action, combineSlices, configureStore } from "@reduxjs/toolkit";
-import { decodeFunctionData, parseAbi, stringToHex } from "viem";
+import { bytesToHex, decodeFunctionData, parseAbi, stringToHex } from "viem";
 import type { ChessSlice, Config, State } from "./index.js";
 import chessSlice from "./index.js";
 import { bigIntReplacer } from "./util.js";
@@ -59,10 +59,13 @@ const makeActionCreator = (config: Config, chess: ChessSlice) => {
             }
         }
 
-        // handle other inputs
+        // handle other inputs. deroll v2 delivers the input as a Buffer, but
+        // viem's decodeFunctionData expects a hex string — passing the Buffer
+        // directly makes viem read a byte-array selector that never matches the
+        // ABI ("Encoded function signature ... not found on ABI").
         const { args, functionName } = decodeFunctionData({
             abi: ABI,
-            data: payload,
+            data: bytesToHex(payload),
         });
 
         switch (functionName) {
