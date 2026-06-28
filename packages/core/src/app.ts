@@ -142,7 +142,19 @@ export const createChess = (app: App, initialState: State) => {
 
     // create a store
     const reducer = combineSlices(slice);
-    const store = configureStore({ reducer });
+    const store = configureStore({
+        reducer,
+        // Actions carry deroll's request metadata, whose fields (chainId,
+        // blockTimestamp, index, ...) are bigints — intentionally non-plain, and
+        // serialized for notices via bigIntReplacer. Disable RTK's dev-only
+        // checks: they would flag those bigints and, more importantly, re-traverse
+        // the whole state/action on every dispatch inside the deterministic machine.
+        middleware: (getDefaultMiddleware) =>
+            getDefaultMiddleware({
+                serializableCheck: false,
+                immutableCheck: false,
+            }),
+    });
     const actionCreator = makeActionCreator(initialState.config, slice);
 
     // add handler for game actions
