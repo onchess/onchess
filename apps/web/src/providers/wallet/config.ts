@@ -13,10 +13,6 @@ export const getConfig = (chain: Chain) => {
         throw new Error("Missing NEXT_PUBLIC_JAW_API_KEY");
     }
 
-    // XXX: try to provide a local env for JAW
-    const keysUrl = undefined;
-    const serverUrl = undefined;
-
     const paymasterUrl = process.env.NEXT_PUBLIC_PAYMASTER_URL;
 
     return createConfig({
@@ -28,8 +24,6 @@ export const getConfig = (chain: Chain) => {
                 appLogoUrl: "https://onchess.xyz/img/onchess_logo.png",
                 defaultChainId: chain.id,
                 preference: {
-                    keysUrl,
-                    serverUrl,
                     showTestnets: chain.testnet,
                 },
                 ...(paymasterUrl
