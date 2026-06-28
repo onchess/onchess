@@ -4,6 +4,7 @@ import { type Action, combineSlices, configureStore } from "@reduxjs/toolkit";
 import { decodeFunctionData, parseAbi, stringToHex } from "viem";
 import type { ChessSlice, Config, State } from "./index.js";
 import chessSlice from "./index.js";
+import { bigIntReplacer } from "./util.js";
 
 // game onchain API
 export const ABI = parseAbi([
@@ -160,12 +161,14 @@ export const createChess = (app: App, initialState: State) => {
 
             // always create a notice with current state as a json string
             await app.createNotice({
-                payload: stringToHex(JSON.stringify(state)),
+                payload: stringToHex(JSON.stringify(state, bigIntReplacer)),
             });
 
             // create second notice with processed action
             await app.createNotice({
-                payload: stringToHex(JSON.stringify(processedAction)),
+                payload: stringToHex(
+                    JSON.stringify(processedAction, bigIntReplacer),
+                ),
             });
 
             // submit vouchers created during action processing

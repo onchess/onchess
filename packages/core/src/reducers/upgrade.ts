@@ -14,6 +14,7 @@ import {
 } from "viem";
 import type { ExportPayload } from "../payloads.js";
 import type { State } from "../state.js";
+import { bigIntReplacer } from "../util.js";
 
 type DepositERC20VoucherParameters = AbiParametersToPrimitiveTypes<
     ExtractAbiFunction<typeof erc20PortalAbi, "depositERC20Tokens">["inputs"]
@@ -100,7 +101,7 @@ export default (state: State, action: PayloadAction<ExportPayload>) => {
     }
 
     // serialize state
-    const execLayerData = stringToHex(JSON.stringify(state));
+    const execLayerData = stringToHex(JSON.stringify(state, bigIntReplacer));
 
     // calculate state TVL
     const amount = tvl(state);

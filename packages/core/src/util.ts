@@ -38,3 +38,13 @@ export const subtract = (v1: string, v2: string): string => {
  */
 export const formatToPGNDate = (ms: number) =>
     new Date(ms).toISOString().slice(0, 10).replace(/-/g, ".");
+
+/**
+ * `JSON.stringify` replacer that serializes `bigint` values as decimal strings,
+ * consistent with how money is stored in `State`. Both the deroll request
+ * metadata (`chainId`, `blockNumber`, `blockTimestamp`, `prevRandao`, `index`)
+ * carried by every action and the `value` of vouchers in state are `bigint`s,
+ * which `JSON.stringify` throws on by default.
+ */
+export const bigIntReplacer = (_key: string, value: unknown): unknown =>
+    typeof value === "bigint" ? value.toString() : value;

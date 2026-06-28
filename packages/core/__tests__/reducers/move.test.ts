@@ -1,5 +1,5 @@
 import { Chess } from "chess.js";
-import { zeroAddress, zeroHash } from "viem";
+import { zeroAddress } from "viem";
 import { describe, test } from "vitest";
 import { createPlayer } from "../../src/players.js";
 import move from "../../src/reducers/move.js";
@@ -26,13 +26,13 @@ describe("move", () => {
         const bob = createPlayer("0x0000000000000000000000000000000000000002");
         const game = "0x0000000000000000000000000000000000000003";
         const metadata = {
-            app_contract: zeroAddress,
-            block_number: 1,
-            block_timestamp: 1748055599,
-            chain_id: 13370,
-            input_index: 1,
-            msg_sender: alice.address,
-            prev_randao: zeroHash,
+            appContract: zeroAddress,
+            blockNumber: 1n,
+            blockTimestamp: 1748055599n,
+            chainId: 13370n,
+            index: 1n,
+            msgSender: alice.address,
+            prevRandao: 0n,
         };
 
         const chess = new Chess();
@@ -42,7 +42,7 @@ describe("move", () => {
         chess.setHeader("Site", "OnChess.xyz");
         chess.setHeader(
             "Date",
-            formatToPGNDate(metadata.block_timestamp * 1000),
+            formatToPGNDate(Number(metadata.blockTimestamp) * 1000),
         );
         const pgn = chess.pgn();
         console.log(pgn);

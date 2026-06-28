@@ -5,7 +5,6 @@ import {
     numberToHex,
     slice,
     zeroAddress,
-    zeroHash,
 } from "viem";
 import { describe, expect, it } from "vitest";
 import { createPlayer } from "../../src/players.js";
@@ -41,13 +40,13 @@ describe("create", () => {
         );
 
         const metadata = {
-            app_contract: zeroAddress,
-            block_number: 1,
-            block_timestamp: 1748055599,
-            chain_id: 13370,
-            input_index: 1,
-            msg_sender: alice.address,
-            prev_randao: zeroHash,
+            appContract: zeroAddress,
+            blockNumber: 1n,
+            blockTimestamp: 1748055599n,
+            chainId: 13370n,
+            index: 1n,
+            msgSender: alice.address,
+            prevRandao: 0n,
         };
 
         const payload = {
@@ -87,13 +86,13 @@ describe("create", () => {
         );
 
         const metadata = {
-            app_contract: zeroAddress,
-            block_number: 1,
-            block_timestamp: 1748055599,
-            chain_id: 13370,
-            input_index: 1,
-            msg_sender: alice.address,
-            prev_randao: zeroHash,
+            appContract: zeroAddress,
+            blockNumber: 1n,
+            blockTimestamp: 1748055599n,
+            chainId: 13370n,
+            index: 1n,
+            msgSender: alice.address,
+            prevRandao: 0n,
         };
 
         create(state, {
@@ -132,18 +131,18 @@ describe("create", () => {
         alice.balance = "1000000";
 
         const metadata = {
-            app_contract: zeroAddress,
-            block_number: 1,
-            block_timestamp: 1748055599,
-            chain_id: 13370,
-            input_index: 1,
-            msg_sender: alice.address,
-            prev_randao: zeroHash,
+            appContract: zeroAddress,
+            blockNumber: 1n,
+            blockTimestamp: 1748055599n,
+            chainId: 13370n,
+            index: 1n,
+            msgSender: alice.address,
+            prevRandao: 0n,
         };
 
         const payload = {
             bet: "100000",
-            timeControl: "0",
+            timeControl: "invalid",
             minRating: 800,
             maxRating: 1200,
             metadata,
@@ -155,7 +154,7 @@ describe("create", () => {
         expect(state.players[alice.address].message).toBeDefined();
         expect(state.players[alice.address].message?.type).toBe("error");
         expect(state.players[alice.address].message?.text).toBe(
-            "Unsupported time control: 0",
+            "Invalid time control: invalid",
         );
     });
 
@@ -178,13 +177,13 @@ describe("create", () => {
         };
 
         const metadata = {
-            app_contract: zeroAddress,
-            block_number: 1,
-            block_timestamp: 1748055599,
-            chain_id: 13370,
-            input_index: 1,
-            msg_sender: alice.address,
-            prev_randao: zeroHash,
+            appContract: zeroAddress,
+            blockNumber: 1n,
+            blockTimestamp: 1748055599n,
+            chainId: 13370n,
+            index: 1n,
+            msgSender: alice.address,
+            prevRandao: 0n,
         };
 
         const payload = {
@@ -202,10 +201,7 @@ describe("create", () => {
         const address = getAddress(
             slice(
                 keccak256(
-                    concat([
-                        numberToHex(metadata.input_index),
-                        metadata.msg_sender,
-                    ]),
+                    concat([numberToHex(metadata.index), metadata.msgSender]),
                 ),
                 0,
                 20,

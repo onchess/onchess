@@ -27,11 +27,11 @@ The game is a **Redux Toolkit slice** (`packages/core/src/index.ts`). State shap
 
 ### Non-obvious invariants
 
-- **Determinism is mandatory.** Core runs inside a deterministic Cartesi Machine. Never use wall-clock time or randomness in core — use `metadata.block_timestamp` and `metadata.input_index` from the action payload. Game/challenge addresses are derived deterministically (`keccak256` of input_index + sender in `create.ts`).
+- **Determinism is mandatory.** Core runs inside a deterministic Cartesi Machine. Never use wall-clock time or randomness in core — use `metadata.blockTimestamp` and `metadata.index` from the action payload. These come from deroll v2's `AdvanceRequestMetadata`, where every field (`chainId`, `blockNumber`, `blockTimestamp`, `prevRandao`, `index`) is a `bigint` — convert with `Number(...)` where a number is needed, and serialize with the `bigIntReplacer` from `util.ts` (every `JSON.stringify` of a state/action must use it, since `JSON.stringify` throws on bigints). Game/challenge addresses are derived deterministically (`keccak256` of index + sender in `create.ts`).
 - **Money is stored as decimal strings** (serialized `bigint`) throughout `State` — `balance`, `bet`, `pot`, `rake`. Convert with `BigInt(...)` for math, `.toString()` back. Never use JS numbers for token amounts.
 - **Addresses are checksummed** with `getAddress()` before use as record keys.
 - **Reducers don't throw on user error.** They validate and set `player.message = createError(...)` (see `message.ts`), then `return`. Immer drafts are mutated directly (RTK convention).
-- **Chess state lives as PGN strings** (`game.pgn`), reconstructed with `new Chess(); chess.loadPgn(...)` on each move. Clocks (`whiteTime`/`blackTime`) are decremented by `block_timestamp - updatedAt`; running out of time terminates the game. Termination logic (pot distribution, rake, ELO update) is centralized in `game.ts`'s `terminateGame`.
+- **Chess state lives as PGN strings** (`game.pgn`), reconstructed with `new Chess(); chess.loadPgn(...)` on each move. Clocks (`whiteTime`/`blackTime`) are decremented by `blockTimestamp - updatedAt`; running out of time terminates the game. Termination logic (pot distribution, rake, ELO update) is centralized in `game.ts`'s `terminateGame`.
 - **ESM with explicit `.js` import extensions** even when importing `.ts` files (`from "./state.js"`). `@onchess/core` is `"type": "module"`.
 
 ## Commands
