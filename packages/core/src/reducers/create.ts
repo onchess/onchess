@@ -55,7 +55,7 @@ export default (state: State, action: PayloadAction<CreateGamePayload>) => {
 
     // calculate lobby address
     const address = getAddress(
-        slice(keccak256(concat([numberToHex(index), msgSender])), 0, 20)
+        slice(keccak256(concat([numberToHex(index), msgSender])), 0, 20),
     );
 
     // create challenge

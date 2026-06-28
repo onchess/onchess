@@ -6,7 +6,7 @@ import { getConfig } from "./config";
 const app = createApp();
 
 // load configuration for the chain
-const chainId = Number.parseInt(process.env.CHAIN_ID ?? "31337");
+const chainId = Number.parseInt(process.env.CHAIN_ID ?? "31337", 10);
 console.log(
     `starting application for chain ${chainId} with the following configuration`,
 );
