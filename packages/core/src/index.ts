@@ -18,6 +18,7 @@ import {
 } from "./reducers/index.js";
 import type { Challenge, Game, State } from "./state.js";
 
+export * from "./abi.js";
 export * from "./app.js";
 export * from "./payloads.js";
 export * from "./players.js";

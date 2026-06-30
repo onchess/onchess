@@ -20,7 +20,7 @@ bun workspaces + Turborepo. Three workspaces:
 
 The game is a **Redux Toolkit slice** (`packages/core/src/index.ts`). State shape is in `state.ts` (`State` = config, lobby of `Challenge`s, in-progress `Game`s keyed by address, `Player`s, rake, vouchers). Each onchain action is a reducer in `reducers/` (create, join, move, resign, claim, cancel, deposit, withdraw, plus owner-only: setRakeDivider, withdrawRake, shutdown, transferOwnership, upgrade).
 
-**The onchain API is the `ABI` constant in `app.ts`** — a `parseAbi([...])` of function signatures (`create`, `move`, `join`, etc.). This single ABI is the contract between the two sides:
+**The onchain API is the `ABI` constant in `abi.ts`** (a viem-only module so it can be shared with browser consumers like `packages/decoder`; re-exported from the package) — a `parseAbi([...])` of function signatures (`create`, `move`, `join`, etc.). This single ABI is the contract between the two sides:
 
 - **Backend** (`createChess` in `app.ts`): receives Cartesi advance requests, decodes the payload against `ABI` into a Redux action, dispatches it through the store, then emits the **entire new state** as a Cartesi `Notice` (JSON string), plus a second Notice with the processed action, plus any `Voucher`s generated (e.g. token withdrawals). ERC-20 deposits are detected separately via `@deroll/wallet` and turned into `deposit` actions.
 - **Frontend** instantiates the *same* slice (`providers/state.tsx`) but hydrates from the latest Notice fetched from the Cartesi node — `hooks/state.tsx`'s `useLatestState` polls `useProcessedInputCount` + `useOutputs` and parses the Notice JSON back into `State`. The UI can optimistically dispatch the same reducers locally. The frontend encodes user actions as `InputBox.addInput` transactions in `apps/web/src/calls/index.ts`, reusing the same `ABI`.
@@ -62,7 +62,7 @@ cd packages/core && bunx vitest run __tests__/reducers/move.test.ts
 cd packages/core && bunx vitest run -t "out of time"   # by test name
 ```
 
-Tests live in `packages/core/__tests__/` (only core is tested).
+Tests live in `packages/core/__tests__/` (the bulk of them); `packages/decoder` also has a vitest test (`src/index.test.ts`).
 
 ### Backend / Cartesi build
 

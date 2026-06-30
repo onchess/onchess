@@ -1,0 +1,31 @@
+{
+    "name": "@onchess/decoder",
+    "version": "0.1.0",
+    "description": "OnChess input/output decoder for the Cartesi Node Explorer",
+    "license": "MIT",
+    "type": "module",
+    "exports": {
+        ".": {
+            "default": "./dist/index.js"
+        }
+    },
+    "files": [
+        "dist"
+    ],
+    "publishConfig": {
+        "access": "public"
+    },
+    "scripts": {
+        "build": "bun build src/index.ts --target=browser --format=esm --external @deroll/decoder --external viem --outdir dist",
+        "lint": "biome check",
+        "test": "vitest run"
+    },
+    "dependencies": {
+        "@deroll/decoder": "0.2.0-alpha.0",
+        "viem": "^2.53.1"
+    },
+    "devDependencies": {
+        "@onchess/core": "workspace:*",
+        "vitest": "^4.1.9"
+    }
+}

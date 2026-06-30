@@ -99,6 +99,18 @@
         "vitest": "^4.1.9",
       },
     },
+    "packages/decoder": {
+      "name": "@onchess/decoder",
+      "version": "0.1.0",
+      "dependencies": {
+        "@deroll/decoder": "0.2.0-alpha.0",
+        "viem": "^2.53.1",
+      },
+      "devDependencies": {
+        "@onchess/core": "workspace:*",
+        "vitest": "^4.1.9",
+      },
+    },
     "packages/typescript-config": {
       "name": "@repo/typescript-config",
       "version": "0.0.0",
@@ -348,6 +360,8 @@
 
     "@deroll/core": ["@deroll/core@2.0.0-alpha.4", "", { "dependencies": { "viem": "^2.53.1" } }, "sha512-fiRWXqHTgELAsik2A2dDacpQFncJCoMm0S+I2CgaClGof35+GtufZTZNWWG1kcSctyCjFrNb2M3hr+UJS9DJ2Q=="],
 
+    "@deroll/decoder": ["@deroll/decoder@0.2.0-alpha.0", "", {}, "sha512-2WHZ5NX8kOEJwocQisP21H+UocFy0JlsnWR8VfFcQrqmcZdvR+5NH7vgC4fLFfOAupWj9U+u1aswMDihKdTnQg=="],
+
     "@deroll/wallet": ["@deroll/wallet@2.0.0-alpha.6", "", { "dependencies": { "@cartesi/viem": "2.0.0-alpha.31", "@deroll/core": "2.0.0-alpha.4", "viem": "^2.52.2" } }, "sha512-fp6fXpgI/KN75I2RNKr7awU4riaFnnfFglRe2xoV3sS//b6Uvly2JCWfJ9j36VaoAEzcM0OQbHoufYuOgLww5w=="],
 
     "@dnd-kit/accessibility": ["@dnd-kit/accessibility@3.1.1", "", { "dependencies": { "tslib": "^2.0.0" }, "peerDependencies": { "react": ">=16.8.0" } }, "sha512-2P+YgaXF+gRsIihwwY1gCsQSYnu9Zyj2py8kY5fFvUM1qm2WA2u639R6YNVfU4GWr+ZM5mqEsfHZZLoRONbemw=="],
@@ -535,6 +549,8 @@
     "@onchess/backend": ["@onchess/backend@workspace:apps/backend"],
 
     "@onchess/core": ["@onchess/core@workspace:packages/core"],
+
+    "@onchess/decoder": ["@onchess/decoder@workspace:packages/decoder"],
 
     "@onchess/web": ["@onchess/web@workspace:apps/web"],
 
