@@ -29,7 +29,7 @@ describe("move", () => {
             appContract: zeroAddress,
             blockNumber: 1n,
             blockTimestamp: 1748055599n,
-            chainId: 13370n,
+            chainId: 31337n,
             index: 1n,
             msgSender: alice.address,
             prevRandao: 0n,

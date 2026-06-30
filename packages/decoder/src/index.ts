@@ -61,7 +61,7 @@ const TOKENS: Record<number, Token> = {
         decimals: 6,
         address: "0x036cbd53842c5426634e7929541ec2318f3dcf7e",
     },
-    13370: {
+    31337: {
         symbol: "FUN",
         decimals: 18,
         address: "0x88a2120b7068e78692c8fd12e751d610b6377e4d",

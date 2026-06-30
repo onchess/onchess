@@ -101,9 +101,9 @@
     },
     "packages/decoder": {
       "name": "@onchess/decoder",
-      "version": "0.1.0",
+      "version": "0.1.2",
       "dependencies": {
-        "@deroll/decoder": "0.2.0-alpha.0",
+        "@deroll/decoder": "0.2.0-alpha.2",
         "viem": "^2.53.1",
       },
       "devDependencies": {
@@ -360,7 +360,7 @@
 
     "@deroll/core": ["@deroll/core@2.0.0-alpha.4", "", { "dependencies": { "viem": "^2.53.1" } }, "sha512-fiRWXqHTgELAsik2A2dDacpQFncJCoMm0S+I2CgaClGof35+GtufZTZNWWG1kcSctyCjFrNb2M3hr+UJS9DJ2Q=="],
 
-    "@deroll/decoder": ["@deroll/decoder@0.2.0-alpha.0", "", {}, "sha512-2WHZ5NX8kOEJwocQisP21H+UocFy0JlsnWR8VfFcQrqmcZdvR+5NH7vgC4fLFfOAupWj9U+u1aswMDihKdTnQg=="],
+    "@deroll/decoder": ["@deroll/decoder@0.2.0-alpha.2", "", {}, "sha512-ssN4kk/cPTZS86U8Jv9zb8ntEpReimZvDzq8WferSnfYjnfi5a8hx/mjVO0T58tonUOLhWnpjEMA+6KEuEYzOA=="],
 
     "@deroll/wallet": ["@deroll/wallet@2.0.0-alpha.6", "", { "dependencies": { "@cartesi/viem": "2.0.0-alpha.31", "@deroll/core": "2.0.0-alpha.4", "viem": "^2.52.2" } }, "sha512-fp6fXpgI/KN75I2RNKr7awU4riaFnnfFglRe2xoV3sS//b6Uvly2JCWfJ9j36VaoAEzcM0OQbHoufYuOgLww5w=="],
 
